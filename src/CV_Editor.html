@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<script src="CV_Editor.js"></script>
+<link rel="stylesheet" href="CV_Editor.css">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Éditeur de CV — local & ATS-friendly</title>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand"><span class="logo">CV</span> Éditeur de CV <span class="tag">standalone · 100 % local</span></div>
+  <div class="actions">
+    <button class="swatch" data-accent="#ea580c" title="Orange" style="background:#ea580c"></button>
+    <button class="swatch" data-accent="#0369a1" title="Bleu" style="background:#0369a1"></button>
+    <button class="swatch" data-accent="#15803d" title="Vert" style="background:#15803d"></button>
+    <button class="swatch" data-accent="#334155" title="Gris" style="background:#334155"></button>
+    <button class="btn" id="btn-export-json">⬇ Export JSON</button>
+    <button class="btn" id="btn-import-json">⬆ Import JSON</button>
+    <input type="file" id="file-input" accept=".json" hidden />
+    <button class="btn primary" id="btn-print">🖨 Exporter PDF (ATS)</button>
+  </div>
+</header>
+
+<div class="layout">
+
+  <!-- ======== Colonne édition ======== -->
+  <div class="editor">
+    <nav class="tabs" id="tabs">
+      <button class="tab active" data-tab="profil">Profil</button>
+      <button class="tab" data-tab="experiences">Expériences</button>
+      <button class="tab" data-tab="competences">Compétences</button>
+      <button class="tab" data-tab="SoftSkill">Soft-Skill</button>
+      <button class="tab" data-tab="poste">Poste ciblé</button>
+    </nav>
+
+    <div class="panel" id="panel-container"></div>
+  </div>
+
+  <!-- ======== Colonne aperçu ======== -->
+  <div class="preview-wrap">
+    <div class="preview-meta">
+      <span>Aperçu live — template ATS mono-colonne</span>
+      <span>📄 A4 · Arial · texte sélectionnable</span>
+    </div>
+    <div class="preview-frame">
+      <div class="preview-scroll">
+        <div class="cv-page" id="cv-preview"></div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

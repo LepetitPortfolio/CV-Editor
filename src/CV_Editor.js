@@ -1,176 +1,3 @@
-<!doctype html>
-<html lang="fr">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Éditeur de CV — local & ATS-friendly</title>
-<style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  :root {
-    --accent: #ea580c;
-    --accent-soft: #fff7ed;
-    --ink: #1f2937;
-    --muted: #64748b;
-    --border: #e2e8f0;
-    --bg: #f1f5f9;
-  }
-  body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.5; }
-
-  /* ===== Topbar ===== */
-  .topbar {
-    background: #0f172a; color: #fff; padding: .65rem 1rem;
-    display: flex; flex-wrap: wrap; align-items: center; gap: .6rem; justify-content: space-between;
-    position: sticky; top: 0; z-index: 10;
-  }
-  .topbar .brand { display: flex; align-items: center; gap: .5rem; font-weight: 700; }
-  .topbar .brand .logo {
-    width: 26px; height: 26px; border-radius: 6px; background: var(--accent);
-    display: inline-flex; align-items: center; justify-content: center; font-size: 12px;
-  }
-  .topbar .tag { font-size: 10px; font-weight: 400; color: #94a3b8; border: 1px solid #334155; border-radius: 4px; padding: 1px 6px; }
-  .topbar .actions { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center; }
-  .btn {
-    font-size: 12px; padding: 6px 10px; border-radius: 6px; border: none; cursor: pointer;
-    background: #334155; color: #fff; transition: background .15s;
-  }
-  .btn:hover { background: #475569; }
-  .btn.primary { background: var(--accent); font-weight: 600; }
-  .btn.primary:hover { filter: brightness(1.1); }
-  .swatch {
-    width: 20px; height: 20px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; padding: 0;
-  }
-  .swatch.active { border-color: #fff; transform: scale(1.15); }
-
-  /* ===== Layout ===== */
-  .layout { display: flex; gap: 1rem; padding: 1rem; max-width: 1400px; margin: 0 auto; align-items: flex-start; flex-wrap: wrap; }
-  .editor { flex: 1 1 420px; min-width: 340px; }
-  .preview-wrap { flex: 1 1 420px; min-width: 340px; }
-  .preview-meta { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; font-weight: 600; margin-bottom: .4rem; }
-  .preview-frame { background: #cbd5e1; border-radius: 10px; padding: 1rem; box-shadow: 0 8px 24px rgba(0,0,0,.1); }
-  .preview-scroll { max-height: 82vh; overflow: auto; border-radius: 6px; }
-
-  /* ===== Tabs ===== */
-  .tabs { display: flex; gap: 2px; flex-wrap: wrap; margin-bottom: .7rem; }
-  .tab {
-    padding: 8px 14px; font-size: 14px; font-weight: 500; background: none; border: none;
-    border-bottom: 3px solid transparent; color: var(--muted); cursor: pointer; border-radius: 6px 6px 0 0;
-  }
-  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
-
-  /* ===== Forms ===== */
-  .panel { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,.05); }
-  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: .7rem; }
-  .field label { display: block; font-size: 10.5px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin-bottom: 3px; }
-  .field input, .field textarea {
-    width: 100%; border: 1px solid #cbd5e1; border-radius: 6px; padding: 7px 9px;
-    font-size: 13.5px; font-family: inherit; color: var(--ink); background: #fff; outline: none;
-    transition: border-color .15s;
-  }
-  .field input:focus, .field textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(234,88,12,.15); }
-  .field textarea { resize: vertical; min-height: 60px; }
-  .exp-card { position: relative; border: 1px solid var(--border); border-radius: 8px; padding: .8rem; margin-bottom: .8rem; background: #fdfdfd; }
-  .exp-card .remove { position: absolute; top: 8px; right: 8px; font-size: 12px; color: #ef4444; background: none; border: none; cursor: pointer; font-weight: 700; }
-  .exp-card .remove:hover { color: #b91c1c; }
-  .add-btn {
-    font-size: 13px; font-weight: 600; color: #fff; background: var(--accent); border: none;
-    border-radius: 6px; padding: 8px 12px; cursor: pointer; margin-top: .3rem;
-  }
-  .add-btn.ghost { background: none; color: var(--muted); border: 1px solid #cbd5e1; }
-  .hint { font-size: 11.5px; color: #94a3b8; }
-  .section-sep { border-top: 1px solid var(--border); margin: 1rem 0; padding-top: .8rem; }
-
-  /* ===== JD matching ===== */
-  .kw-list { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 4px; }
-  .kw { font-size: 11px; padding: 3px 9px; border-radius: 999px; font-weight: 500; }
-  .kw.ok { background: #d1fae5; color: #065f46; }
-  .kw.miss { background: #fee2e2; color: #991b1b; }
-  .alert { border-radius: 8px; padding: .7rem .9rem; font-size: 12.5px; margin-top: .8rem; }
-  .alert.warn { background: var(--accent-soft); border: 1px solid #fdba74; color: #7c2d12; }
-  .alert.good { background: #f0fdf4; border: 1px solid #86efac; color: #14532d; }
-
-  /* ===== CV Preview (ATS-friendly) ===== */
-  .cv-page {
-    background: #fff; max-width: 720px; margin: 0 auto; padding: 2rem 2.2rem;
-    font-family: Arial, Helvetica, sans-serif; line-height: 1.45; color: #1f2937;
-  }
-  .cv-page h1 { font-size: 24px; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; color: #111827; }
-  .cv-title { font-size: 15px; font-weight: 600; color: var(--accent); margin: 2px 0 4px; }
-  .cv-contact { font-size: 11px; color: #4b5563; }
-  .cv-header { border-bottom: 3px solid var(--accent); padding-bottom: 10px; margin-bottom: 12px; }
-  .cv-section-title {
-    font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em;
-    color: var(--accent); border-bottom: 2px solid var(--accent);
-    padding-bottom: 2px; margin: 16px 0 6px;
-  }
-  .cv-accroche { font-size: 12px; color: #374151; }
-  .cv-skill-line { font-size: 12px; color: #374151; margin-bottom: 2px; }
-  .cv-job { margin-bottom: 12px; break-inside: avoid; page-break-inside: avoid; }
-  .cv-job-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap; }
-  .cv-job-title { font-size: 13.5px; font-weight: 700; color: #111827; }
-  .cv-job-title .company { color: var(--accent); }
-  .cv-job-dates { font-size: 11px; color: #6b7280; white-space: nowrap; }
-  .cv-job ul { margin: 3px 0 0 18px; }
-  .cv-job li { font-size: 12px; color: #374151; margin-bottom: 2px; }
-  .cv-edu { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; font-size: 12px; color: #374151; break-inside: avoid; }
-  .cv-edu strong { color: #111827; }
-
-  /* ===== Print : seul le CV est exporté ===== */
-  @media print {
-    body { background: #fff; }
-    .topbar, .editor, .preview-meta, .preview-frame { display: none !important; }
-    .layout { display: block; padding: 0; max-width: none; }
-    .preview-wrap { display: block; }
-    .preview-scroll { max-height: none; overflow: visible; border-radius: 0; }
-    .cv-page { max-width: none; padding: 0; }
-    @page { size: A4; margin: 12mm; }
-  }
-</style>
-</head>
-<body>
-
-<header class="topbar">
-  <div class="brand"><span class="logo">CV</span> Éditeur de CV <span class="tag">standalone · 100 % local</span></div>
-  <div class="actions">
-    <button class="swatch" data-accent="#ea580c" title="Orange" style="background:#ea580c"></button>
-    <button class="swatch" data-accent="#0369a1" title="Bleu" style="background:#0369a1"></button>
-    <button class="swatch" data-accent="#15803d" title="Vert" style="background:#15803d"></button>
-    <button class="swatch" data-accent="#334155" title="Gris" style="background:#334155"></button>
-    <button class="btn" id="btn-export-json">⬇ Export JSON</button>
-    <button class="btn" id="btn-import-json">⬆ Import JSON</button>
-    <input type="file" id="file-input" accept=".json" hidden />
-    <button class="btn primary" id="btn-print">🖨 Exporter PDF (ATS)</button>
-  </div>
-</header>
-
-<div class="layout">
-
-  <!-- ======== Colonne édition ======== -->
-  <div class="editor">
-    <nav class="tabs" id="tabs">
-      <button class="tab active" data-tab="profil">Profil</button>
-      <button class="tab" data-tab="experiences">Expériences</button>
-      <button class="tab" data-tab="competences">Compétences</button>
-      <button class="tab" data-tab="poste">Poste ciblé</button>
-    </nav>
-
-    <div class="panel" id="panel-container"></div>
-  </div>
-
-  <!-- ======== Colonne aperçu ======== -->
-  <div class="preview-wrap">
-    <div class="preview-meta">
-      <span>Aperçu live — template ATS mono-colonne</span>
-      <span>📄 A4 · Arial · texte sélectionnable</span>
-    </div>
-    <div class="preview-frame">
-      <div class="preview-scroll">
-        <div class="cv-page" id="cv-preview"></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<script>
 "use strict";
 
 // ============================================================
@@ -186,7 +13,8 @@ const DEFAULT_CV = {
   tel: "06 58 26 44 83",
   linkedin: "linkedin.com/in/simonlepetit",
   portfolio: "www.lepetitportfolio.fr",
-  experiences: [
+  experiences: 
+  [
     {
       poste: "Programmeur Gameplay", entreprise: "OSC Games", lieu: "Montpellier",
       debut: "01/2024", fin: "02/2025",
@@ -206,11 +34,20 @@ const DEFAULT_CV = {
       ]
     }
   ],
-  formations: [
+  softskill:
+  [
+    {
+      libelle: "",
+      desc : ""
+    }
+  ],
+  formations: 
+  [
     { intitule: "Formation Programmeur Gameplay", lieu: "Objectif 3D, Montpellier", annee: "2014 – 2016" },
     { intitule: "BTS SIO Option SLAM", lieu: "Lycée La Colinière, Nantes", annee: "2012 – 2014" }
   ],
-  competences: {
+  competences: 
+  {
     langages: "C++, C#, Java, JavaScript, Python",
     moteurs: "Unity 3D, Unreal Engine, UEFN",
     outils: "Git, Perforce, Visual Studio, JIRA"
@@ -257,7 +94,8 @@ function extractKeywords(text) {
 // ============================================================
 // 4. RENDU DE L'APERÇU CV
 // ============================================================
-function renderPreview() {
+function renderPreview() 
+{
   const c = cv;
   const contacts = [c.email, c.tel, c.linkedin, c.portfolio].filter(Boolean).map(esc).join(" · ");
   const skills = [
@@ -297,7 +135,8 @@ function renderPreview() {
 // ============================================================
 // 5. RENDU DU FORMULAIRE (par onglet)
 // ============================================================
-function field(label, path, value, opts = {}) {
+function field(label, path, value, opts = {}) 
+{
   const id = "f-" + path;
   const tag = opts.textarea ? "textarea" : "input";
   return `<div class="field">
@@ -306,12 +145,14 @@ function field(label, path, value, opts = {}) {
   </div>`.replace(`<${tag} id`, opts.textarea ? `<${tag} id` : `<${tag} id`) ;
 }
 
-function renderPanel() {
+function renderPanel() 
+{
   const c = cv;
   const box = $("#panel-container");
   let html = "";
 
-  if (currentTab === "profil") {
+  if (currentTab === "profil") 
+  {
     html = `
       <div class="grid">
         <div class="field"><label>Nom</label><input data-bind="nom" value="${esc(c.nom)}"></div>
@@ -326,7 +167,8 @@ function renderPanel() {
       </div>`;
   }
 
-  if (currentTab === "experiences") {
+  if (currentTab === "experiences") 
+  {
     html = c.experiences.map((e, i) => `
       <div class="exp-card">
         ${c.experiences.length > 1 ? `<button class="remove" data-remove-exp="${i}" title="Supprimer">✕</button>` : ""}
@@ -353,7 +195,8 @@ function renderPanel() {
       </div>`;
   }
 
-  if (currentTab === "competences") {
+  if (currentTab === "competences") 
+  {
     html = `
       <div class="field"><label>Langages (séparés par des virgules)</label><textarea data-bind-comp="langages" rows="2">${esc(c.competences.langages)}</textarea></div>
       <div class="field" style="margin-top:.7rem"><label>Moteurs / frameworks</label><textarea data-bind-comp="moteurs" rows="2">${esc(c.competences.moteurs)}</textarea></div>
@@ -361,7 +204,21 @@ function renderPanel() {
       <p class="hint" style="margin-top:.7rem">💡 Les listes en texte simple sont les plus fiables pour les ATS.</p>`;
   }
 
-  if (currentTab === "poste") {
+  if(currentTab === "SoftSkill")
+  {
+    html = c.softskill.map((s, i) => `
+      <div class="exp-card">
+        ${c.softskill.length > 1 ? `<button class="remove" data-remove-sk="${i}" title="Supprimer">✕</button>` : ""}
+        <div class="grid">
+          <div class="field"><label>Libelle</label><input data-sk="${i}" data-key="libelle" value="${esc(s.libelle)}"></div>
+          <div class="field"><label>Description</label><input data-sk="${i}" data-key="desc" value="${esc(s.desc)}"></div>
+        </div>
+      </div>`).join("")
+      + `<button class="add-btn" id="btn-add-sk">+ Ajouter un Soft skill</button>`;
+  }
+
+  if (currentTab === "poste")
+  {
     html = `
       <div class="field">
         <label>Collez l'offre d'emploi (Job Description)</label>
@@ -374,7 +231,8 @@ function renderPanel() {
   if (currentTab === "poste") { renderJdResults(); }
 }
 
-function renderJdResults() {
+function renderJdResults() 
+{
   const box = $("#jd-results");
   if (!box) return;
   if (!jd.trim()) { box.innerHTML = ""; return; }
@@ -411,54 +269,92 @@ function renderAll() { renderPanel(); renderPreview(); }
 document.addEventListener("input", (e) => {
   const t = e.target;
 
-  if (t.dataset.bind) {
+  if (t.dataset.bind) 
+    {
     cv[t.dataset.bind] = t.value;
-  } else if (t.dataset.bindComp) {
+  } 
+  else if (t.dataset.bindComp) 
+  {
     cv.competences[t.dataset.bindComp] = t.value;
-  } else if (t.dataset.exp !== undefined && t.dataset.key) {
+  } 
+  else if (t.dataset.exp !== undefined && t.dataset.key) 
+  {
     const i = +t.dataset.exp;
     const key = t.dataset.key;
     cv.experiences[i][key] = key === "missions" ? t.value.split("\n") : t.value;
-  } else if (t.dataset.edu !== undefined && t.dataset.key) {
+  } 
+  else if (t.dataset.edu !== undefined && t.dataset.key) 
+  {
     cv.formations[+t.dataset.edu][t.dataset.key] = t.value;
-  } else if (t.id === "jd-input") {
+  } 
+  else if (t.id === "jd-input") 
+  {
     jd = t.value;
     renderJdResults();
     return; // pas besoin de rerendre le CV pour la JD
-  } else {
+  } 
+  else 
+  {
     return;
   }
+
   save();
   renderPreview();
 });
 
 // Clics (tabs, boutons, suppressions)
-document.addEventListener("click", (e) => {
+document.addEventListener("click", (e) => 
+{
   const t = e.target;
 
-  if (t.classList.contains("tab")) {
+  if (t.classList.contains("tab")) 
+  {
     currentTab = t.dataset.tab;
     document.querySelectorAll(".tab").forEach((b) => b.classList.toggle("active", b === t));
     renderPanel();
     return;
   }
-  if (t.classList.contains("swatch")) {
+  if (t.classList.contains("swatch"))
+  {
     accent = t.dataset.accent;
     document.documentElement.style.setProperty("--accent", accent);
     document.querySelectorAll(".swatch").forEach((s) => s.classList.toggle("active", s === t));
     return;
   }
-  if (t.id === "btn-add-exp") {
+  if (t.id === "btn-add-exp") 
+  {
     cv.experiences.push({ poste: "", entreprise: "", lieu: "", debut: "", fin: "", missions: [""] });
-    save(); renderAll(); return;
+    save(); 
+    renderAll(); 
+    return;
   }
-  if (t.id === "btn-add-edu") {
+  if (t.id === "btn-add-edu") 
+  {
     cv.formations.push({ intitule: "", lieu: "", annee: "" });
-    save(); renderAll(); return;
+    save(); 
+    renderAll(); 
+    return;
   }
-  if (t.dataset.removeExp !== undefined) {
+  if(t.id === "btn-add-sk")
+  {
+    cv.softskill.push({ libelle: "", desc: "" });
+    save(); 
+    renderAll(); 
+    return;
+  }
+  if (t.dataset.removeExp !== undefined) 
+  {
     cv.experiences.splice(+t.dataset.removeExp, 1);
-    save(); renderAll(); return;
+    save(); 
+    renderAll(); 
+    return;
+  }
+  if (t.dataset.removeSK !== undefined) 
+  {
+    cv.softskill.splice(+t.dataset.removeSK, 1);
+    save(); 
+    renderAll(); 
+    return;
   }
 });
 
@@ -475,15 +371,19 @@ $("#btn-export-json").addEventListener("click", () => {
 });
 
 $("#btn-import-json").addEventListener("click", () => $("#file-input").click());
-$("#file-input").addEventListener("change", (e) => {
+$("#file-input").addEventListener("change", (e) => 
+{
   const file = e.target.files?.[0];
   if (!file) return;
   const reader = new FileReader();
-  reader.onload = () => {
-    try {
+  reader.onload = () => 
+  {
+    try 
+    {
       cv = { ...structuredClone(DEFAULT_CV), ...JSON.parse(String(reader.result)) };
       save(); renderAll();
-    } catch { alert("Fichier JSON invalide"); }
+    } 
+    catch { alert("Fichier JSON invalide"); }
   };
   reader.readAsText(file);
   e.target.value = "";
@@ -493,6 +393,3 @@ $("#file-input").addEventListener("change", (e) => {
 document.documentElement.style.setProperty("--accent", accent);
 document.querySelector(".swatch").classList.add("active");
 renderAll();
-</script>
-</body>
-</html>

@@ -1,0 +1,130 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root 
+{
+  --accent: #ea580c;
+  --accent-soft: #fff7ed;
+  --ink: #1f2937;
+  --muted: #64748b;
+  --border: #e2e8f0;
+  --bg: #f1f5f9;
+}
+body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.5; }
+
+/* ===== Topbar ===== */
+.topbar 
+{
+  background: #0f172a; color: #fff; padding: .65rem 1rem;
+  display: flex; flex-wrap: wrap; align-items: center; gap: .6rem; justify-content: space-between;
+  position: sticky; top: 0; z-index: 10;
+}
+.topbar .brand { display: flex; align-items: center; gap: .5rem; font-weight: 700; }
+.topbar .brand .logo 
+{
+  width: 26px; height: 26px; border-radius: 6px; background: var(--accent);
+  display: inline-flex; align-items: center; justify-content: center; font-size: 12px;
+}
+.topbar .tag { font-size: 10px; font-weight: 400; color: #94a3b8; border: 1px solid #334155; border-radius: 4px; padding: 1px 6px; }
+.topbar .actions { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center; }
+.btn 
+{
+  font-size: 12px; padding: 6px 10px; border-radius: 6px; border: none; cursor: pointer;
+  background: #334155; color: #fff; transition: background .15s;
+}
+.btn:hover { background: #475569; }
+.btn.primary { background: var(--accent); font-weight: 600; }
+.btn.primary:hover { filter: brightness(1.1); }
+.swatch 
+{
+  width: 20px; height: 20px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; padding: 0;
+}
+.swatch.active { border-color: #fff; transform: scale(1.15); }
+
+/* ===== Layout ===== */
+.layout { display: flex; gap: 1rem; padding: 1rem; max-width: 1400px; margin: 0 auto; align-items: flex-start; flex-wrap: wrap; }
+.editor { flex: 1 1 420px; min-width: 340px; }
+.preview-wrap { flex: 1 1 420px; min-width: 340px; }
+.preview-meta { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; font-weight: 600; margin-bottom: .4rem; }
+.preview-frame { background: #cbd5e1; border-radius: 10px; padding: 1rem; box-shadow: 0 8px 24px rgba(0,0,0,.1); }
+.preview-scroll { max-height: 82vh; overflow: auto; border-radius: 6px; }
+
+/* ===== Tabs ===== */
+.tabs { display: flex; gap: 2px; flex-wrap: wrap; margin-bottom: .7rem; }
+.tab 
+{
+  padding: 8px 14px; font-size: 14px; font-weight: 500; background: none; border: none;
+  border-bottom: 3px solid transparent; color: var(--muted); cursor: pointer; border-radius: 6px 6px 0 0;
+}
+.tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* ===== Forms ===== */
+.panel { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,.05); }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: .7rem; }
+.field label { display: block; font-size: 10.5px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin-bottom: 3px; }
+.field input, .field textarea 
+{
+  width: 100%; border: 1px solid #cbd5e1; border-radius: 6px; padding: 7px 9px;
+  font-size: 13.5px; font-family: inherit; color: var(--ink); background: #fff; outline: none;
+  transition: border-color .15s;
+}
+.field input:focus, .field textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(234,88,12,.15); }
+.field textarea { resize: vertical; min-height: 60px; }
+.exp-card { position: relative; border: 1px solid var(--border); border-radius: 8px; padding: .8rem; margin-bottom: .8rem; background: #fdfdfd; }
+.exp-card .remove { position: absolute; top: 8px; right: 8px; font-size: 12px; color: #ef4444; background: none; border: none; cursor: pointer; font-weight: 700; }
+.exp-card .remove:hover { color: #b91c1c; }
+.add-btn 
+{
+  font-size: 13px; font-weight: 600; color: #fff; background: var(--accent); border: none;
+  border-radius: 6px; padding: 8px 12px; cursor: pointer; margin-top: .3rem;
+}
+.add-btn.ghost { background: none; color: var(--muted); border: 1px solid #cbd5e1; }
+.hint { font-size: 11.5px; color: #94a3b8; }
+.section-sep { border-top: 1px solid var(--border); margin: 1rem 0; padding-top: .8rem; }
+
+/* ===== JD matching ===== */
+.kw-list { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 4px; }
+.kw { font-size: 11px; padding: 3px 9px; border-radius: 999px; font-weight: 500; }
+.kw.ok { background: #d1fae5; color: #065f46; }
+.kw.miss { background: #fee2e2; color: #991b1b; }
+.alert { border-radius: 8px; padding: .7rem .9rem; font-size: 12.5px; margin-top: .8rem; }
+.alert.warn { background: var(--accent-soft); border: 1px solid #fdba74; color: #7c2d12; }
+.alert.good { background: #f0fdf4; border: 1px solid #86efac; color: #14532d; }
+
+/* ===== CV Preview (ATS-friendly) ===== */
+.cv-page 
+{
+  background: #fff; max-width: 720px; margin: 0 auto; padding: 2rem 2.2rem;
+  font-family: Arial, Helvetica, sans-serif; line-height: 1.45; color: #1f2937;
+}
+.cv-page h1 { font-size: 24px; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; color: #111827; }
+.cv-title { font-size: 15px; font-weight: 600; color: var(--accent); margin: 2px 0 4px; }
+.cv-contact { font-size: 11px; color: #4b5563; }
+.cv-header { border-bottom: 3px solid var(--accent); padding-bottom: 10px; margin-bottom: 12px; }
+.cv-section-title 
+{
+  font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em;
+  color: var(--accent); border-bottom: 2px solid var(--accent);
+  padding-bottom: 2px; margin: 16px 0 6px;
+}
+.cv-accroche { font-size: 12px; color: #374151; }
+.cv-skill-line { font-size: 12px; color: #374151; margin-bottom: 2px; }
+.cv-job { margin-bottom: 12px; break-inside: avoid; page-break-inside: avoid; }
+.cv-job-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.cv-job-title { font-size: 13.5px; font-weight: 700; color: #111827; }
+.cv-job-title .company { color: var(--accent); }
+.cv-job-dates { font-size: 11px; color: #6b7280; white-space: nowrap; }
+.cv-job ul { margin: 3px 0 0 18px; }
+.cv-job li { font-size: 12px; color: #374151; margin-bottom: 2px; }
+.cv-edu { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; font-size: 12px; color: #374151; break-inside: avoid; }
+.cv-edu strong { color: #111827; }
+
+/* ===== Print : seul le CV est exporté ===== */
+@media print 
+{
+  body { background: #fff; }
+  .topbar, .editor, .preview-meta, .preview-frame { display: none !important; }
+  .layout { display: block; padding: 0; max-width: none; }
+  .preview-wrap { display: block; }
+  .preview-scroll { max-height: none; overflow: visible; border-radius: 0; }
+  .cv-page { max-width: none; padding: 0; }
+  @page { size: A4; margin: 12mm; }
+}
