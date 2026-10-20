@@ -5,7 +5,8 @@
 // ============================================================
 const STORAGE_KEY = "cv-editor-standalone-v1";
 
-const DEFAULT_CV = {
+const DEFAULT_CV = 
+{
   nom: "Simon Lepetit",
   titre: "Programmeur Gameplay",
   accroche: "Développeur de jeux expérimenté, spécialisé en C++, C# ainsi que sur les moteurs Unreal Engine et Unity 3D. Passionné par les expériences immersives, je mets mes compétences techniques et créatives au service de la création de jeux innovants et captivants.",
@@ -104,6 +105,13 @@ function renderPreview()
     c.competences.outils && `<div class="cv-skill-line"><strong>Outils :</strong> ${esc(c.competences.outils)}</div>`,
   ].filter(Boolean).join("");
 
+  const softsk = c.softskill.map((s) => `
+    <div class="cv-job">
+      <div class="cv-job-head">
+        <div class="cv-SoftSkill-libelle"><strong>${esc(s.libelle) || "Libellé"} : </strong>${esc(s.desc)|| "Description"}</div>
+      </div>
+    </div>`).join("");
+
   const exps = c.experiences.map((e) => `
     <div class="cv-job">
       <div class="cv-job-head">
@@ -127,6 +135,7 @@ function renderPreview()
     </div>
     ${c.accroche ? `<div class="cv-section-title">Profil</div><div class="cv-accroche">${esc(c.accroche)}</div>` : ""}
     ${skills ? `<div class="cv-section-title">Compétences</div>${skills}` : ""}
+    ${softsk ? `<div class="cv-section-title">Compétences transversales</div>${softsk}` : ""}
     ${exps ? `<div class="cv-section-title">Expériences professionnelles</div>${exps}` : ""}
     ${formations ? `<div class="cv-section-title">Formation</div>${formations}` : ""}
   `;
@@ -229,6 +238,8 @@ function renderPanel()
 
   box.innerHTML = html;
   if (currentTab === "poste") { renderJdResults(); }
+
+  renderPreview();
 }
 
 function renderJdResults() 
@@ -264,13 +275,17 @@ function renderJdResults()
 // ============================================================
 // 6. RENDU GLOBAL + ÉVÉNEMENTS
 // ============================================================
-function renderAll() { renderPanel(); renderPreview(); }
+function renderAll() 
+{ 
+  renderPanel(); 
+  renderPreview(); 
+}
 
 document.addEventListener("input", (e) => {
   const t = e.target;
 
   if (t.dataset.bind) 
-    {
+  {
     cv[t.dataset.bind] = t.value;
   } 
   else if (t.dataset.bindComp) 
