@@ -150,6 +150,7 @@
       <button class="tab active" data-tab="profil">Profil</button>
       <button class="tab" data-tab="experiences">Expériences</button>
       <button class="tab" data-tab="competences">Compétences</button>
+      <button class="tab" data-tab="SoftSkill">Soft-Skill</button>
       <button class="tab" data-tab="poste">Poste ciblé</button>
     </nav>
 
@@ -241,7 +242,8 @@ function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(cv)); }
 // ============================================================
 const STOPWORDS = new Set(("le la les un une des de du au aux et ou en dans sur pour avec sans par qui que quoi dont où est sont être avoir fait faire plus moins très ce cette ces son sa ses leur nos vos je tu il elle nous vous ils elles se ne pas aussi ainsi comme mais donc or ni car si tout tous toute toutes autre autres même entre chez vers afin selon lors alors the and for with you your our their will that this from have has are was were not can all").split(" "));
 
-function extractKeywords(text) {
+function extractKeywords(text) 
+{
   const counts = new Map();
   (text.toLowerCase().match(/[a-zàâçéèêëîïôûùüÿñæœ][a-zàâçéèêëîïôûùüÿñæœ+#.\-\/]*/g) || []).forEach((w) => {
     const clean = w.replace(/[.\-\/]+$/, "");
@@ -257,7 +259,8 @@ function extractKeywords(text) {
 // ============================================================
 // 4. RENDU DE L'APERÇU CV
 // ============================================================
-function renderPreview() {
+function renderPreview() 
+{
   const c = cv;
   const contacts = [c.email, c.tel, c.linkedin, c.portfolio].filter(Boolean).map(esc).join(" · ");
   const skills = [
@@ -297,7 +300,8 @@ function renderPreview() {
 // ============================================================
 // 5. RENDU DU FORMULAIRE (par onglet)
 // ============================================================
-function field(label, path, value, opts = {}) {
+function field(label, path, value, opts = {}) 
+{
   const id = "f-" + path;
   const tag = opts.textarea ? "textarea" : "input";
   return `<div class="field">
@@ -306,12 +310,14 @@ function field(label, path, value, opts = {}) {
   </div>`.replace(`<${tag} id`, opts.textarea ? `<${tag} id` : `<${tag} id`) ;
 }
 
-function renderPanel() {
+function renderPanel() 
+{
   const c = cv;
   const box = $("#panel-container");
   let html = "";
 
-  if (currentTab === "profil") {
+  if (currentTab === "profil") 
+  {
     html = `
       <div class="grid">
         <div class="field"><label>Nom</label><input data-bind="nom" value="${esc(c.nom)}"></div>
@@ -326,7 +332,8 @@ function renderPanel() {
       </div>`;
   }
 
-  if (currentTab === "experiences") {
+  if (currentTab === "experiences") 
+  {
     html = c.experiences.map((e, i) => `
       <div class="exp-card">
         ${c.experiences.length > 1 ? `<button class="remove" data-remove-exp="${i}" title="Supprimer">✕</button>` : ""}
@@ -353,7 +360,8 @@ function renderPanel() {
       </div>`;
   }
 
-  if (currentTab === "competences") {
+  if (currentTab === "competences") 
+  {
     html = `
       <div class="field"><label>Langages (séparés par des virgules)</label><textarea data-bind-comp="langages" rows="2">${esc(c.competences.langages)}</textarea></div>
       <div class="field" style="margin-top:.7rem"><label>Moteurs / frameworks</label><textarea data-bind-comp="moteurs" rows="2">${esc(c.competences.moteurs)}</textarea></div>
@@ -361,7 +369,21 @@ function renderPanel() {
       <p class="hint" style="margin-top:.7rem">💡 Les listes en texte simple sont les plus fiables pour les ATS.</p>`;
   }
 
-  if (currentTab === "poste") {
+  if(currentTab === "SoftSkill")
+  {
+    html = c.experiences.map((e, i) => `
+      <div class="exp-card">
+        ${c.SoftSkill.length > 1 ? `<button class="remove" data-remove-exp="${i}" title="Supprimer">✕</button>` : ""}
+        <div class="grid">
+          <div class="field"><label>Libelle</label><input data-exp="${i}" data-key="libelle" value="${esc(s.Libille)}"></div>
+          <div class="field"><label>Description</label><input data-exp="${i}" data-key="description" value="${esc(s.desc)}"></div>
+        </div>
+      </div>`).join("")
+      + `<button class="add-btn" id="btn-add-exp">+ Ajouter une Soft skile</button>`;
+  }
+
+  if (currentTab === "poste") 
+  {
     html = `
       <div class="field">
         <label>Collez l'offre d'emploi (Job Description)</label>
@@ -374,7 +396,8 @@ function renderPanel() {
   if (currentTab === "poste") { renderJdResults(); }
 }
 
-function renderJdResults() {
+function renderJdResults() 
+{
   const box = $("#jd-results");
   if (!box) return;
   if (!jd.trim()) { box.innerHTML = ""; return; }
@@ -408,24 +431,36 @@ function renderJdResults() {
 // ============================================================
 function renderAll() { renderPanel(); renderPreview(); }
 
-document.addEventListener("input", (e) => {
+document.addEventListener("input", (e) => 
+{
   const t = e.target;
 
-  if (t.dataset.bind) {
+  if (t.dataset.bind) 
+  {
     cv[t.dataset.bind] = t.value;
-  } else if (t.dataset.bindComp) {
+  } 
+  else if (t.dataset.bindComp) 
+  {
     cv.competences[t.dataset.bindComp] = t.value;
-  } else if (t.dataset.exp !== undefined && t.dataset.key) {
+  } 
+  else if (t.dataset.exp !== undefined && t.dataset.key) 
+  {
     const i = +t.dataset.exp;
     const key = t.dataset.key;
     cv.experiences[i][key] = key === "missions" ? t.value.split("\n") : t.value;
-  } else if (t.dataset.edu !== undefined && t.dataset.key) {
+  } 
+  else if (t.dataset.edu !== undefined && t.dataset.key) 
+  {
     cv.formations[+t.dataset.edu][t.dataset.key] = t.value;
-  } else if (t.id === "jd-input") {
+  } 
+  else if (t.id === "jd-input") 
+  {
     jd = t.value;
     renderJdResults();
     return; // pas besoin de rerendre le CV pour la JD
-  } else {
+  } 
+  else 
+  {
     return;
   }
   save();
@@ -433,30 +468,36 @@ document.addEventListener("input", (e) => {
 });
 
 // Clics (tabs, boutons, suppressions)
-document.addEventListener("click", (e) => {
+document.addEventListener("click", (e) => 
+{
   const t = e.target;
 
-  if (t.classList.contains("tab")) {
+  if (t.classList.contains("tab")) 
+  {
     currentTab = t.dataset.tab;
     document.querySelectorAll(".tab").forEach((b) => b.classList.toggle("active", b === t));
     renderPanel();
     return;
   }
-  if (t.classList.contains("swatch")) {
+  if (t.classList.contains("swatch")) 
+  {
     accent = t.dataset.accent;
     document.documentElement.style.setProperty("--accent", accent);
     document.querySelectorAll(".swatch").forEach((s) => s.classList.toggle("active", s === t));
     return;
   }
-  if (t.id === "btn-add-exp") {
+  if (t.id === "btn-add-exp") 
+  {
     cv.experiences.push({ poste: "", entreprise: "", lieu: "", debut: "", fin: "", missions: [""] });
     save(); renderAll(); return;
   }
-  if (t.id === "btn-add-edu") {
+  if (t.id === "btn-add-edu") 
+  {
     cv.formations.push({ intitule: "", lieu: "", annee: "" });
     save(); renderAll(); return;
   }
-  if (t.dataset.removeExp !== undefined) {
+  if (t.dataset.removeExp !== undefined) 
+  {
     cv.experiences.splice(+t.dataset.removeExp, 1);
     save(); renderAll(); return;
   }
@@ -465,7 +506,8 @@ document.addEventListener("click", (e) => {
 // Export / Import / Print
 $("#btn-print").addEventListener("click", () => window.print());
 
-$("#btn-export-json").addEventListener("click", () => {
+$("#btn-export-json").addEventListener("click", () => 
+{
   const blob = new Blob([JSON.stringify(cv, null, 2)], { type: "application/json" });
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
@@ -475,12 +517,14 @@ $("#btn-export-json").addEventListener("click", () => {
 });
 
 $("#btn-import-json").addEventListener("click", () => $("#file-input").click());
-$("#file-input").addEventListener("change", (e) => {
+$("#file-input").addEventListener("change", (e) => 
+{
   const file = e.target.files?.[0];
   if (!file) return;
   const reader = new FileReader();
   reader.onload = () => {
-    try {
+    try 
+    {
       cv = { ...structuredClone(DEFAULT_CV), ...JSON.parse(String(reader.result)) };
       save(); renderAll();
     } catch { alert("Fichier JSON invalide"); }
