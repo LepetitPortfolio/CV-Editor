@@ -66,7 +66,14 @@ const DEFAULT_CV =
       intitule : "Outils",
       valeur : "Git, Perforce, Visual Studio, JIRA"
     }
-  ]
+  ],
+  customisation :
+  {
+    police : "Arial, sans-serif",
+    taille : "12pt",
+    couleur : "#000000",
+    accent : "#000000"
+  }
   
 };
 
@@ -81,7 +88,7 @@ catch { cv = structuredClone(DEFAULT_CV); }
 
 let jd = "";            // job description collée
 let currentTab = "profil";
-let accent = "#ea580c";
+let accent = cv.customisation.accent || "#000000";
 
 // ============================================================
 // 2. OUTILS
@@ -256,6 +263,27 @@ function renderPanel()
       + `<button class="add-btn" id="btn-add-softskill">+ Ajouter un Soft skill</button>`;
   }
 
+  if(currentTab === "Customisation")
+  {
+    html = `
+      <div class="field">
+        <label>Police</label>
+        <input data-bind="customisation.police" value="${esc(c.customisation.police)}">
+      </div>
+      <div class="field">
+        <label>Taille</label>
+        <input data-bind="customisation.taille" value="${esc(c.customisation.taille)}">
+      </div>
+      <div class="field">
+        <label>Couleur</label>
+        <input type="color" data-bind="customisation.couleur" value="${esc(c.customisation.couleur)}">
+      </div>
+      <div class="field">
+        <label>Accent</label>
+        <input type="color" data-bind="customisation.accent" value="${esc(c.customisation.accent)}">
+      </div>`;
+  }
+
   if (currentTab === "poste")
   {
     html = `
@@ -350,7 +378,18 @@ document.addEventListener("input", (e) => {
   else if (t.dataset.softskill !== undefined) 
   {
     cv.softskill[+t.dataset.softskill][t.dataset.key] = t.value;
-  } 
+  }
+  else if (t.dataset.bind && t.dataset.bind.startsWith("customisation."))
+  {
+    const key = t.dataset.bind.split(".")[1];
+    cv.customisation[key] = t.value;
+    if(key === "accent")
+    {
+      accent = t.value;
+      document.documentElement.style.setProperty("--accent", accent);
+      document.querySelectorAll(".swatch").forEach((s) => s.classList.toggle("active", s.dataset.accent === accent));
+    }
+  }
   else if (t.id === "jd-input") 
   {
     jd = t.value;
@@ -520,4 +559,3 @@ $("#file-input").addEventListener("change", (e) =>
 // Init
 document.documentElement.style.setProperty("--accent", accent);
 document.querySelector(".swatch").classList.add("active");
-document.addEventListener("DOMContentLoaded", renderAll());
