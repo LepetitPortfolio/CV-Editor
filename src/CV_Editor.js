@@ -12,8 +12,13 @@ const DEFAULT_CV =
   accroche: "Développeur de jeux expérimenté, spécialisé en C++, C# ainsi que sur les moteurs Unreal Engine et Unity 3D. Passionné par les expériences immersives, je mets mes compétences techniques et créatives au service de la création de jeux innovants et captivants.",
   email: "Simon.Lepetit1@gmail.com",
   tel: "06 58 26 44 83",
-  linkedin: "linkedin.com/in/simonlepetit",
-  portfolio: "www.lepetitportfolio.fr",
+  otherlinks : 
+  [
+    {
+      libelle: "GitHub",
+      url: "github.com/simonlepetit"
+    }
+  ],
   experiences: 
   [
     {
@@ -79,9 +84,11 @@ function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(cv)); }
 // ============================================================
 const STOPWORDS = new Set(("le la les un une des de du au aux et ou en dans sur pour avec sans par qui que quoi dont où est sont être avoir fait faire plus moins très ce cette ces son sa ses leur nos vos je tu il elle nous vous ils elles se ne pas aussi ainsi comme mais donc or ni car si tout tous toute toutes autre autres même entre chez vers afin selon lors alors the and for with you your our their will that this from have has are was were not can all").split(" "));
 
-function extractKeywords(text) {
+function extractKeywords(text) 
+{
   const counts = new Map();
-  (text.toLowerCase().match(/[a-zàâçéèêëîïôûùüÿñæœ][a-zàâçéèêëîïôûùüÿñæœ+#.\-\/]*/g) || []).forEach((w) => {
+  (text.toLowerCase().match(/[a-zàâçéèêëîïôûùüÿñæœ][a-zàâçéèêëîïôûùüÿñæœ+#.\-\/]*/g) || []).forEach((w) => 
+  {
     const clean = w.replace(/[.\-\/]+$/, "");
     if (clean.length < 3 || STOPWORDS.has(clean)) return;
     counts.set(clean, (counts.get(clean) || 0) + 1);
@@ -98,7 +105,8 @@ function extractKeywords(text) {
 function renderPreview() 
 {
   const c = cv;
-  const contacts = [c.email, c.tel, c.linkedin, c.portfolio].filter(Boolean).map(esc).join(" · ");
+  const contacts = ["Tel : " + c.tel, "Mail : " + c.email].filter(Boolean).map(esc).join(" · ");
+  const links = c.otherlinks.map((l) => `<a href="${esc(l.url)}" target="_blank">${esc(l.libelle)}</a>`).join(" · ");
   const skills = [
     c.competences.langages && `<div class="cv-skill-line"><strong>Langages :</strong> ${esc(c.competences.langages)}</div>`,
     c.competences.moteurs && `<div class="cv-skill-line"><strong>Moteurs :</strong> ${esc(c.competences.moteurs)}</div>`,
@@ -132,6 +140,7 @@ function renderPreview()
       <h1>${esc(c.nom) || "Votre nom"}</h1>
       <div class="cv-title">${esc(c.titre) || "Votre titre"}</div>
       <div class="cv-contact">${contacts}</div>
+      <div class="cv-contact">${links}</div>
     </div>
     ${c.accroche ? `<div class="cv-section-title">Profil</div><div class="cv-accroche">${esc(c.accroche)}</div>` : ""}
     ${skills ? `<div class="cv-section-title">Compétences</div>${skills}` : ""}
@@ -162,6 +171,9 @@ function renderPanel()
 
   if (currentTab === "profil") 
   {
+
+    console.log(c.otherlinks.length);
+
     html = `
       <div class="grid">
         <div class="field"><label>Nom</label><input data-bind="nom" value="${esc(c.nom)}"></div>
@@ -171,8 +183,15 @@ function renderPanel()
       <div class="grid" style="margin-top:.7rem">
         <div class="field"><label>Email</label><input data-bind="email" value="${esc(c.email)}"></div>
         <div class="field"><label>Téléphone</label><input data-bind="tel" value="${esc(c.tel)}"></div>
-        <div class="field"><label>LinkedIn</label><input data-bind="linkedin" value="${esc(c.linkedin)}"></div>
-        <div class="field"><label>Portfolio</label><input data-bind="portfolio" value="${esc(c.portfolio)}"></div>
+      </div>
+      <div class="exp-card" style="margin-top:.7rem">
+        ${c.otherlinks.map((ol, i) => `
+        <div class="grid">
+        ${c.otherlinks.length > 0 ? `<button class="remove" id="btn-remove-link" data-remove="${i}" title="Supprimer">✕</button>` : ""}
+          <div class="field"><label>Libelle</label><input data-ol="${i}" data-key="libelle" value="${esc(ol.libelle)}"></div>
+          <div class="field"><label>Adresse</label><input data-ol="${i}" data-key="url" value="${esc(ol.url)}"></div>
+        </div>`).join("")}
+        <button class="add-btn" id="btn-add-link">+ Ajouter un lien</button>
       </div>`;
   }
 
@@ -180,7 +199,7 @@ function renderPanel()
   {
     html = c.experiences.map((e, i) => `
       <div class="exp-card">
-        ${c.experiences.length > 1 ? `<button class="remove" data-remove-exp="${i}" title="Supprimer">✕</button>` : ""}
+        ${c.experiences.length > 1 ? `<button class="remove"  id="btn-remove-exp" data-remove="${i}" title="Supprimer">✕</button>` : ""}
         <div class="grid">
           <div class="field"><label>Poste</label><input data-exp="${i}" data-key="poste" value="${esc(e.poste)}"></div>
           <div class="field"><label>Entreprise</label><input data-exp="${i}" data-key="entreprise" value="${esc(e.entreprise)}"></div>
@@ -193,8 +212,10 @@ function renderPanel()
         </div>
       </div>`).join("")
       + `<button class="add-btn" id="btn-add-exp">+ Ajouter une expérience</button>
+
+      ${c.formations.map((f, i) => `
       <div class="section-sep">
-        ${c.formations.map((f, i) => `
+        <button class="remove"  id="btn-remove-edu" data-remove = "${i}" title="Supprimer">✕</button>
         <div class="grid" style="margin-bottom:.5rem">
           <div class="field"><label>Formation</label><input data-edu="${i}" data-key="intitule" value="${esc(f.intitule)}"></div>
           <div class="field"><label>Établissement</label><input data-edu="${i}" data-key="lieu" value="${esc(f.lieu)}"></div>
@@ -217,7 +238,7 @@ function renderPanel()
   {
     html = c.softskill.map((s, i) => `
       <div class="exp-card">
-        ${c.softskill.length > 1 ? `<button class="remove" data-remove-sk="${i}" title="Supprimer">✕</button>` : ""}
+        ${c.softskill.length > 1 ? `<button class="remove" id="btn-remove-sk" data-remove="${i}" title="Supprimer">✕</button>` : ""}
         <div class="grid">
           <div class="field"><label>Libelle</label><input data-sk="${i}" data-key="libelle" value="${esc(s.libelle)}"></div>
           <div class="field"><label>Description</label><input data-sk="${i}" data-key="desc" value="${esc(s.desc)}"></div>
@@ -252,15 +273,19 @@ function renderJdResults()
   const cvText = JSON.stringify(cv).toLowerCase();
   const missing = keywords.filter((k) => !cvText.includes(k.word));
 
-  const chips = keywords.map((k) => {
+  const chips = keywords.map((k) => 
+  {
     const ok = cvText.includes(k.word);
     return `<span class="kw ${ok ? "ok" : "miss"}">${esc(k.word)} ${ok ? "✓" : "✗"} (${k.count})</span>`;
   }).join("");
 
   let alertHtml = "";
-  if (missing.length > 0) {
+  if (missing.length > 0) 
+  {
     alertHtml = `<div class="alert warn"><strong>⚠ ${missing.length} mot(s)-clé absent(s) de votre CV :</strong> ${missing.map((k) => esc(k.word)).join(", ")}.<br>Vérifiez s'ils méritent d'être ajoutés à vos compétences ou missions.</div>`;
-  } else if (keywords.length > 0) {
+  } 
+  else if (keywords.length > 0) 
+  {
     alertHtml = `<div class="alert good">✅ Tous les mots-clés principaux de l'offre figurent dans votre CV.</div>`;
   }
 
@@ -322,6 +347,8 @@ document.addEventListener("click", (e) =>
 {
   const t = e.target;
 
+  console.log(t.id);
+
   if (t.classList.contains("tab")) 
   {
     currentTab = t.dataset.tab;
@@ -343,6 +370,16 @@ document.addEventListener("click", (e) =>
     renderAll(); 
     return;
   }
+
+  if(t.id === "btn-add-link")
+  {
+    console.log("Adding link");
+    cv.otherlinks.push({ libelle: "", url: "" });
+    save(); 
+    renderAll(); 
+    return;
+  }
+
   if (t.id === "btn-add-edu") 
   {
     cv.formations.push({ intitule: "", lieu: "", annee: "" });
@@ -357,20 +394,51 @@ document.addEventListener("click", (e) =>
     renderAll(); 
     return;
   }
-  if (t.dataset.removeExp !== undefined) 
+
+   if(t.id === "btn-remove-link")
   {
-    cv.experiences.splice(+t.dataset.removeExp, 1);
-    save(); 
-    renderAll(); 
+    if(t.dataset.remove !== undefined)
+    {
+      cv.otherlinks.splice(+t.dataset.remove, 1);
+      save(); 
+      renderAll();
+    }
     return;
   }
-  if (t.dataset.removeSK !== undefined) 
+
+  if(t.id === "btn-remove-exp")
   {
-    cv.softskill.splice(+t.dataset.removeSK, 1);
-    save(); 
-    renderAll(); 
+    if(t.dataset.remove !== undefined)
+    {
+      cv.experiences.splice(+t.dataset.remove, 1);
+      save(); 
+      renderAll();
+    }
     return;
   }
+
+  if(t.id === "btn-remove-edu")
+  {
+    if(t.dataset.remove !== undefined)
+    {
+      cv.formations.splice(+t.dataset.remove, 1);
+      save(); 
+      renderAll();
+    }
+    return;
+  }
+
+  if(t.id === "btn-remove-sk")
+  {
+    if(t.dataset.remove !== undefined)
+    {
+      cv.softskill.splice(+t.dataset.remove, 1);
+      save(); 
+      renderAll();
+    }
+    return;
+  }
+
 });
 
 // Export / Import / Print
