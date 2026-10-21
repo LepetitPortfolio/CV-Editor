@@ -125,10 +125,3 @@ Aucune dépendance externe, aucun outil de build.
 - Nettoyage des `console.log` de debug.
 - Choix de l'ordre des sections et masquage de sections optionnelles.
 
-## 📜 Licence
-
-Projet personnel — voir le dépôt GitHub pour plus de détails.
-
----
-
-*Made with vanilla HTML/CSS/JS — no framework was harmed in the making of this tool.*
