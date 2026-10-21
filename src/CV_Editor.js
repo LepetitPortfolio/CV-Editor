@@ -220,15 +220,15 @@ function renderPanel()
       + `<button class="add-btn" id="btn-add-exp">+ Ajouter une expérience</button>
 
       ${c.formations.map((f, i) => `
-      <div class="section-sep">
-        <button class="remove"  id="btn-remove-edu" data-remove = "${i}" title="Supprimer">✕</button>
+      <div class="exp-card">
+        ${c.formations.length > 0 ? `<button class="remove" id="btn-remove-edu" data-remove="${i}" title="Supprimer">✕</button>` : ""}
         <div class="grid" style="margin-bottom:.5rem">
           <div class="field"><label>Formation</label><input data-edu="${i}" data-key="intitule" value="${esc(f.intitule)}"></div>
           <div class="field"><label>Établissement</label><input data-edu="${i}" data-key="lieu" value="${esc(f.lieu)}"></div>
           <div class="field"><label>Années</label><input data-edu="${i}" data-key="annee" value="${esc(f.annee)}"></div>
-        </div>`).join("")}
-        <button class="add-btn ghost" id="btn-add-edu">+ Ajouter une formation</button>
-      </div>`;
+        </div>
+      </div>`).join("")}
+      <button class="add-btn" id="btn-add-edu">+ Ajouter une formation</button>`;
   }
 
   if (currentTab === "competences") 
@@ -520,4 +520,4 @@ $("#file-input").addEventListener("change", (e) =>
 // Init
 document.documentElement.style.setProperty("--accent", accent);
 document.querySelector(".swatch").classList.add("active");
-renderAll();
+document.addEventListener("DOMContentLoaded", renderAll());
