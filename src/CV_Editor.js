@@ -53,19 +53,31 @@ const DEFAULT_CV =
     { intitule: "BTS SIO Option SLAM", lieu: "Lycée La Colinière, Nantes", annee: "2012 – 2014" }
   ],
   competences: 
-  {
-    langages: "C++, C#, Java, JavaScript, Python",
-    moteurs: "Unity 3D, Unreal Engine, UEFN",
-    outils: "Git, Perforce, Visual Studio, JIRA"
-  }
+  [
+    {
+      intitule : "Langages",
+      valeur : "C++, C#, Java, JavaScript, Python"
+    },
+    {
+      intitule : "Moteurs",
+      valeur : "Unity 3D, Unreal Engine, UEFN"
+    },
+    {
+      intitule : "Outils",
+      valeur : "Git, Perforce, Visual Studio, JIRA"
+    }
+  ]
+  
 };
 
 // Chargement (localStorage) ou défaut
 let cv;
-try {
+try 
+{
   const raw = localStorage.getItem(STORAGE_KEY);
   cv = raw ? { ...structuredClone(DEFAULT_CV), ...JSON.parse(raw) } : structuredClone(DEFAULT_CV);
-} catch { cv = structuredClone(DEFAULT_CV); }
+} 
+catch { cv = structuredClone(DEFAULT_CV); }
 
 let jd = "";            // job description collée
 let currentTab = "profil";
@@ -106,12 +118,9 @@ function renderPreview()
 {
   const c = cv;
   const contacts = ["Tel : " + c.tel, "Mail : " + c.email].filter(Boolean).map(esc).join(" · ");
-  const links = c.otherlinks.map((l) => `<a href="${esc(l.url)}" target="_blank">${esc(l.libelle)}</a>`).join(" · ");
-  const skills = [
-    c.competences.langages && `<div class="cv-skill-line"><strong>Langages :</strong> ${esc(c.competences.langages)}</div>`,
-    c.competences.moteurs && `<div class="cv-skill-line"><strong>Moteurs :</strong> ${esc(c.competences.moteurs)}</div>`,
-    c.competences.outils && `<div class="cv-skill-line"><strong>Outils :</strong> ${esc(c.competences.outils)}</div>`,
-  ].filter(Boolean).join("");
+  const links = c.otherlinks.map((l) => `<div class="cv-skill-line"><strong>${esc(l.libelle)} : </strong><a href="${esc(l.url)}" target="_blank">${esc(l.url)}</a>`).join(" · ");
+  
+  const skills = c.competences.map((s) => `<div class="cv-skill-line"><strong>${esc(s.intitule)} : </strong>${esc(s.valeur)}</div>`).join("");
 
   const softsk = c.softskill.map((s) => `
     <div class="cv-job">
@@ -171,9 +180,6 @@ function renderPanel()
 
   if (currentTab === "profil") 
   {
-
-    console.log(c.otherlinks.length);
-
     html = `
       <div class="grid">
         <div class="field"><label>Nom</label><input data-bind="nom" value="${esc(c.nom)}"></div>
@@ -185,11 +191,11 @@ function renderPanel()
         <div class="field"><label>Téléphone</label><input data-bind="tel" value="${esc(c.tel)}"></div>
       </div>
       <div class="exp-card" style="margin-top:.7rem">
-        ${c.otherlinks.map((ol, i) => `
-        <div class="grid">
+        ${c.otherlinks.map((otherlinks, i) => `
         ${c.otherlinks.length > 0 ? `<button class="remove" id="btn-remove-link" data-remove="${i}" title="Supprimer">✕</button>` : ""}
-          <div class="field"><label>Libelle</label><input data-ol="${i}" data-key="libelle" value="${esc(ol.libelle)}"></div>
-          <div class="field"><label>Adresse</label><input data-ol="${i}" data-key="url" value="${esc(ol.url)}"></div>
+        <div class="grid">
+          <div class="field"><label>Libelle</label><input data-otherlinks="${i}" data-key="libelle" value="${esc(otherlinks.libelle)}"></div>
+          <div class="field"><label>Adresse</label><input data-otherlinks="${i}" data-key="url" value="${esc(otherlinks.url)}"></div>
         </div>`).join("")}
         <button class="add-btn" id="btn-add-link">+ Ajouter un lien</button>
       </div>`;
@@ -199,7 +205,7 @@ function renderPanel()
   {
     html = c.experiences.map((e, i) => `
       <div class="exp-card">
-        ${c.experiences.length > 1 ? `<button class="remove"  id="btn-remove-exp" data-remove="${i}" title="Supprimer">✕</button>` : ""}
+        ${c.experiences.length > 0 ? `<button class="remove"  id="btn-remove-exp" data-remove="${i}" title="Supprimer">✕</button>` : ""}
         <div class="grid">
           <div class="field"><label>Poste</label><input data-exp="${i}" data-key="poste" value="${esc(e.poste)}"></div>
           <div class="field"><label>Entreprise</label><input data-exp="${i}" data-key="entreprise" value="${esc(e.entreprise)}"></div>
@@ -227,24 +233,27 @@ function renderPanel()
 
   if (currentTab === "competences") 
   {
-    html = `
-      <div class="field"><label>Langages (séparés par des virgules)</label><textarea data-bind-comp="langages" rows="2">${esc(c.competences.langages)}</textarea></div>
-      <div class="field" style="margin-top:.7rem"><label>Moteurs / frameworks</label><textarea data-bind-comp="moteurs" rows="2">${esc(c.competences.moteurs)}</textarea></div>
-      <div class="field" style="margin-top:.7rem"><label>Outils</label><textarea data-bind-comp="outils" rows="2">${esc(c.competences.outils)}</textarea></div>
-      <p class="hint" style="margin-top:.7rem">💡 Les listes en texte simple sont les plus fiables pour les ATS.</p>`;
+    html =
+      c.competences.map((comp, i) => `
+      <div class="exp-card">
+        ${c.competences.length > 0 ? `<button class="remove" id="btn-remove-comp" data-remove="${i}" title="Supprimer">✕</button>` : ""}
+          <div class="field"><label>Intitulé</label><input data-comp="${i}" data-key="intitule" value="${esc(comp.intitule)}"></div>
+          <div class="field"><label>Compétences (séparés par des virgules)</label><textarea data-comp="${i}" data-key="valeur" rows="2">${esc(comp.valeur)}</textarea></div>
+      </div>`).join("")
+      + `<button class="add-btn" id="btn-add-comp">+ Ajouter une compétence</button>`;
   }
 
   if(currentTab === "SoftSkill")
   {
     html = c.softskill.map((s, i) => `
       <div class="exp-card">
-        ${c.softskill.length > 1 ? `<button class="remove" id="btn-remove-sk" data-remove="${i}" title="Supprimer">✕</button>` : ""}
+        ${c.softskill.length > 0 ? `<button class="remove" id="btn-remove-softskill" data-remove="${i}" title="Supprimer">✕</button>` : ""}
         <div class="grid">
-          <div class="field"><label>Libelle</label><input data-sk="${i}" data-key="libelle" value="${esc(s.libelle)}"></div>
-          <div class="field"><label>Description</label><input data-sk="${i}" data-key="desc" value="${esc(s.desc)}"></div>
+          <div class="field"><label>Libelle</label><input data-softskill="${i}" data-key="libelle" value="${esc(s.libelle)}"></div>
+          <div class="field"><label>Description</label><input data-softskill="${i}" data-key="desc" value="${esc(s.desc)}"></div>
         </div>
       </div>`).join("")
-      + `<button class="add-btn" id="btn-add-sk">+ Ajouter un Soft skill</button>`;
+      + `<button class="add-btn" id="btn-add-softskill">+ Ajouter un Soft skill</button>`;
   }
 
   if (currentTab === "poste")
@@ -308,11 +317,18 @@ function renderAll()
 
 document.addEventListener("input", (e) => {
   const t = e.target;
+  
+  console.log(t);
 
   if (t.dataset.bind) 
   {
     cv[t.dataset.bind] = t.value;
-  } 
+  }
+  else if (t.dataset.otherlinks !== undefined) 
+  {
+    console.log(t.dataset);
+    cv.otherlinks[+t.dataset.otherlinks][t.dataset.key] = t.value;
+  }
   else if (t.dataset.bindComp) 
   {
     cv.competences[t.dataset.bindComp] = t.value;
@@ -326,6 +342,14 @@ document.addEventListener("input", (e) => {
   else if (t.dataset.edu !== undefined && t.dataset.key) 
   {
     cv.formations[+t.dataset.edu][t.dataset.key] = t.value;
+  }
+  else if (t.dataset.comp !== undefined) 
+  {
+    cv.competences[+t.dataset.comp][t.dataset.key] = t.value;
+  }
+  else if (t.dataset.softskill !== undefined) 
+  {
+    cv.softskill[+t.dataset.softskill][t.dataset.key] = t.value;
   } 
   else if (t.id === "jd-input") 
   {
@@ -387,7 +411,16 @@ document.addEventListener("click", (e) =>
     renderAll(); 
     return;
   }
-  if(t.id === "btn-add-sk")
+
+  if(t.id === "btn-add-comp")
+  {
+    cv.competences.push({ intitule: "", valeur: "" });
+    save(); 
+    renderAll(); 
+    return;
+  }
+
+  if(t.id === "btn-add-softskill")
   {
     cv.softskill.push({ libelle: "", desc: "" });
     save(); 
@@ -428,7 +461,18 @@ document.addEventListener("click", (e) =>
     return;
   }
 
-  if(t.id === "btn-remove-sk")
+  if(t.id === "btn-remove-comp")
+  {
+    if(t.dataset.remove !== undefined)
+    {
+      cv.competences.splice(+t.dataset.remove, 1);
+      save(); 
+      renderAll();
+    }
+    return;
+  }
+
+  if(t.id === "btn-remove-softskill")
   {
     if(t.dataset.remove !== undefined)
     {
@@ -444,7 +488,8 @@ document.addEventListener("click", (e) =>
 // Export / Import / Print
 $("#btn-print").addEventListener("click", () => window.print());
 
-$("#btn-export-json").addEventListener("click", () => {
+$("#btn-export-json").addEventListener("click", () => 
+{
   const blob = new Blob([JSON.stringify(cv, null, 2)], { type: "application/json" });
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
