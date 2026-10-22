@@ -104,7 +104,8 @@ body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg); co
 }
 .cv-page h1 { font-size: 24px; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; color: var(--cv-ink-strong, #111827); }
 .cv-title { font-size: 15px; font-weight: 600; color: var(--accent); margin: 2px 0 4px; }
-.cv-contact { font-size: 11px; color: #4b5563; }
+.cv-contact { font-size: calc(var(--cv-size, 12px) * 0.92); color: var(--cv-ink, #4b5563); }
+.cv-contact a, .cv-Link-line a { color: inherit; text-decoration: none; }
 .cv-header { border-bottom: 3px solid var(--accent); padding-bottom: 10px; margin-bottom: 12px; }
 .cv-section-title 
 {
@@ -118,7 +119,7 @@ body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg); co
 .cv-job-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap; }
 .cv-job-title { font-size: 13.5px; font-weight: 700; color: var(--cv-ink-strong, #111827); }
 .cv-job-title .company { color: var(--accent); }
-.cv-job-dates { font-size: 11px; color: #6b7280; white-space: nowrap; }
+.cv-job-dates { font-size: calc(var(--cv-size, 12px) * 0.92); color: var(--cv-ink, #6b7280); white-space: nowrap; }
 .cv-job ul { margin: 3px 0 0 18px; }
 .cv-job li { font-size: var(--cv-size, 12px); color: var(--cv-ink, #374151); margin-bottom: 2px; }
 .cv-edu { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; font-size: var(--cv-size, 12px); color: var(--cv-ink, #374151); break-inside: avoid; }
@@ -128,12 +129,19 @@ body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg); co
 @media print 
 {
   body { background: #fff; }
-  .topbar, .editor, .preview-meta, .preview-frame { display: none !important; }
+  .topbar, .editor, .preview-meta { display: none !important; }
   .layout { display: block; padding: 0; max-width: none; }
   .preview-wrap { display: block; }
+  /* On ne masque PAS .preview-frame (sinon le CV qu'il contient disparaît aussi) :
+     on retire juste son habillage visuel. */
+  .preview-frame { background: none; padding: 0; border-radius: 0; box-shadow: none; }
   .preview-scroll { max-height: none; overflow: visible; border-radius: 0; }
-  .cv-page { max-width: none; padding: 0; }
-  @page { size: A4; margin: 12mm; }
+  .cv-page { max-width: none; padding: 12mm; box-shadow: none; }
+  /* Astuce anti en-tête/pied de page ("1 sur 1", date, URL...) :
+     les navigateurs les placent dans la marge de @page ; une marge à 0
+     ne leur laisse aucune place → ils disparaissent. Les marges visibles
+     sont alors recréées par le padding de .cv-page ci-dessus. */
+  @page { size: A4; margin: 0; }
 }
 
 /* ============================================================
