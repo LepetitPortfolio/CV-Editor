@@ -556,6 +556,39 @@ $("#file-input").addEventListener("change", (e) =>
   e.target.value = "";
 });
 
+// ============================================================
+// 7. MODE SOMBRE
+// ============================================================
+const DARK_KEY = "cv-editor-dark";
+
+function applyTheme(dark)
+{
+  document.body?.classList.toggle("dark", dark);
+  const btn = document.getElementById("btn-dark");
+  if (btn) btn.textContent = dark ? "☀️" : "🌙";
+  try { localStorage.setItem(DARK_KEY, dark ? "1" : "0"); } catch {}
+}
+
+// Init thème : préférence sauvegardée, sinon préférence système
+let darkPref = false;
+try
+{
+  const saved = localStorage.getItem(DARK_KEY);
+  darkPref = saved !== null ? saved === "1" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+}
+catch {}
+
+// Attachement DIFFÉRÉ : le script étant chargé dans le <head>,
+// le DOM n'existe pas encore à l'exécution → on attend DOMContentLoaded.
+document.addEventListener("DOMContentLoaded", () =>
+{
+  applyTheme(darkPref);
+  document.getElementById("btn-dark")?.addEventListener("click", () =>
+  {
+    applyTheme(!document.body.classList.contains("dark"));
+  });
+});
+
 // Init
 document.documentElement.style.setProperty("--accent", accent);
-document.querySelector(".swatch").classList.add("active");
+document.querySelector(".swatch")?.classList.add("active");

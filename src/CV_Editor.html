@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="fr">
 <head>
-<script src="CV_Editor.js"></script>
+<script src="CV_Editor.js" defer></script>
 <link rel="stylesheet" href="CV_Editor.css">
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -12,6 +12,7 @@
 <header class="topbar">
   <div class="brand"><span class="logo">CV</span> Éditeur de CV <span class="tag">standalone · 100 % local</span></div>
   <div class="actions">
+    <button class="btn" id="btn-dark" title="Basculer clair / sombre">🌙</button>
     <button class="btn" id="btn-export-json">⬇ Export JSON</button>
     <button class="btn" id="btn-import-json">⬆ Import JSON</button>
     <input type="file" id="file-input" accept=".json" hidden />
@@ -50,7 +51,7 @@
 </div>
 
   <script>
-    document.addEventListener("DOMContentLoaded", renderAll());
+    document.addEventListener("DOMContentLoaded", () => renderAll());
   </script>
 </body>
 </html>
