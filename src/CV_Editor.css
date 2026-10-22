@@ -60,7 +60,7 @@ body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg); co
 .panel { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,.05); }
 .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: .7rem; }
 .field label { display: block; font-size: 10.5px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin-bottom: 3px; }
-.field input, .field textarea 
+.field input, .field textarea, .field select 
 {
   width: 100%; border: 1px solid #cbd5e1; border-radius: 6px; padding: 7px 9px;
   font-size: 13.5px; font-family: inherit; color: var(--ink); background: #fff; outline: none;
@@ -68,6 +68,10 @@ body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg); co
 }
 .field input:focus, .field textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(234,88,12,.15); }
 .field textarea { resize: vertical; min-height: 60px; }
+
+/* ===== Slider de taille de police ===== */
+.field input[type="range"] { padding: 0; border: none; background: none; height: 28px; accent-color: var(--accent); }
+.range-val { font-weight: 400; text-transform: none; letter-spacing: 0; color: var(--muted); }
 .exp-card { position: relative; border: 1px solid var(--border); border-radius: 8px; padding: .8rem; margin-bottom: .8rem; background: #fdfdfd; }
 .exp-card .remove { position: absolute; top: 8px; right: 8px; font-size: 12px; color: #ef4444; background: none; border: none; cursor: pointer; font-weight: 700; }
 .exp-card .remove:hover { color: #b91c1c; }
@@ -95,9 +99,10 @@ body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg); co
 .cv-page 
 {
   background: #fff; max-width: 720px; margin: 0 auto; padding: 2rem 2.2rem;
-  font-family: Arial, Helvetica, sans-serif; line-height: 1.45; color: #1f2937;
+  font-family: var(--cv-font, Arial, Helvetica, sans-serif); line-height: 1.45;
+  color: var(--cv-ink, #1f2937);
 }
-.cv-page h1 { font-size: 24px; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; color: #111827; }
+.cv-page h1 { font-size: 24px; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; color: var(--cv-ink-strong, #111827); }
 .cv-title { font-size: 15px; font-weight: 600; color: var(--accent); margin: 2px 0 4px; }
 .cv-contact { font-size: 11px; color: #4b5563; }
 .cv-header { border-bottom: 3px solid var(--accent); padding-bottom: 10px; margin-bottom: 12px; }
@@ -107,17 +112,17 @@ body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg); co
   color: var(--accent); border-bottom: 2px solid var(--accent);
   padding-bottom: 2px; margin: 16px 0 6px;
 }
-.cv-accroche { font-size: 12px; color: #374151; }
-.cv-skill-line { font-size: 12px; color: #374151; margin-bottom: 2px; }
+.cv-accroche { font-size: var(--cv-size, 12px); color: var(--cv-ink, #374151); }
+.cv-skill-line { font-size: var(--cv-size, 12px); color: var(--cv-ink, #374151); margin-bottom: 2px; }
 .cv-job { margin-bottom: 12px; break-inside: avoid; page-break-inside: avoid; }
 .cv-job-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap; }
-.cv-job-title { font-size: 13.5px; font-weight: 700; color: #111827; }
+.cv-job-title { font-size: 13.5px; font-weight: 700; color: var(--cv-ink-strong, #111827); }
 .cv-job-title .company { color: var(--accent); }
 .cv-job-dates { font-size: 11px; color: #6b7280; white-space: nowrap; }
 .cv-job ul { margin: 3px 0 0 18px; }
-.cv-job li { font-size: 12px; color: #374151; margin-bottom: 2px; }
-.cv-edu { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; font-size: 12px; color: #374151; break-inside: avoid; }
-.cv-edu strong { color: #111827; }
+.cv-job li { font-size: var(--cv-size, 12px); color: var(--cv-ink, #374151); margin-bottom: 2px; }
+.cv-edu { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; font-size: var(--cv-size, 12px); color: var(--cv-ink, #374151); break-inside: avoid; }
+.cv-edu strong { color: var(--cv-ink-strong, #111827); }
 
 /* ===== Print : seul le CV est exporté ===== */
 @media print 
@@ -145,7 +150,7 @@ body.dark .exp-card { background: #0e1729; border-color: #253248; }
 body.dark .section-sep { border-top-color: #253248; }
 
 /* Champs de formulaire */
-body.dark .field input, body.dark .field textarea
+body.dark .field input, body.dark .field textarea, body.dark .field select
 {
   background: #0b1220; color: #dbe3ef; border-color: #334155;
 }

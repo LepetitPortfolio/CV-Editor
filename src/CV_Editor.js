@@ -7,65 +7,30 @@ const STORAGE_KEY = "cv-editor-standalone-v1";
 
 const DEFAULT_CV = 
 {
-  nom: "Simon Lepetit",
-  titre: "Programmeur Gameplay",
-  accroche: "Développeur de jeux expérimenté, spécialisé en C++, C# ainsi que sur les moteurs Unreal Engine et Unity 3D. Passionné par les expériences immersives, je mets mes compétences techniques et créatives au service de la création de jeux innovants et captivants.",
-  email: "Simon.Lepetit1@gmail.com",
-  tel: "06 58 26 44 83",
+  nom: "Gérard Bouchard",
+  titre: "",
+  accroche: "",
+  email: "",
+  tel: "",
   otherlinks : 
   [
-    {
-      libelle: "GitHub",
-      url: "github.com/simonlepetit"
-    }
+    
   ],
   experiences: 
   [
-    {
-      poste: "Programmeur Gameplay", entreprise: "OSC Games", lieu: "Montpellier",
-      debut: "01/2024", fin: "02/2025",
-      missions: [
-        "Développement d'un système de missions avec progression et récompenses.",
-        "Gestion complète de l'apparition, de la disparition et du comportement des IA.",
-        "Création de processus pour la sauvegarde et la gestion des données des joueurs."
-      ]
-    },
-    {
-      poste: "Programmeur Gameplay", entreprise: "NKX Studio", lieu: "Montpellier",
-      debut: "01/2023", fin: "10/2023",
-      missions: [
-        "Développement des 3C en fonction du gameplay.",
-        "Création et intégration d'une IA adaptée au game-design.",
-        "Développement d'une composante multijoueur liée au gameplay."
-      ]
-    }
+    
   ],
   softskill:
   [
-    {
-      libelle: "",
-      desc : ""
-    }
+    
   ],
   formations: 
   [
-    { intitule: "Formation Programmeur Gameplay", lieu: "Objectif 3D, Montpellier", annee: "2014 – 2016" },
-    { intitule: "BTS SIO Option SLAM", lieu: "Lycée La Colinière, Nantes", annee: "2012 – 2014" }
+    
   ],
   competences: 
   [
-    {
-      intitule : "Langages",
-      valeur : "C++, C#, Java, JavaScript, Python"
-    },
-    {
-      intitule : "Moteurs",
-      valeur : "Unity 3D, Unreal Engine, UEFN"
-    },
-    {
-      intitule : "Outils",
-      valeur : "Git, Perforce, Visual Studio, JIRA"
-    }
+    
   ],
   customisation :
   {
@@ -76,6 +41,17 @@ const DEFAULT_CV =
   }
   
 };
+
+const CV_FONTS =
+[
+  { label: "Arial",          stack: "Arial, Helvetica, sans-serif" },
+  { label: "Helvetica",     stack: "Helvetica, Arial, sans-serif" },
+  { label: "Calibri",       stack: "Calibri, Arial, sans-serif" },
+  { label: "Verdana",       stack: "Verdana, Geneva, sans-serif" },
+  { label: "Tahoma",        stack: "Tahoma, Verdana, sans-serif" },
+  { label: "Georgia",       stack: "Georgia, serif" },
+  { label: "Times New Roman", stack: "\"Times New Roman\", Times, serif" }
+];
 
 // Chargement (localStorage) ou défaut
 let cv;
@@ -124,8 +100,18 @@ function extractKeywords(text)
 function renderPreview() 
 {
   const c = cv;
-  const contacts = ["Tel : " + c.tel, "Mail : " + c.email].filter(Boolean).map(esc).join(" · ");
-  const links = c.otherlinks.map((l) => `<div class="cv-skill-line"><strong>${esc(l.libelle)} : </strong><a href="${esc(l.url)}" target="_blank">${esc(l.url)}</a>`).join(" · ");
+
+  // ===== Application de la customisation au rendu du CV =====
+  const page = $("#cv-preview");
+  page.style.setProperty("--cv-ink", c.customisation?.couleur || "#000000");
+  page.style.setProperty("--cv-ink-strong", c.customisation?.couleur || "#000000");
+  page.style.setProperty("--cv-size", (parseFloat(c.customisation?.taille) || 12) + "px");
+  page.style.setProperty("--cv-font", c.customisation?.police || "Arial, Helvetica, sans-serif");
+
+  const contacts = `<div class="cv-contact"><strong>Tel : </strong>${esc(c.tel) || "06 ..."}</div>
+                    <div class="cv-contact"><strong>Mail : </strong>${esc(c.email) || "mail@example.com"}</div>`
+  
+  const links = c.otherlinks.map((l) => `<div class="cv-Link-line"><strong>${esc(l.libelle)} : </strong><a href="${esc(l.url)}" target="_blank">${esc(l.url)}</a>`).join(" · ");
   
   const skills = c.competences.map((s) => `<div class="cv-skill-line"><strong>${esc(s.intitule)} : </strong>${esc(s.valeur)}</div>`).join("");
 
@@ -268,11 +254,13 @@ function renderPanel()
     html = `
       <div class="field">
         <label>Police</label>
-        <input data-bind="customisation.police" value="${esc(c.customisation.police)}">
+        <select data-bind="customisation.police">
+        ${CV_FONTS.map((f) => `<option value="${esc(f.stack)}" ${c.customisation.police === f.stack ? "selected" : ""}>${esc(f.label)}</option>`).join("")}
+        </select>
       </div>
       <div class="field">
-        <label>Taille</label>
-        <input data-bind="customisation.taille" value="${esc(c.customisation.taille)}">
+        <label>Taille <span class="range-val" id="taille-val">12 px</span></label>
+        <input type="range" min="2" max="50" step="1" data-bind="customisation.taille" value="12">
       </div>
       <div class="field">
         <label>Couleur</label>
@@ -343,18 +331,38 @@ function renderAll()
   renderPreview(); 
 }
 
-document.addEventListener("input", (e) => {
+document.addEventListener("input", (e) => 
+{
   const t = e.target;
-  
-  console.log(t);
 
   if (t.dataset.bind) 
   {
-    cv[t.dataset.bind] = t.value;
+    if (t.dataset.bind.startsWith("customisation."))
+    {
+      const key = t.dataset.bind.split(".")[1];
+      cv.customisation[key] = t.value;
+
+      // Application immédiate de l'accent sur toute l'interface
+      if (key === "accent")
+      {
+        accent = t.value;
+        document.documentElement.style.setProperty("--accent", accent);
+        document.querySelectorAll(".swatch").forEach((s) => s.classList.toggle("active", s.dataset.accent === accent));
+      }
+
+      if (key === "taille")
+      {
+        const lbl = document.getElementById("taille-val");
+        if (lbl) lbl.textContent = t.value + " px";
+      }
+    }
+    else
+    {
+      cv[t.dataset.bind] = t.value;
+    }
   }
   else if (t.dataset.otherlinks !== undefined) 
   {
-    console.log(t.dataset);
     cv.otherlinks[+t.dataset.otherlinks][t.dataset.key] = t.value;
   }
   else if (t.dataset.bindComp) 
@@ -379,17 +387,6 @@ document.addEventListener("input", (e) => {
   {
     cv.softskill[+t.dataset.softskill][t.dataset.key] = t.value;
   }
-  else if (t.dataset.bind && t.dataset.bind.startsWith("customisation."))
-  {
-    const key = t.dataset.bind.split(".")[1];
-    cv.customisation[key] = t.value;
-    if(key === "accent")
-    {
-      accent = t.value;
-      document.documentElement.style.setProperty("--accent", accent);
-      document.querySelectorAll(".swatch").forEach((s) => s.classList.toggle("active", s.dataset.accent === accent));
-    }
-  }
   else if (t.id === "jd-input") 
   {
     jd = t.value;
@@ -409,8 +406,6 @@ document.addEventListener("input", (e) => {
 document.addEventListener("click", (e) => 
 {
   const t = e.target;
-
-  console.log(t.id);
 
   if (t.classList.contains("tab")) 
   {
@@ -436,7 +431,6 @@ document.addEventListener("click", (e) =>
 
   if(t.id === "btn-add-link")
   {
-    console.log("Adding link");
     cv.otherlinks.push({ libelle: "", url: "" });
     save(); 
     renderAll(); 
