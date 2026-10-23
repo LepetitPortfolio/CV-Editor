@@ -33,12 +33,13 @@ body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg); co
 .btn:hover { background: #475569; }
 .btn.primary { background: var(--accent); font-weight: 600; }
 .btn.primary:hover { filter: brightness(1.1); }
+.btn.reset { background: #ef4444; font-weight: 600; }
+.btn.reset:hover { filter: brightness(1.1); }
 .swatch 
 {
   width: 20px; height: 20px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; padding: 0;
 }
 .swatch.active { border-color: #fff; transform: scale(1.15); }
-
 /* ===== Layout ===== */
 .layout { display: flex; gap: 1rem; padding: 1rem; max-width: 1400px; margin: 0 auto; align-items: flex-start; flex-wrap: wrap; }
 .editor { flex: 1 1 420px; min-width: 340px; }

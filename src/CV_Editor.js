@@ -209,7 +209,7 @@ function renderExperiencesTab()
           <textarea data-exp="${i}" data-key="missions" rows="4">${esc(e.missions.join("\n"))}</textarea>
         </div>
       </div>`).join("")
-      + `<button class="add-btn" id="btn-add-exp">+ Ajouter une expérience</button>
+      + `<button class="add-btn" id="btn-add-exp">+ Ajouter une expérience</button><br><br>
 
       ${c.formations.map((f, i) => `
       <div class="exp-card">
@@ -522,7 +522,17 @@ document.addEventListener("click", (e) =>
 });
 
 
-// Export / Import / Print
+// Export / Import / Print / Reset
+$("#btn-reset").addEventListener("click", () => 
+{
+  if (confirm("Recommencer de zéro ?\n\nToutes les données de votre CV seront effacées (expériences, compétences, formations…).\nCette action est irréversible.")) 
+  {
+    cv = structuredClone(DEFAULT_CV);
+    save();
+    renderAll();
+  }
+});
+
 $("#btn-print").addEventListener("click", () => window.print());
 
 $("#btn-export-json").addEventListener("click", () => 
