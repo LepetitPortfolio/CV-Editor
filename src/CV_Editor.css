@@ -128,7 +128,9 @@ body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg); co
 /* ===== Print : seul le CV est exporté ===== */
 @media print 
 {
-  body { background: #fff; }
+  /* !important est indispensable : body.dark (classe) est plus spécifique
+     que "body" seul, et sinon le fond sombre resterait visible à l'impression. */
+  html, body { background: #fff !important; }
   .topbar, .editor, .preview-meta { display: none !important; }
   .layout { display: block; padding: 0; max-width: none; }
   .preview-wrap { display: block; }

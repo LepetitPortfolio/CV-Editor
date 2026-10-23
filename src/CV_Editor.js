@@ -165,15 +165,13 @@ function field(label, path, value, opts = {})
   </div>`.replace(`<${tag} id`, opts.textarea ? `<${tag} id` : `<${tag} id`) ;
 }
 
-function renderPanel() 
+// ============================================================
+// 5a. RENDU DU FORMULAIRE — une sous-fonction par onglet
+// ============================================================
+function renderProfilTab()
 {
   const c = cv;
-  const box = $("#panel-container");
-  let html = "";
-
-  if (currentTab === "profil") 
-  {
-    html = `
+  return `
       <div class="grid">
         <div class="field"><label>Nom</label><input data-bind="nom" value="${esc(c.nom)}"></div>
         <div class="field"><label>Titre</label><input data-bind="titre" value="${esc(c.titre)}"></div>
@@ -192,11 +190,12 @@ function renderPanel()
         </div>`).join("")}
         <button class="add-btn" id="btn-add-link">+ Ajouter un lien</button>
       </div>`;
-  }
+}
 
-  if (currentTab === "experiences") 
-  {
-    html = c.experiences.map((e, i) => `
+function renderExperiencesTab()
+{
+  const c = cv;
+  return c.experiences.map((e, i) => `
       <div class="exp-card">
         ${c.experiences.length > 0 ? `<button class="remove"  id="btn-remove-exp" data-remove="${i}" title="Supprimer">✕</button>` : ""}
         <div class="grid">
@@ -222,23 +221,24 @@ function renderPanel()
         </div>
       </div>`).join("")}
       <button class="add-btn" id="btn-add-edu">+ Ajouter une formation</button>`;
-  }
+}
 
-  if (currentTab === "competences") 
-  {
-    html =
-      c.competences.map((comp, i) => `
+function renderCompetencesTab()
+{
+  const c = cv;
+  return c.competences.map((comp, i) => `
       <div class="exp-card">
         ${c.competences.length > 0 ? `<button class="remove" id="btn-remove-comp" data-remove="${i}" title="Supprimer">✕</button>` : ""}
           <div class="field"><label>Intitulé</label><input data-comp="${i}" data-key="intitule" value="${esc(comp.intitule)}"></div>
           <div class="field"><label>Compétences (séparés par des virgules)</label><textarea data-comp="${i}" data-key="valeur" rows="2">${esc(comp.valeur)}</textarea></div>
       </div>`).join("")
       + `<button class="add-btn" id="btn-add-comp">+ Ajouter une compétence</button>`;
-  }
+}
 
-  if(currentTab === "SoftSkill")
-  {
-    html = c.softskill.map((s, i) => `
+function renderSoftSkillTab()
+{
+  const c = cv;
+  return c.softskill.map((s, i) => `
       <div class="exp-card">
         ${c.softskill.length > 0 ? `<button class="remove" id="btn-remove-softskill" data-remove="${i}" title="Supprimer">✕</button>` : ""}
         <div class="grid">
@@ -247,11 +247,12 @@ function renderPanel()
         </div>
       </div>`).join("")
       + `<button class="add-btn" id="btn-add-softskill">+ Ajouter un Soft skill</button>`;
-  }
+}
 
-  if(currentTab === "Customisation")
-  {
-    html = `
+function renderCustomisationTab()
+{
+  const c = cv;
+  return `
       <div class="field">
         <label>Police</label>
         <select data-bind="customisation.police">
@@ -270,23 +271,52 @@ function renderPanel()
         <label>Accent</label>
         <input type="color" data-bind="customisation.accent" value="${esc(c.customisation.accent)}">
       </div>`;
-  }
+}
 
-  if (currentTab === "poste")
-  {
-    html = `
+function renderPosteTab()
+{
+  return `
       <div class="field">
         <label>Collez l'offre d'emploi (Job Description)</label>
         <textarea id="jd-input" rows="7" placeholder="Ex. Nous cherchons un Gameplay Programmer confirmé, maîtrisant C++, Unreal Engine, les 3C, l'IA (Behavior Trees), le réseau...">${esc(jd)}</textarea>
       </div>
       <div id="jd-results"></div>`;
-  }
+}
 
-  box.innerHTML = html;
+// Association onglet → sous-fonction de rendu
+const TAB_RENDERERS =
+{
+  "profil":        renderProfilTab,
+  "experiences":   renderExperiencesTab,
+  "competences":   renderCompetencesTab,
+  "SoftSkill":     renderSoftSkillTab,
+  "Customisation": renderCustomisationTab,
+  "poste":         renderPosteTab
+};
+
+// ============================================================
+// 5b. CHANGEMENT D'ONGLET
+// ============================================================
+function switchTab(tabName)
+{
+  currentTab = tabName;
+  document.querySelectorAll(".tab").forEach((b) => b.classList.toggle("active", b.dataset.tab === tabName));
+  renderPanel();
+}
+
+// ============================================================
+// 5c. RENDU DU PANNEAU (délègue à la sous-fonction de l'onglet actif)
+// ============================================================
+function renderPanel()
+{
+  const box = $("#panel-container");
+  const render = TAB_RENDERERS[currentTab];
+  box.innerHTML = render ? render() : "";
   if (currentTab === "poste") { renderJdResults(); }
 
   renderPreview();
 }
+
 
 function renderJdResults() 
 {
@@ -331,11 +361,40 @@ function renderAll()
   renderPreview(); 
 }
 
-document.addEventListener("input", (e) => 
+// ============================================================
+// 6a. AJOUT — crée un nouvel élément dans le JSON du CV
+// ============================================================
+const ADD_ACTIONS =
 {
-  const t = e.target;
+  "btn-add-exp":       () => cv.experiences.push({ poste: "", entreprise: "", lieu: "", debut: "", fin: "", missions: [""] }),
+  "btn-add-link":      () => cv.otherlinks.push({ libelle: "", url: "" }),
+  "btn-add-edu":       () => cv.formations.push({ intitule: "", lieu: "", annee: "" }),
+  "btn-add-comp":      () => cv.competences.push({ intitule: "", valeur: "" }),
+  "btn-add-softskill": () => cv.softskill.push({ libelle: "", desc: "" })
+};
 
-  if (t.dataset.bind) 
+function addCvItem(btnId)
+{
+  const action = ADD_ACTIONS[btnId];
+  if (!action) return false;
+  action();
+  return true;
+}
+
+// ============================================================
+// 6b. MODIFICATION — écrit la valeur d'un champ dans le JSON du CV
+// ============================================================
+function updateCvField(t)
+{
+  // Cas particulier : la JD ne modifie pas le CV (pas de save nécessaire)
+  if (t.id === "jd-input")
+  {
+    jd = t.value;
+    renderJdResults();
+    return false;
+  }
+
+  if (t.dataset.bind)
   {
     if (t.dataset.bind.startsWith("customisation."))
     {
@@ -387,31 +446,56 @@ document.addEventListener("input", (e) =>
   {
     cv.softskill[+t.dataset.softskill][t.dataset.key] = t.value;
   }
-  else if (t.id === "jd-input") 
+  else
   {
-    jd = t.value;
-    renderJdResults();
-    return; // pas besoin de rerendre le CV pour la JD
-  } 
-  else 
-  {
-    return;
+    return false; // champ non reconnu
   }
 
+  return true; // le CV a changé
+}
+
+// ============================================================
+// 6c. SUPPRESSION — retire un élément du JSON du CV par son index
+// ============================================================
+const REMOVE_ACTIONS =
+{
+  "btn-remove-link":      () => cv.otherlinks,
+  "btn-remove-exp":       () => cv.experiences,
+  "btn-remove-edu":       () => cv.formations,
+  "btn-remove-comp":      () => cv.competences,
+  "btn-remove-softskill": () => cv.softskill
+};
+
+function removeCvItem(btnId, index)
+{
+  const getCollection = REMOVE_ACTIONS[btnId];
+  if (!getCollection) return false;
+  getCollection().splice(index, 1);
+  return true;
+}
+
+// ============================================================
+// 6d. CÂBLAGE DES ÉVÉNEMENTS (les 3 fonctions ci-dessus)
+// ============================================================
+const onFieldChange = (e) =>
+{
+  if (!updateCvField(e.target)) return;
   save();
   renderPreview();
-});
+};
 
-// Clics (tabs, boutons, suppressions)
+// "input" pour les champs texte/sliders, "change" pour les <select>
+document.addEventListener("input", onFieldChange);
+document.addEventListener("change", onFieldChange);
+
+// Clics (tabs, swatches, ajouts, suppressions)
 document.addEventListener("click", (e) => 
 {
   const t = e.target;
 
   if (t.classList.contains("tab")) 
   {
-    currentTab = t.dataset.tab;
-    document.querySelectorAll(".tab").forEach((b) => b.classList.toggle("active", b === t));
-    renderPanel();
+    switchTab(t.dataset.tab);
     return;
   }
   if (t.classList.contains("swatch"))
@@ -421,102 +505,22 @@ document.addEventListener("click", (e) =>
     document.querySelectorAll(".swatch").forEach((s) => s.classList.toggle("active", s === t));
     return;
   }
-  if (t.id === "btn-add-exp") 
+
+  // Ajout de données
+  if (t.id && t.id.startsWith("btn-add-"))
   {
-    cv.experiences.push({ poste: "", entreprise: "", lieu: "", debut: "", fin: "", missions: [""] });
-    save(); 
-    renderAll(); 
+    if (addCvItem(t.id)) { save(); renderAll(); }
     return;
   }
 
-  if(t.id === "btn-add-link")
+  // Suppression de données
+  if (t.id && t.id.startsWith("btn-remove-") && t.dataset.remove !== undefined)
   {
-    cv.otherlinks.push({ libelle: "", url: "" });
-    save(); 
-    renderAll(); 
+    if (removeCvItem(t.id, +t.dataset.remove)) { save(); renderAll(); }
     return;
   }
-
-  if (t.id === "btn-add-edu") 
-  {
-    cv.formations.push({ intitule: "", lieu: "", annee: "" });
-    save(); 
-    renderAll(); 
-    return;
-  }
-
-  if(t.id === "btn-add-comp")
-  {
-    cv.competences.push({ intitule: "", valeur: "" });
-    save(); 
-    renderAll(); 
-    return;
-  }
-
-  if(t.id === "btn-add-softskill")
-  {
-    cv.softskill.push({ libelle: "", desc: "" });
-    save(); 
-    renderAll(); 
-    return;
-  }
-
-   if(t.id === "btn-remove-link")
-  {
-    if(t.dataset.remove !== undefined)
-    {
-      cv.otherlinks.splice(+t.dataset.remove, 1);
-      save(); 
-      renderAll();
-    }
-    return;
-  }
-
-  if(t.id === "btn-remove-exp")
-  {
-    if(t.dataset.remove !== undefined)
-    {
-      cv.experiences.splice(+t.dataset.remove, 1);
-      save(); 
-      renderAll();
-    }
-    return;
-  }
-
-  if(t.id === "btn-remove-edu")
-  {
-    if(t.dataset.remove !== undefined)
-    {
-      cv.formations.splice(+t.dataset.remove, 1);
-      save(); 
-      renderAll();
-    }
-    return;
-  }
-
-  if(t.id === "btn-remove-comp")
-  {
-    if(t.dataset.remove !== undefined)
-    {
-      cv.competences.splice(+t.dataset.remove, 1);
-      save(); 
-      renderAll();
-    }
-    return;
-  }
-
-  if(t.id === "btn-remove-softskill")
-  {
-    if(t.dataset.remove !== undefined)
-    {
-      cv.softskill.splice(+t.dataset.remove, 1);
-      save(); 
-      renderAll();
-    }
-    return;
-  }
-
 });
+
 
 // Export / Import / Print
 $("#btn-print").addEventListener("click", () => window.print());
