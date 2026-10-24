@@ -10,6 +10,14 @@ const DEFAULT_CV =
   nom: "Gérard Bouchard",
   titre: "",
   accroche: "",
+  Adresse:
+  {
+    Ligne1: "",
+    Ligne2: "",
+    CodePostal: "",
+    Ville: "",
+    Pays: ""
+  },
   email: "",
   tel: "",
   otherlinks : 
@@ -32,12 +40,18 @@ const DEFAULT_CV =
   [
     
   ],
+  autresinformations: 
+  [
+    
+  ],
   customisation :
   {
+    Template : 0,
     police : "Arial, sans-serif",
     taille : "12pt",
-    couleur : "#000000",
-    accent : "#000000"
+    couleurprincipale : "#000000",
+    couleursecondaire : "#000000",
+    couleurtertiaire : "#000000"
   }
   
 };
@@ -51,6 +65,16 @@ const CV_FONTS =
   { label: "Tahoma",        stack: "Tahoma, Verdana, sans-serif" },
   { label: "Georgia",       stack: "Georgia, serif" },
   { label: "Times New Roman", stack: "\"Times New Roman\", Times, serif" }
+];
+
+const CV_TEMPLATES =
+[
+  { label: 0,     stack: "Classique sobre" },
+  { label: 1,     stack: "Moderne" },
+  { label: 2,     stack: "Timeline minimaliste" },
+  { label: 3,     stack: "Élégant serif" },
+  { label: 4,     stack: "Suisse grandes majuscules" },
+  { label: 5,     stack: "Compétences en tête style épuré" }
 ];
 
 // Chargement (localStorage) ou défaut
@@ -103,8 +127,9 @@ function renderPreview()
 
   // ===== Application de la customisation au rendu du CV =====
   const page = $("#cv-preview");
-  page.style.setProperty("--cv-ink", c.customisation?.couleur || "#000000");
-  page.style.setProperty("--cv-ink-strong", c.customisation?.couleur || "#000000");
+  page.style.setProperty("--cv-ink", c.customisation?.couleurprincipale || "#000000");
+  page.style.setProperty("--cv-ink-strong", c.customisation?.couleursecondaire || "#000000");
+  page.style.setProperty("--accent", c.customisation?.couleursecondaire || "#000000");
   page.style.setProperty("--cv-size", (parseFloat(c.customisation?.taille) || 12) + "px");
   page.style.setProperty("--cv-font", c.customisation?.police || "Arial, Helvetica, sans-serif");
 
@@ -137,6 +162,12 @@ function renderPreview()
       <div>${esc(f.annee)}</div>
     </div>`).join("");
 
+    const autreinfo = c.autresinformations.map((ai) => `
+    <div class="cv-section-title">${esc(ai.libelle)}</div>
+    <div class="cv-other-info">
+      <div>${ai.informations.filter(Boolean).map((i) => `${esc(i)}`).join(" - ")}</div>
+    </div>`).join("");
+
   $("#cv-preview").innerHTML = `
     <div class="cv-header">
       <h1>${esc(c.nom) || "Votre nom"}</h1>
@@ -149,6 +180,7 @@ function renderPreview()
     ${softsk ? `<div class="cv-section-title">Compétences transversales</div>${softsk}` : ""}
     ${exps ? `<div class="cv-section-title">Expériences professionnelles</div>${exps}` : ""}
     ${formations ? `<div class="cv-section-title">Formation</div>${formations}` : ""}
+    ${autreinfo ? `${autreinfo}` : ""}
   `;
 }
 
@@ -249,6 +281,22 @@ function renderSoftSkillTab()
       + `<button class="add-btn" id="btn-add-softskill">+ Ajouter un Soft skill</button>`;
 }
 
+function renderAutresInformationsTab()
+{
+  const c = cv;
+  return c.autresinformations.map((ai, i) => `
+      <div class="exp-card">
+        ${c.autresinformations.length > 0 ? `<button class="remove" id="btn-remove-autresinformations" data-remove="${i}" title="Supprimer">✕</button>` : ""}
+        <div>
+          <div class="field"><label>Libelle</label><input data-autresinformations="${i}" data-key="libelle" value="${esc(ai.libelle)}"></div>
+          <div class="field" style="margin-top:.7rem"><label>Informations (une par ligne)</label>
+            <textarea data-autresinformations="${i}" data-key="informations" rows="4">${esc(ai.informations.join("\n"))}</textarea>
+          </div>
+        </div>
+      </div>`).join("")
+      + `<button class="add-btn" id="btn-add-autresinformations">+ Ajouter une Autres Informations</button>`;
+}
+
 function renderCustomisationTab()
 {
   const c = cv;
@@ -264,13 +312,17 @@ function renderCustomisationTab()
         <input type="range" min="2" max="50" step="1" data-bind="customisation.taille" value="12">
       </div>
       <div class="field">
-        <label>Couleur</label>
-        <input type="color" data-bind="customisation.couleur" value="${esc(c.customisation.couleur)}">
+        <label>Couleur Principale</label>
+        <input type="color" data-bind="customisation.couleurprincipale" value="${esc(c.customisation.couleurprincipale)}">
       </div>
       <div class="field">
-        <label>Accent</label>
-        <input type="color" data-bind="customisation.accent" value="${esc(c.customisation.accent)}">
+        <label>Couleur Secondaire</label>
+        <input type="color" data-bind="customisation.couleursecondaire" value="${esc(c.customisation.couleursecondaire)}">
+      </div><div class="field">
+        <label>Couleur Tertiaire</label>
+        <input type="color" data-bind="customisation.couleurtertiaire" value="${esc(c.customisation.couleurtertiaire)}">
       </div>`;
+      
 }
 
 function renderPosteTab()
@@ -290,6 +342,7 @@ const TAB_RENDERERS =
   "experiences":   renderExperiencesTab,
   "competences":   renderCompetencesTab,
   "SoftSkill":     renderSoftSkillTab,
+  "autresinformations": renderAutresInformationsTab,
   "Customisation": renderCustomisationTab,
   "poste":         renderPosteTab
 };
@@ -318,7 +371,7 @@ function renderPanel()
 }
 
 
-function renderJdResults() 
+function renderJdResults()
 {
   const box = $("#jd-results");
   if (!box) return;
@@ -370,7 +423,8 @@ const ADD_ACTIONS =
   "btn-add-link":      () => cv.otherlinks.push({ libelle: "", url: "" }),
   "btn-add-edu":       () => cv.formations.push({ intitule: "", lieu: "", annee: "" }),
   "btn-add-comp":      () => cv.competences.push({ intitule: "", valeur: "" }),
-  "btn-add-softskill": () => cv.softskill.push({ libelle: "", desc: "" })
+  "btn-add-softskill": () => cv.softskill.push({ libelle: "", desc: "" }),
+  "btn-add-autresinformations": () => cv.autresinformations.push({ libelle: "", informations: [""] })
 };
 
 function addCvItem(btnId)
@@ -405,8 +459,7 @@ function updateCvField(t)
       if (key === "accent")
       {
         accent = t.value;
-        document.documentElement.style.setProperty("--accent", accent);
-        document.querySelectorAll(".swatch").forEach((s) => s.classList.toggle("active", s.dataset.accent === accent));
+        document.querySelectorAll(".swatch").forEach((s) => s.classList.toggle("active", s.dataset.couleursecondaire === accent));
       }
 
       if (key === "taille")
@@ -446,6 +499,12 @@ function updateCvField(t)
   {
     cv.softskill[+t.dataset.softskill][t.dataset.key] = t.value;
   }
+  else if (t.dataset.autresinformations !== undefined && t.dataset.key)
+  {
+    const i = +t.dataset.autresinformations;
+    const key = t.dataset.key;
+    cv.autresinformations[i][key] = key === "informations" ? t.value.split("\n") : t.value;
+  }
   else
   {
     return false; // champ non reconnu
@@ -463,7 +522,8 @@ const REMOVE_ACTIONS =
   "btn-remove-exp":       () => cv.experiences,
   "btn-remove-edu":       () => cv.formations,
   "btn-remove-comp":      () => cv.competences,
-  "btn-remove-softskill": () => cv.softskill
+  "btn-remove-softskill": () => cv.softskill,
+  "btn-remove-autresinformations": () => cv.autresinformations
 };
 
 function removeCvItem(btnId, index)
@@ -556,7 +616,8 @@ $("#file-input").addEventListener("change", (e) =>
     try 
     {
       cv = { ...structuredClone(DEFAULT_CV), ...JSON.parse(String(reader.result)) };
-      save(); renderAll();
+      save(); 
+      renderAll();
     } 
     catch { alert("Fichier JSON invalide"); }
   };
