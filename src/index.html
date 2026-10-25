@@ -1,8 +1,18 @@
 <!doctype html>
 <html lang="fr">
 <head>
-<script src="CV_Editor.js" defer></script>
-<link rel="stylesheet" href="CV_Editor.css">
+<!-- Les scripts defer s'exécutent dans l'ORDRE : de la fondation (données)
+     vers le câblage (événements) puis l'init (main). -->
+<script src="cv-model.js" defer></script>
+<script src="cv-utils.js" defer></script>
+<script src="cv-keywords.js" defer></script>
+<script src="cv-preview.js" defer></script>
+<script src="cv-panel.js" defer></script>
+<script src="cv-actions.js" defer></script>
+<script src="cv-events.js" defer></script>
+<script src="cv-theme.js" defer></script>
+<script src="main.js" defer></script>
+<link rel="stylesheet" href="cv-editor.css">
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Éditeur de CV — local & ATS-friendly</title>
