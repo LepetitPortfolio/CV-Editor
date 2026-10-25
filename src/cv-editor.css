@@ -1,6 +1,13 @@
+/* ============================================================
+   cv-editor.css — Éditeur de CV (standalone, 100% local)
+   Sommaire : 1. Base   2. Topbar/boutons   3. Layout/aperçu
+   4. Onglets   5. Formulaires   6. JD matching   7. CV Classique
+   8. Impression   9. Mode sombre   10. Template « Moderne » (tm-*)
+   ============================================================ */
+
+/* ===== 1. Base ===== */
 * { margin: 0; padding: 0; box-sizing: border-box; }
-:root 
-{
+:root {
   --accent: #ea580c;
   --accent-soft: #fff7ed;
   --ink: #1f2937;
@@ -10,23 +17,22 @@
 }
 body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.5; }
 
-/* ===== Topbar ===== */
-.topbar 
-{
+/* ===== 2. Topbar & boutons ===== */
+.topbar {
   background: #0f172a; color: #fff; padding: .65rem 1rem;
   display: flex; flex-wrap: wrap; align-items: center; gap: .6rem; justify-content: space-between;
   position: sticky; top: 0; z-index: 10;
 }
 .topbar .brand { display: flex; align-items: center; gap: .5rem; font-weight: 700; }
-.topbar .brand .logo 
-{
+.topbar .brand .logo {
   width: 26px; height: 26px; border-radius: 6px; background: var(--accent);
   display: inline-flex; align-items: center; justify-content: center; font-size: 12px;
 }
 .topbar .tag { font-size: 10px; font-weight: 400; color: #94a3b8; border: 1px solid #334155; border-radius: 4px; padding: 1px 6px; }
 .topbar .actions { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center; }
-.btn 
-{
+#btn-dark { min-width: 34px; }
+
+.btn {
   font-size: 12px; padding: 6px 10px; border-radius: 6px; border: none; cursor: pointer;
   background: #334155; color: #fff; transition: background .15s;
 }
@@ -35,12 +41,8 @@ body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg); co
 .btn.primary:hover { filter: brightness(1.1); }
 .btn.reset { background: #ef4444; font-weight: 600; }
 .btn.reset:hover { filter: brightness(1.1); }
-.swatch 
-{
-  width: 20px; height: 20px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; padding: 0;
-}
-.swatch.active { border-color: #fff; transform: scale(1.15); }
-/* ===== Layout ===== */
+
+/* ===== 3. Layout & cadre d'aperçu ===== */
 .layout { display: flex; gap: 1rem; padding: 1rem; max-width: 1600px; margin: 0 auto; align-items: flex-start; flex-wrap: wrap; }
 .editor { flex: 1 1 420px; min-width: 340px; }
 .preview-wrap { flex: 1 1 420px; min-width: 340px; }
@@ -48,46 +50,42 @@ body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg); co
 .preview-frame { background: #cbd5e1; border-radius: 10px; padding: 1rem; box-shadow: 0 8px 24px rgba(0,0,0,.1); }
 .preview-scroll { max-height: 82vh; overflow: auto; border-radius: 6px; }
 
-/* ===== Tabs ===== */
+/* ===== 4. Onglets ===== */
 .tabs { display: flex; gap: 2px; flex-wrap: wrap; margin-bottom: .7rem; }
-.tab 
-{
+.tab {
   padding: 8px 14px; font-size: 14px; font-weight: 500; background: none; border: none;
   border-bottom: 3px solid transparent; color: var(--muted); cursor: pointer; border-radius: 6px 6px 0 0;
 }
+.tab:hover { background: var(--bg); }
 .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
 
-/* ===== Forms ===== */
+/* ===== 5. Formulaires ===== */
 .panel { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,.05); }
 .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: .7rem; }
 .field label { display: block; font-size: 10.5px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin-bottom: 3px; }
-.field input, .field textarea, .field select 
-{
+.field input, .field textarea, .field select {
   width: 100%; border: 1px solid #cbd5e1; border-radius: 6px; padding: 7px 9px;
   font-size: 13.5px; font-family: inherit; color: var(--ink); background: #fff; outline: none;
   transition: border-color .15s;
 }
-.field input:focus, .field textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(234,88,12,.15); }
+.field input:focus, .field textarea:focus, .field select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(234,88,12,.15); }
 .field textarea { resize: vertical; min-height: 60px; }
 
-/* ===== Slider de taille de police ===== */
+/* Slider de taille de police */
 .field input[type="range"] { padding: 0; border: none; background: none; height: 28px; accent-color: var(--accent); }
 .range-val { font-weight: 400; text-transform: none; letter-spacing: 0; color: var(--muted); }
+
+/* Cartes (expériences, formations, compétences...) */
 .exp-card { position: relative; border: 1px solid var(--border); border-radius: 8px; padding: .8rem; margin-bottom: .8rem; background: #fdfdfd; }
 .exp-card .remove { position: absolute; top: 8px; right: 8px; font-size: 12px; color: #ef4444; background: none; border: none; cursor: pointer; font-weight: 700; }
 .exp-card .remove:hover { color: #b91c1c; }
-.add-btn 
-{
+.add-btn {
   font-size: 13px; font-weight: 600; color: #fff; background: var(--accent); border: none;
   border-radius: 6px; padding: 8px 12px; cursor: pointer; margin-top: .3rem;
 }
-.add-btn.ghost { background: none; color: var(--muted); border: 1px solid #cbd5e1; }
-.hint { font-size: 11.5px; color: #94a3b8; }
-.section-sep { border-top: 1px solid var(--border); margin: 1rem 0; padding-top: .8rem; }
-.section-sep .remove { position: absolute; top: 8px; right: 8px; font-size: 12px; color: #ef4444; background: none; border: none; cursor: pointer; font-weight: 700; }
-.section-sep .remove:hover { color: #b91c1c; }
 
-/* ===== JD matching ===== */
+/* ===== 6. JD matching (analyse de l'offre) ===== */
+.hint { font-size: 11.5px; color: #94a3b8; }
 .kw-list { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 4px; }
 .kw { font-size: 11px; padding: 3px 9px; border-radius: 999px; font-weight: 500; }
 .kw.ok { background: #d1fae5; color: #065f46; }
@@ -96,9 +94,8 @@ body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg); co
 .alert.warn { background: var(--accent-soft); border: 1px solid #fdba74; color: #7c2d12; }
 .alert.good { background: #f0fdf4; border: 1px solid #86efac; color: #14532d; }
 
-/* ===== CV Preview (ATS-friendly) ===== */
-.cv-page 
-{
+/* ===== 7. Aperçu du CV — template Classique (ATS-friendly) ===== */
+.cv-page {
   background: #fff; max-width: 720px; margin: 0 auto; padding: 2rem 2.2rem;
   font-family: var(--cv-font, Arial, Helvetica, sans-serif); line-height: 1.45;
   color: var(--cv-ink, #1f2937);
@@ -108,14 +105,14 @@ body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg); co
 .cv-contact { font-size: calc(var(--cv-size, 12px) * 0.92); color: var(--cv-ink, #4b5563); }
 .cv-contact a, .cv-Link-line a { color: inherit; text-decoration: none; }
 .cv-header { border-bottom: 3px solid var(--accent); padding-bottom: 10px; margin-bottom: 12px; }
-.cv-section-title 
-{
+.cv-section-title {
   font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em;
   color: var(--accent); border-bottom: 2px solid var(--accent);
   padding-bottom: 2px; margin: 16px 0 6px;
 }
 .cv-accroche { font-size: var(--cv-size, 12px); color: var(--cv-ink, #374151); }
 .cv-skill-line { font-size: var(--cv-size, 12px); color: var(--cv-ink, #374151); margin-bottom: 2px; }
+.cv-other-info { font-size: var(--cv-size, 12px); color: var(--cv-ink, #374151); }
 .cv-job { margin-bottom: 12px; break-inside: avoid; page-break-inside: avoid; }
 .cv-job-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap; }
 .cv-job-title { font-size: 13.5px; font-weight: 700; color: var(--cv-ink-strong, #111827); }
@@ -126,9 +123,8 @@ body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg); co
 .cv-edu { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; font-size: var(--cv-size, 12px); color: var(--cv-ink, #374151); break-inside: avoid; }
 .cv-edu strong { color: var(--cv-ink-strong, #111827); }
 
-/* ===== Print : seul le CV est exporté ===== */
-@media print 
-{
+/* ===== 8. Impression : seul le CV est exporté ===== */
+@media print {
   /* !important est indispensable : body.dark (classe) est plus spécifique
      que "body" seul, et sinon le fond sombre resterait visible à l'impression. */
   html, body { background: #fff !important; }
@@ -148,21 +144,17 @@ body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg); co
 }
 
 /* ============================================================
-   MODE SOMBRE
+   9. MODE SOMBRE
    (le CV reste sur fond blanc pour rester fidèle à l'export ATS)
    ============================================================ */
-#btn-dark { min-width: 34px; }
-
 body.dark { background: #0b1220; color: #dbe3ef; }
 
 /* Panneau d'édition & cartes */
 body.dark .panel { background: #111a2e; border-color: #253248; box-shadow: 0 1px 3px rgba(0,0,0,.4); }
 body.dark .exp-card { background: #0e1729; border-color: #253248; }
-body.dark .section-sep { border-top-color: #253248; }
 
 /* Champs de formulaire */
-body.dark .field input, body.dark .field textarea, body.dark .field select
-{
+body.dark .field input, body.dark .field textarea, body.dark .field select {
   background: #0b1220; color: #dbe3ef; border-color: #334155;
 }
 body.dark .field input:focus, body.dark .field textarea:focus { box-shadow: 0 0 0 3px rgba(234,88,12,.25); }
@@ -183,12 +175,10 @@ body.dark .alert.good { background: #052e16; border-color: #166534; color: #86ef
 
 /* Divers */
 body.dark .hint { color: #7c8db0; }
-body.dark .swatch.active { border-color: #fff; }
-body.dark .add-btn.ghost { color: #8fa3c0; border-color: #334155; }
-body.dark .exp-card .remove:hover, body.dark .section-sep .remove:hover { color: #f87171; }
+body.dark .exp-card .remove:hover { color: #f87171; }
 
 /* ============================================================
-   TEMPLATE 1 « Moderne » (bandeau) — classes tm-*
+   10. TEMPLATE 1 « Moderne » (bandeau) — classes tm-*
    ============================================================ */
 
 /* --- Bandeau d'en-tête --- */
