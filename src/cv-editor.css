@@ -6,10 +6,14 @@
    ============================================================ */
 
 /* ===== 1. Base ===== */
+/* Deux systèmes de couleurs, étanches l'un à l'autre :
+   - --editor-* : couleurs de l'INTERFACE (boutons, onglets, alertes...)
+   - --cv-*     : couleurs du CV (pilotées par l'onglet Customisation,
+                  appliquées par cv-preview.js sur #cv-preview) */
 * { margin: 0; padding: 0; box-sizing: border-box; }
 :root {
-  --accent: #ea580c;
-  --accent-soft: #fff7ed;
+  --editor-accent: #ea580c;
+  --editor-accent-soft: #fff7ed;
   --ink: #1f2937;
   --muted: #64748b;
   --border: #e2e8f0;
@@ -25,7 +29,7 @@ body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg); co
 }
 .topbar .brand { display: flex; align-items: center; gap: .5rem; font-weight: 700; }
 .topbar .brand .logo {
-  width: 26px; height: 26px; border-radius: 6px; background: var(--accent);
+  width: 26px; height: 26px; border-radius: 6px; background: var(--editor-accent);
   display: inline-flex; align-items: center; justify-content: center; font-size: 12px;
 }
 .topbar .tag { font-size: 10px; font-weight: 400; color: #94a3b8; border: 1px solid #334155; border-radius: 4px; padding: 1px 6px; }
@@ -37,7 +41,7 @@ body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg); co
   background: #334155; color: #fff; transition: background .15s;
 }
 .btn:hover { background: #475569; }
-.btn.primary { background: var(--accent); font-weight: 600; }
+.btn.primary { background: var(--editor-accent); font-weight: 600; }
 .btn.primary:hover { filter: brightness(1.1); }
 .btn.reset { background: #ef4444; font-weight: 600; }
 .btn.reset:hover { filter: brightness(1.1); }
@@ -57,7 +61,7 @@ body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg); co
   border-bottom: 3px solid transparent; color: var(--muted); cursor: pointer; border-radius: 6px 6px 0 0;
 }
 .tab:hover { background: var(--bg); }
-.tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+.tab.active { color: var(--editor-accent); border-bottom-color: var(--editor-accent); }
 
 /* ===== 5. Formulaires ===== */
 .panel { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,.05); }
@@ -68,11 +72,11 @@ body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg); co
   font-size: 13.5px; font-family: inherit; color: var(--ink); background: #fff; outline: none;
   transition: border-color .15s;
 }
-.field input:focus, .field textarea:focus, .field select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(234,88,12,.15); }
+.field input:focus, .field textarea:focus, .field select:focus { border-color: var(--editor-accent); box-shadow: 0 0 0 3px rgba(234,88,12,.15); }
 .field textarea { resize: vertical; min-height: 60px; }
 
 /* Slider de taille de police */
-.field input[type="range"] { padding: 0; border: none; background: none; height: 28px; accent-color: var(--accent); }
+.field input[type="range"] { padding: 0; border: none; background: none; height: 28px; accent-color: var(--editor-accent); }
 .range-val { font-weight: 400; text-transform: none; letter-spacing: 0; color: var(--muted); }
 
 /* Cartes (expériences, formations, compétences...) */
@@ -80,7 +84,7 @@ body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg); co
 .exp-card .remove { position: absolute; top: 8px; right: 8px; font-size: 12px; color: #ef4444; background: none; border: none; cursor: pointer; font-weight: 700; }
 .exp-card .remove:hover { color: #b91c1c; }
 .add-btn {
-  font-size: 13px; font-weight: 600; color: #fff; background: var(--accent); border: none;
+  font-size: 13px; font-weight: 600; color: #fff; background: var(--editor-accent); border: none;
   border-radius: 6px; padding: 8px 12px; cursor: pointer; margin-top: .3rem;
 }
 
@@ -91,23 +95,31 @@ body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg); co
 .kw.ok { background: #d1fae5; color: #065f46; }
 .kw.miss { background: #fee2e2; color: #991b1b; }
 .alert { border-radius: 8px; padding: .7rem .9rem; font-size: 12.5px; margin-top: .8rem; }
-.alert.warn { background: var(--accent-soft); border: 1px solid #fdba74; color: #7c2d12; }
+.alert.warn { background: var(--editor-accent-soft); border: 1px solid #fdba74; color: #7c2d12; }
 .alert.good { background: #f0fdf4; border: 1px solid #86efac; color: #14532d; }
 
 /* ===== 7. Aperçu du CV — template Classique (ATS-friendly) ===== */
+/* Convention commune à TOUS les templates (posées par cv-preview.js) :
+   --cv-principale = couleurprincipale : textes forts (h1, intitulés)
+   --cv-secondaire = couleursecondaire : accents (titres de section, filets)
+   --cv-tertiaire  = couleurtertiaire  : texte commun (--cv-ink en dérive)
+   --cv-ink = couleur du texte de corps (posée depuis couleurtertiaire)
+   --cv-size / --cv-font = taille et police.
+   Le Classique utilise : texte = --cv-ink, textes forts = --cv-principale,
+   accents = --cv-secondaire. */
 .cv-page {
   background: #fff; max-width: 720px; margin: 0 auto; padding: 2rem 2.2rem;
   font-family: var(--cv-font, Arial, Helvetica, sans-serif); line-height: 1.45;
   color: var(--cv-ink, #1f2937);
 }
-.cv-page h1 { font-size: 24px; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; color: var(--cv-ink-strong, #111827); }
-.cv-title { font-size: 15px; font-weight: 600; color: var(--accent); margin: 2px 0 4px; }
+.cv-page h1 { font-size: 24px; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; color: var(--cv-principale, #111827); }
+.cv-title { font-size: 15px; font-weight: 600; color: var(--cv-secondaire, #000000); margin: 2px 0 4px; }
 .cv-contact { font-size: calc(var(--cv-size, 12px) * 0.92); color: var(--cv-ink, #4b5563); }
 .cv-contact a, .cv-Link-line a { color: inherit; text-decoration: none; }
-.cv-header { border-bottom: 3px solid var(--accent); padding-bottom: 10px; margin-bottom: 12px; }
+.cv-header { border-bottom: 3px solid var(--cv-secondaire, #000000); padding-bottom: 10px; margin-bottom: 12px; }
 .cv-section-title {
   font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em;
-  color: var(--accent); border-bottom: 2px solid var(--accent);
+  color: var(--cv-secondaire, #000000); border-bottom: 2px solid var(--cv-secondaire, #000000);
   padding-bottom: 2px; margin: 16px 0 6px;
 }
 .cv-accroche { font-size: var(--cv-size, 12px); color: var(--cv-ink, #374151); }
@@ -115,13 +127,13 @@ body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg); co
 .cv-other-info { font-size: var(--cv-size, 12px); color: var(--cv-ink, #374151); }
 .cv-job { margin-bottom: 12px; break-inside: avoid; page-break-inside: avoid; }
 .cv-job-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap; }
-.cv-job-title { font-size: 13.5px; font-weight: 700; color: var(--cv-ink-strong, #111827); }
-.cv-job-title .company { color: var(--accent); }
+.cv-job-title { font-size: 13.5px; font-weight: 700; color: var(--cv-principale, #111827); }
+.cv-job-title .company { color: var(--cv-secondaire, #000000); }
 .cv-job-dates { font-size: calc(var(--cv-size, 12px) * 0.92); color: var(--cv-ink, #6b7280); white-space: nowrap; }
 .cv-job ul { margin: 3px 0 0 18px; }
 .cv-job li { font-size: var(--cv-size, 12px); color: var(--cv-ink, #374151); margin-bottom: 2px; }
 .cv-edu { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; font-size: var(--cv-size, 12px); color: var(--cv-ink, #374151); break-inside: avoid; }
-.cv-edu strong { color: var(--cv-ink-strong, #111827); }
+.cv-edu strong { color: var(--cv-principale, #111827); }
 
 /* ===== 8. Impression : seul le CV est exporté ===== */
 @media print {
@@ -183,7 +195,7 @@ body.dark .exp-card .remove:hover { color: #f87171; }
 
 /* --- Bandeau d'en-tête --- */
 #cv-preview .tm-header {
-  background: var(--tm-color, #1e4e8c);
+  background: var(--cv-principale, #1e4e8c);
   color: #fff;
   padding: 26px 30px 22px;
 }
@@ -202,8 +214,8 @@ body.dark .exp-card .remove:hover { color: #f87171; }
 /* Titres de section : barre latérale */
 #cv-preview .tm-h2 {
   font-size: calc(var(--cv-size, 12px) * 1.1); text-transform: uppercase; letter-spacing: 2px;
-  color: var(--tm-color, #1e4e8c);
-  border-left: 4px solid var(--tm-color, #1e4e8c);
+  color: var(--cv-principale, #1e4e8c);
+  border-left: 4px solid var(--cv-principale, #1e4e8c);
   padding-left: 10px; margin: 22px 0 10px;
 }
 
@@ -211,7 +223,7 @@ body.dark .exp-card .remove:hover { color: #f87171; }
 #cv-preview .tm-h3 { font-size: calc(var(--cv-size, 12px) * 1.25); margin: 14px 0 1px; }
 #cv-preview .tm-job-meta {
   font-size: calc(var(--cv-size, 12px) * 1.05);
-  color: var(--tm-meta, #1e4e8c); font-weight: 600; margin: 0 0 6px;
+  color: var(--cv-secondaire, #1e4e8c); font-weight: 600; margin: 0 0 6px;
 }
 
 /* Textes et listes */
@@ -220,4 +232,4 @@ body.dark .exp-card .remove:hover { color: #f87171; }
 
 /* Compétences : intitulé en gras, largeur d'étiquette alignée */
 #cv-preview .tm-skills { font-size: calc(var(--cv-size, 12px) * 1.12); line-height: 1.7; margin: 4px 0; }
-#cv-preview .tm-skills b { color: var(--tm-color, #1e4e8c); display: inline-block; min-width: 105px; }
+#cv-preview .tm-skills b { color: var(--cv-principale, #1e4e8c); display: inline-block; min-width: 105px; }

@@ -10,6 +10,13 @@ function renderPreview()
   const c = cv;
 
   // ===== Application de la customisation au rendu du CV =====
+  const page = $("#cv-preview");
+  page.style.setProperty("--cv-principale", c.customisation?.couleurprincipale || "#000000");
+  page.style.setProperty("--cv-secondaire", c.customisation?.couleursecondaire || "#000000");
+  page.style.setProperty("--cv-tertiaire",  c.customisation?.couleurtertiaire  || "#000000");
+  page.style.setProperty("--cv-ink", c.customisation?.couleurtertiaire || "#000000");
+  page.style.setProperty("--cv-size", (parseFloat(c.customisation?.taille) || 12) + "px");
+  page.style.setProperty("--cv-font", c.customisation?.police || "Arial, Helvetica, sans-serif");
 
   const template = c.customisation?.Template || 0;
 
@@ -35,11 +42,6 @@ function renderPreview()
 function PreviewClassiqueCV(_CV)
 {
   const page = $("#cv-preview");
-  page.style.setProperty("--cv-ink", _CV.customisation?.couleurprincipale || "#000000");
-  page.style.setProperty("--cv-ink-strong", _CV.customisation?.couleursecondaire || "#000000");
-  page.style.setProperty("--accent", _CV.customisation?.couleursecondaire || "#000000");
-  page.style.setProperty("--cv-size", (parseFloat(_CV.customisation?.taille) || 12) + "px");
-  page.style.setProperty("--cv-font", _CV.customisation?.police || "Arial, Helvetica, sans-serif");
 
   const contacts = `
                     <div class="cv-contact"><strong>Adresse : </strong><br>${esc(_CV.adresse.ligne1) || ""}${esc(_CV.adresse.ligne2) ? `<br>${esc(_CV.adresse.ligne2)}` : ""}</div>
@@ -111,11 +113,6 @@ function PreviewClassiqueCV(_CV)
 function PreviewModerneCV(_CV)
 {
   const page = $("#cv-preview");
-  page.style.setProperty("--cv-ink", "#2d3748");
-  page.style.setProperty("--tm-color", _CV.customisation?.couleurprincipale || "#1e4e8c");
-  page.style.setProperty("--tm-meta", _CV.customisation?.couleursecondaire || "#1e4e8c");
-  page.style.setProperty("--cv-size", (parseFloat(_CV.customisation?.taille) || 12) + "px");
-  page.style.setProperty("--cv-font", _CV.customisation?.police || '"Segoe UI", Arial, sans-serif');
 
   // Ligne d'adresse
   const adr = _CV.adresse;
