@@ -151,7 +151,7 @@ function renderCustomisationTab()
         </select>
       </div>
       <div class="field">
-        <label>Taille <span class="range-val" id="taille-val">${taille} px</span></label>
+        <label>Taille <span class="range-val" id="taille-val">${c.customisation.taille} px</span></label>
         <input type="range" min="2" max="50" step="1" data-bind="customisation.taille" value="${taille}">
       </div>
       <div class="field">

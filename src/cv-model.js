@@ -79,12 +79,30 @@ const CV_TEMPLATES =
   { label: "Compétences en tête style épuré",     stack: 5 }
 ];
 
+// Fusion profonde : complète un objet (partiel) avec les valeurs par défaut,
+// clé par clé, à toutes les profondeurs. Les tableaux ne fusionnent PAS :
+// on prend ceux de l'objet entrant tels quels (ce sont des données utilisateur).
+function deepMerge(base, incoming)
+{
+  const out = structuredClone(base);
+  for (const key in incoming)
+  {
+    const b = out[key];
+    const i = incoming[key];
+    const bothPlain = b && i
+      && typeof b === "object" && typeof i === "object"
+      && !Array.isArray(b) && !Array.isArray(i);
+    out[key] = bothPlain ? deepMerge(b, i) : i;
+  }
+  return out;
+}
+
 // Chargement (localStorage) ou défaut
 let cv;
 try 
 {
   const raw = localStorage.getItem(STORAGE_KEY);
-  cv = raw ? { ...structuredClone(DEFAULT_CV), ...JSON.parse(raw) } : structuredClone(DEFAULT_CV);
+  cv = raw ? deepMerge(DEFAULT_CV, JSON.parse(raw)) : structuredClone(DEFAULT_CV);
 } 
 catch { cv = structuredClone(DEFAULT_CV); }
 

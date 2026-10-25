@@ -9,7 +9,25 @@
 // ============================================================
 const onFieldChange = (e) =>
 {
-  if (!updateCvField(e.target)) return;
+  const t = e.target;
+
+  // Anti-double événement : les <select> émettent "input" PUIS "change"
+  // pour une seule interaction ; les <input type="color"> émettent plein
+  // d'"input" pendant le choix puis un "change" final redondant.
+  if (e.type === "input" && t.tagName === "SELECT") return;
+  if (e.type === "change" && t.type === "color") return;
+
+  if (!updateCvField(t)) return;
+
+  // Libellé « N px » du slider : mise à jour directe du DOM, SANS re-render
+  // du panneau (renderPanel reconstruirait le <input type="range"> et
+  // interromprait le glissement).
+  if (t.dataset.bind === "customisation.taille")
+  {
+    const label = $("#taille-val");
+    if (label) label.textContent = `${parseFloat(t.value) || 12} px`;
+  }
+
   save();
   renderPreview();
 };
@@ -77,7 +95,7 @@ $("#file-input").addEventListener("change", (e) =>
   {
     try 
     {
-      cv = { ...structuredClone(DEFAULT_CV), ...JSON.parse(String(reader.result)) };
+      cv = deepMerge(DEFAULT_CV, JSON.parse(String(reader.result)));
       normalizePolice();
       save(); 
       renderAll();

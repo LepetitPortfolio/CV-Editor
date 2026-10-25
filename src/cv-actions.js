@@ -36,7 +36,7 @@ function addCvItem(btnId)
 // + clés multi-lignes (valeur splittée sur les retours à la ligne).
 const LIST_TARGETS =
 {
-  otherlinks:          { get: () => cv.otherlinks },
+  otherlinks:         { get: () => cv.otherlinks },
   exp:                { get: () => cv.experiences,       multiline: ["missions"] },
   edu:                { get: () => cv.formations },
   comp:               { get: () => cv.competences },
@@ -88,9 +88,7 @@ function writeListItem(t, value)
     const target = LIST_TARGETS[attr];
     const item = target.get()[+index];
     const key = t.dataset.key;
-    item[key] = target.multiline && target.multiline.includes(key)
-      ? value.split("\n")
-      : value;
+    item[key] = target.multiline && target.multiline.includes(key) ? value.split("\n") : value;
     return true;
   }
   return false;
