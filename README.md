@@ -4,6 +4,8 @@
 
 > 🎯 **100 % local &amp; privé** : aucune donnée ne quitte votre machine. Pas de backend, pas de compte, pas de tracking. Fonctionne par simple double-clic (`file://`).
 
+> 🌐 **Version en ligne** : [simon.lepetit.free.fr/CV\_Editor](http://simon.lepetit.free.fr/CV_Editor/) — même code, hébergé chez Free. Le dépôt GitHub reste la version de référence.
+
 ---
 
 ## ✨ Fonctionnalités
@@ -18,7 +20,7 @@
 
 ### Templates &amp; personnalisation
 
-- **Système de templates** — liste déroulante de 6 modèles : **« Classique sobre »** (mono-colonne ATS) et **« Moderne »** (bandeau coloré, sections à barre latérale, compétences à intitulé gras) sont implémentés ; les 4 autres (« Timeline minimaliste », « Élégant serif », « Suisse grandes majuscules », « Compétences en tête ») retombent proprement sur le Classique en attendant leur implémentation
+- **Système de templates** — liste déroulante de 6 modèles : **« Classique sobre »** (mono-colonne ATS), **« Moderne »** (bandeau coloré, sections à barre latérale) et **« Minimaliste »** (CV épuré, titres soulignés d'un filet, puces colorées, filet pleine largeur en tête) sont implémentés ; les 3 autres (« Élégant serif », « Suisse grandes majuscules », « Compétences en tête ») retombent proprement sur le Classique en attendant leur implémentation
 - **Convention de couleurs** — 3 couleurs de customisation au rôle identique dans tous les templates :
   
   | Couleur             | Rôle                                                                 |
@@ -45,16 +47,18 @@
 
 Aucune installation nécessaire :
 
-1. Cloner le dépôt (ou télécharger les fichiers) :
-  ```bash
-   git clone https://github.com/LepetitPortfolio/CV-Editor.git
-  ```
-2. Ouvrir `src/index.html` dans un navigateur (double-clic suffit).
-3. Éditer votre CV — tout est sauvegardé automatiquement.
-4. Exporter :
-  - **🖨 Exporter PDF (ATS)** → dans la boîte de dialogue, choisir **« Enregistrer au format PDF »** ;
-  - **⬇ Export JSON** → télécharge `mes-donnees-cv.json` ;
-  - **⬆ Import JSON** → restaure un CV précédemment exporté.
+- **En ligne** : ouvrez directement [la version hébergée](http://simon.lepetit.free.fr/CV_Editor/).
+- **En local** :
+  1. Cloner le dépôt (ou télécharger les fichiers) :
+    ```bash
+     git clone https://github.com/LepetitPortfolio/CV-Editor.git
+    ```
+  2. Ouvrir `src/index.html` dans un navigateur (double-clic suffit).
+  3. Éditer votre CV — tout est sauvegardé automatiquement.
+  4. Exporter :
+    - **🖨 Exporter PDF (ATS)** → dans la boîte de dialogue, choisir **« Enregistrer au format PDF »** ;
+    - **⬇ Export JSON** → télécharge `mes-donnees-cv.json` ;
+    - **⬆ Import JSON** → restaure un CV précédemment exporté.
 
 ## 🗂 Structure du projet
 
@@ -99,7 +103,7 @@ flowchart LR
 
 - **Table d'association (plugin pattern)** : `TAB_RENDERERS` (onglet → sous-fonction de rendu), `ADD_ACTIONS` / `REMOVE_ACTIONS` (bouton → action sur le JSON), `CV_TEMPLATES` / `CV_FONTS` (listes de configuration). Ajouter un type d'élément, un onglet ou un template = quelques lignes, sans toucher aux cascades.
 - **Séparation des responsabilités** : `cv-actions.js` manipule le JSON sans connaître le DOM ; `cv-events.js` attache les listeners et orchestre `save()` + rendus ; les modules de rendu produisent du HTML pur.
-- **Système de templates** : `renderPreview()` pose d'abord la **convention de couleurs commune** (variables CSS sur `#cv-preview`), puis route vers une sous-fonction par template (`PreviewClassiqueCV` n°0, `PreviewModerneCV` n°1) via un `switch`, avec repli sur le Classique pour les templates non implémentés.
+- **Système de templates** : `renderPreview()` pose d'abord la **convention de couleurs commune** (variables CSS sur `#cv-preview`) et réinitialise les habillages des templates (ex. filet `border-top` du Minimaliste), puis route vers une sous-fonction par template (`PreviewClassiqueCV` n°0, `PreviewModerneCV` n°1, `PreviewMinimalisteCV` n°2) via un `switch`, avec repli sur le Classique pour les templates non implémentés.
 - **Deux systèmes de couleurs étanches** : l'interface utilise `--editor-accent` (et déclinaisons), le CV utilise exclusivement `--cv-principale` / `--cv-secondaire` / `--cv-tertiaire` / `--cv-ink` — changer les couleurs du CV n'affecte jamais l'éditeur, et réciproquement.
 
 ### Points techniques notables
@@ -148,7 +152,7 @@ Aucune dépendance externe, aucun outil de build.
 
 ## ⚠️ Limitations &amp; problèmes connus
 
-- **Templates 2 à 5 non implémentés** : le rendu retombe sur le template Classique (le choix reste mémorisé dans le JSON et visible dans le select).
+- **Templates 3 à 5 non implémentés** : le rendu retombe sur le template Classique (le choix reste mémorisé dans le JSON et visible dans le select).
 - **Variable `accent` résiduelle (JS)** : `cv-model.js` déclare toujours `let accent = cv.customisation.accent || "#000000"` (clé inexistante → toujours `#000000`) et `cv-events.js` conserve un bloc de clic `.swatch` sans effet — les pastilles n'existent plus dans l'UI ni dans le CSS. Code mort à supprimer des deux fichiers.
 - **Bandeau du Moderne dans les marges** : le bandeau coloré s'arrête aux limites de `.cv-page` (padding blanc autour) — choix volontaire pour rester propre à l'impression, mais un bandeau pleine largeur demanderait des marges négatives.
 - **Libellé du slider** : la valeur affichée (« N px ») est correcte à l'ouverture de l'onglet mais ne se rafraîchit pas en direct pendant le glissement.
@@ -158,13 +162,16 @@ Aucune dépendance externe, aucun outil de build.
 
 ## 🗺 Améliorations possibles
 
-- Implémenter les templates 2 à 5 (le routage par `switch` et la convention couleurs sont déjà en place)
+- Implémenter les templates 3 à 5 (le routage par `switch` et la convention couleurs sont déjà en place)
 - Supprimer la variable `accent` et le bloc `.swatch` restants (fin de ménage)
 - Rafraîchir en direct le libellé « N px » pendant le glissement du slider
 - Choix de l'ordre des sections et masquage de sections optionnelles
 - Fusion profonde (deep merge) lors de l'import JSON partiel + validation de la forme (rejeter tableaux/null)
 - Migration progressive vers les modules ES si un jour un serveur local ne fait pas peur (le découpage actuel est déjà « module-ready »)
 
+## 🔗 Liens
+
+- 🌐 **Version en ligne** : [simon.lepetit.free.fr/CV\_Editor](http://simon.lepetit.free.fr/CV_Editor/)
 ---
 
 *Made with vanilla HTML/CSS/JS — no framework was harmed in the making of this tool.*
