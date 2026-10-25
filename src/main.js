@@ -2,7 +2,6 @@
 
 // ============================================================
 // main.js — Initialisation globale (chargé en dernier)
-// Dépend de : accent (cv-model.js)
+// Le premier rendu est déclenché par index.html :
+//   document.addEventListener("DOMContentLoaded", () => renderAll());
 // ============================================================
-document.documentElement.style.setProperty("--accent", accent);
-document.querySelector(".swatch")?.classList.add("active");

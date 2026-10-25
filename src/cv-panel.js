@@ -6,14 +6,14 @@
 //          renderJdResults, renderAll
 // Dépend de : cv, jd, currentTab, CV_FONTS ($, esc, extractKeywords)
 // ============================================================
-function field(label, path, value, opts = {}) 
+function field(label, path, value, opts = {})
 {
   const id = "f-" + path;
   const tag = opts.textarea ? "textarea" : "input";
   return `<div class="field">
     <label for="${id}">${label}</label>
-    <${tag} id="${id}" data-path="${path}" ${opts.textarea ? `rows="${opts.rows || 3}"` : ""}>${opts.textarea ? esc(value) : ""}</${tag}">
-  </div>`.replace(`<${tag} id`, opts.textarea ? `<${tag} id` : `<${tag} id`) ;
+    <${tag} id="${id}" data-path="${path}" ${opts.textarea ? `rows="${opts.rows || 3}"` : ""}>${opts.textarea ? esc(value) : ""}</${tag}>
+  </div>`;
 }
 
 // ------------------------------------------------------------
@@ -132,6 +132,9 @@ function renderAutresInformationsTab()
 function renderCustomisationTab()
 {
   const c = cv;
+  // FIX : la valeur du slider était codée en dur (12) et revenait à 12
+  // après rechargement même si une autre taille était sauvegardée.
+  const taille = parseFloat(c.customisation.taille) || 12;
   return `
       <div class="field">
         <label>Template :</label>
@@ -146,8 +149,8 @@ function renderCustomisationTab()
         </select>
       </div>
       <div class="field">
-        <label>Taille <span class="range-val" id="taille-val">12 px</span></label>
-        <input type="range" min="2" max="50" step="1" data-bind="customisation.taille" value="12">
+        <label>Taille <span class="range-val" id="taille-val">${taille} px</span></label>
+        <input type="range" min="2" max="50" step="1" data-bind="customisation.taille" value="${taille}">
       </div>
       <div class="field">
         <label>Couleur Principale</label>
@@ -160,7 +163,7 @@ function renderCustomisationTab()
         <label>Couleur Tertiaire</label>
         <input type="color" data-bind="customisation.couleurtertiaire" value="${esc(c.customisation.couleurtertiaire)}">
       </div>`;
-      
+
 }
 
 function renderPosteTab()
@@ -208,7 +211,7 @@ function renderPanel()
   renderPreview();
 }
 
-function renderJdResults() 
+function renderJdResults()
 {
   const box = $("#jd-results");
   if (!box) return;
@@ -218,18 +221,18 @@ function renderJdResults()
   const cvText = JSON.stringify(cv).toLowerCase();
   const missing = keywords.filter((k) => !cvText.includes(k.word));
 
-  const chips = keywords.map((k) => 
+  const chips = keywords.map((k) =>
   {
     const ok = cvText.includes(k.word);
     return `<span class="kw ${ok ? "ok" : "miss"}">${esc(k.word)} ${ok ? "✓" : "✗"} (${k.count})</span>`;
   }).join("");
 
   let alertHtml = "";
-  if (missing.length > 0) 
+  if (missing.length > 0)
   {
     alertHtml = `<div class="alert warn"><strong>⚠ ${missing.length} mot(s)-clé absent(s) de votre CV :</strong> ${missing.map((k) => esc(k.word)).join(", ")}.<br>Vérifiez s'ils méritent d'être ajoutés à vos compétences ou missions.</div>`;
-  } 
-  else if (keywords.length > 0) 
+  }
+  else if (keywords.length > 0)
   {
     alertHtml = `<div class="alert good">✅ Tous les mots-clés principaux de l'offre figurent dans votre CV.</div>`;
   }
@@ -243,8 +246,8 @@ function renderJdResults()
 }
 
 // Rendu global (panneau + aperçu)
-function renderAll() 
-{ 
-  renderPanel(); 
-  renderPreview(); 
+function renderAll()
+{
+  renderPanel();
+  renderPreview();
 }

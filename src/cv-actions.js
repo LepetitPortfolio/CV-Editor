@@ -3,7 +3,7 @@
 // ============================================================
 // cv-actions.js — Actions sur les données du CV (JSON)
 // Expose : addCvItem, updateCvField, removeCvItem
-// Dépend de : cv, jd, accent (renderJdResults de cv-panel.js)
+// Dépend de : cv, jd (renderJdResults de cv-panel.js)
 // ============================================================
 
 // AJOUT — crée un nouvel élément dans le JSON du CV
@@ -38,66 +38,52 @@ function updateCvField(t)
 
   if (t.dataset.bind)
   {
-    if (t.dataset.bind.startsWith("customisation."))
-    {
-      const key = t.dataset.bind.split(".")[1];
-      cv.customisation[key] = t.value;
+    const bind = t.dataset.bind;
 
-      switch (key)
-      {
-        case "Template":
-          document.body.dataset.template = t.value;
-          break;
-        case "police":
-          document.body.style.setProperty("--font-family", t.value);
-          break;
-        case "taille":
-          document.body.style.setProperty("--font-size", t.value + "px");
-          break;
-        case "CouleurPrincipale":
-          document.body.style.setProperty("--couleur-principale", t.value);
-          break;
-        case "CouleurSecondaire":
-          document.body.style.setProperty("--couleur-secondaire", t.value);
-          break;
-        case "Couleurtertiaire":
-          document.body.style.setProperty("--couleur-tertiaire", t.value);
-          break;
-      }
-    }
-    if (t.dataset.bind.startsWith("adresse."))
+    // IMPORTANT : chaînage else if — un data-bind doit écrire dans UNE seule
+    // cible. Auparavant, "customisation.*" retombait ensuite dans le else
+    // final, ce qui créait une clé parasite "customisation.police" à la
+    // racine du JSON (double écriture).
+    if (bind.startsWith("customisation."))
     {
-      const key = t.dataset.bind.split(".")[1];
+      const key = bind.split(".")[1];
+      cv.customisation[key] = t.value;
+      // Rien d'autre à faire ici : renderPreview() (cv-preview.js) lit
+      // cv.customisation et applique les variables CSS (--cv-ink,
+      // --cv-size, --cv-font...) sur #cv-preview. Les anciens
+      // setProperty sur body (cases "CouleurPrincipale" etc.) étaient
+      // des cases mortes : jamais déclenchées (majuscules) et jamais
+      // lues par le CSS.
+    }
+    else if (bind.startsWith("adresse."))
+    {
+      const key = bind.split(".")[1];
       cv.adresse[key] = t.value;
     }
     else
     {
-      cv[t.dataset.bind] = t.value;
+      cv[bind] = t.value;
     }
   }
-  else if (t.dataset.otherlinks !== undefined) 
+  else if (t.dataset.otherlinks !== undefined)
   {
     cv.otherlinks[+t.dataset.otherlinks][t.dataset.key] = t.value;
   }
-  else if (t.dataset.bindComp) 
-  {
-    cv.competences[t.dataset.bindComp] = t.value;
-  } 
-  else if (t.dataset.exp !== undefined && t.dataset.key) 
+  else if (t.dataset.exp !== undefined && t.dataset.key)
   {
     const i = +t.dataset.exp;
     const key = t.dataset.key;
     cv.experiences[i][key] = key === "missions" ? t.value.split("\n") : t.value;
-  } 
-  else if (t.dataset.edu !== undefined && t.dataset.key) 
+  }
+  else if (t.dataset.edu !== undefined && t.dataset.key)
   {
     cv.formations[+t.dataset.edu][t.dataset.key] = t.value;
   }
-  else if (t.dataset.comp !== undefined) 
+  else if (t.dataset.comp !== undefined)
   {
     cv.competences[+t.dataset.comp][t.dataset.key] = t.value;
   }
-  else if (t.dataset.softskill !== undefined) 
+  else if (t.dataset.softskill !== undefined)
   {
     cv.softskill[+t.dataset.softskill][t.dataset.key] = t.value;
   }

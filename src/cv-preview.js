@@ -5,7 +5,7 @@
 // Expose : renderPreview
 // Dépend de : cv ($, esc de cv-utils.js)
 // ============================================================
-function renderPreview() 
+function renderPreview()
 {
   const c = cv;
 
@@ -13,18 +13,17 @@ function renderPreview()
 
   const template = c.customisation?.Template || 0;
 
-  switch (parseInt(template)) 
+  switch (parseInt(template))
   {
     case 0:
       PreviewClassiqueCV(c);
       break;
 
     default:
-      $("#cv-preview").innerHTML = `
-        <div class="cv-header"> 
-          <h1>"Template non implémenté ou inconnu"</h1>
-        </div>
-      `;
+      // Templates 1 à 5 pas encore implémentés : on évite une page vide
+      // ou cassée en revenant au template Classique (le select garde
+      // le choix de l'utilisateur, la valeur est mémorisée dans le JSON).
+      PreviewClassiqueCV(c);
       break;
   }
     // Ajouter d'autres cas pour les autres templates
@@ -44,15 +43,24 @@ function PreviewClassiqueCV(_CV)
                     <div class="cv-contact">${esc(_CV.adresse.codePostal)+" " || ""}${esc(_CV.adresse.ville)+" " || ""} ${esc(_CV.adresse.pays)+" " || ""}</div>
                     <div class="cv-contact"><strong>Tel : </strong>${esc(_CV.tel) || "06 ..."}</div>
                     <div class="cv-contact"><strong>Mail : </strong>${esc(_CV.email) || "mail@example.com"}</div>`
-  
-  const links = _CV.otherlinks.map((l) => `<div class="cv-Link-line"><strong>${esc(l.libelle)} : </strong><a href="${esc(l.url)}" target="_blank">${esc(l.url)}</a>`).join(" · ");
-  
+
+  // Liens : en <span> (inline) pour que les séparateurs "·" s'affichent
+  // correctement ; les liens entièrement vides sont ignorés.
+  const links = _CV.otherlinks
+    .filter((l) => (l.libelle || "").trim() || (l.url || "").trim())
+    .map((l) => `<span class="cv-Link-line"><strong>${esc(l.libelle)} : </strong><a href="${esc(l.url)}" target="_blank">${esc(l.url)}</a></span>`)
+    .join(" · ");
+
   const skills = _CV.competences.map((s) => `<div class="cv-skill-line"><strong>${esc(s.intitule)} : </strong>${esc(s.valeur)}</div>`).join("");
 
-  const softsk = _CV.softskill.map((s) => `
+  // Soft-skills : un élément vide ne s'affiche plus du tout ;
+  // si un seul des deux champs est rempli, pas de " : " orphelin.
+  const softsk = _CV.softskill
+    .filter((s) => (s.libelle || "").trim() || (s.desc || "").trim())
+    .map((s) => `
     <div class="cv-job">
       <div class="cv-job-head">
-        <div class="cv-SoftSkill-libelle"><strong>${esc(s.libelle) || "Libellé"} : </strong>${esc(s.desc)|| "Description"}</div>
+        <div class="cv-SoftSkill-libelle"><strong>${esc(s.libelle)}${s.libelle && s.desc ? " : " : ""}</strong>${esc(s.desc)}</div>
       </div>
     </div>`).join("");
 
@@ -82,7 +90,7 @@ function PreviewClassiqueCV(_CV)
       <h1>${esc(_CV.nom) || "Votre nom"}</h1>
       <div class="cv-title">${esc(_CV.titre) || "Votre titre"}</div>
       <div class="cv-contact">${contacts}</div>
-      <div class="cv-contact">${links}</div>
+      ${links ? `<div class="cv-contact">${links}</div>` : ""}
     </div>
     ${_CV.accroche ? `<div class="cv-section-title">Profil</div><div class="cv-accroche">${esc(_CV.accroche)}</div>` : ""}
     ${skills ? `<div class="cv-section-title">Compétences</div>${skills}` : ""}
