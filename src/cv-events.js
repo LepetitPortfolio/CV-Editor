@@ -28,13 +28,6 @@ document.addEventListener("click", (e) =>
     switchTab(t.dataset.tab);
     return;
   }
-  if (t.classList.contains("swatch"))
-  {
-    accent = t.dataset.accent;
-    document.documentElement.style.setProperty("--accent", accent);
-    document.querySelectorAll(".swatch").forEach((s) => s.classList.toggle("active", s === t));
-    return;
-  }
 
   // Ajout de données
   if (t.id && t.id.startsWith("btn-add-"))

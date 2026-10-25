@@ -3,7 +3,7 @@
 // ============================================================
 // cv-model.js — Modèle de données & état global
 // Expose : STORAGE_KEY, DEFAULT_CV, CV_FONTS, save(),
-//          cv, jd, currentTab, accent
+//          cv, jd, currentTab
 // ============================================================
 const STORAGE_KEY = "cv-editor-standalone-v1";
 
@@ -90,7 +90,6 @@ catch { cv = structuredClone(DEFAULT_CV); }
 
 let jd = "";            // job description collée
 let currentTab = "profil";
-let accent = cv.customisation.accent || "#000000";
 
 // Persistance de l'état courant
 function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(cv)); }
