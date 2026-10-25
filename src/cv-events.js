@@ -85,7 +85,9 @@ $("#file-input").addEventListener("change", (e) =>
     try 
     {
       cv = { ...structuredClone(DEFAULT_CV), ...JSON.parse(String(reader.result)) };
-      save(); renderAll();
+      normalizePolice();
+      save(); 
+      renderAll();
     } 
     catch { alert("Fichier JSON invalide"); }
   };

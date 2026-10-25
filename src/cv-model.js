@@ -49,8 +49,8 @@ const DEFAULT_CV =
   customisation :
   {
     Template : 0,
-    police : "Arial, sans-serif",
-    taille : "12pt",
+    police : 0,
+    taille : 12,
     couleurprincipale : "#000000",
     couleursecondaire : "#000000",
     couleurtertiaire : "#000000"
@@ -94,3 +94,29 @@ let accent = cv.customisation.accent || "#000000";
 
 // Persistance de l'état courant
 function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(cv)); }
+
+// Normalise customisation.police vers un index valide de CV_FONTS.
+// Migration : les anciennes données stockaient le stack CSS complet
+// (ex. "Arial, Helvetica, sans-serif") ou "12pt" par accident.
+function normalizePolice()
+{
+  const p = cv.customisation?.police;
+  const i = parseInt(p, 10);
+  if (String(p) === String(i) && i >= 0 && i < CV_FONTS.length)
+  {
+    cv.customisation.police = i;
+    return;
+  }
+  // Ancien format : on retrouve l'index par le stack
+  const idx = CV_FONTS.findIndex((f) => f.stack === p || f.label === p);
+  cv.customisation.police = idx >= 0 ? idx : 0;
+}
+
+// Renvoie le stack CSS correspondant à l'index police du CV.
+function cvFontStack()
+{
+  const i = cv.customisation?.police;
+  return CV_FONTS[i]?.stack || CV_FONTS[0].stack;
+}
+
+normalizePolice(); // appelé à chaque chargement (localStorage ou défaut)

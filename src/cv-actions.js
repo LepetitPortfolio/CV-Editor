@@ -47,13 +47,8 @@ function updateCvField(t)
     if (bind.startsWith("customisation."))
     {
       const key = bind.split(".")[1];
-      cv.customisation[key] = t.value;
-      // Rien d'autre à faire ici : renderPreview() (cv-preview.js) lit
-      // cv.customisation et applique les variables CSS (--cv-ink,
-      // --cv-size, --cv-font...) sur #cv-preview. Les anciens
-      // setProperty sur body (cases "CouleurPrincipale" etc.) étaient
-      // des cases mortes : jamais déclenchées (majuscules) et jamais
-      // lues par le CSS.
+      const numericKeys = ["Template", "police"];
+      cv.customisation[key] = numericKeys.includes(key) ? parseInt(t.value, 10) : t.value;
     }
     else if (bind.startsWith("adresse."))
     {

@@ -145,7 +145,7 @@ function renderCustomisationTab()
       <div class="field">
         <label>Police</label>
         <select data-bind="customisation.police">
-        ${CV_FONTS.map((f) => `<option value="${esc(f.stack)}" ${parseInt(c.customisation.police) === parseInt(f.stack) ? "selected" : ""}>${esc(f.label)}</option>`).join("")}
+        ${CV_FONTS.map((f, idx) => `<option value="${idx}" ${parseInt(c.customisation.police) === idx ? "selected" : ""}>${esc(f.label)}</option>`).join("")}
         </select>
       </div>
       <div class="field">

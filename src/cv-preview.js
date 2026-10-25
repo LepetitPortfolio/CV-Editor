@@ -16,7 +16,7 @@ function renderPreview()
   page.style.setProperty("--cv-tertiaire",  c.customisation?.couleurtertiaire  || "#000000");
   page.style.setProperty("--cv-ink", c.customisation?.couleurtertiaire || "#000000");
   page.style.setProperty("--cv-size", (parseFloat(c.customisation?.taille) || 12) + "px");
-  page.style.setProperty("--cv-font", c.customisation?.police || "Arial, Helvetica, sans-serif");
+  page.style.setProperty("--cv-font", cvFontStack());
 
   page.classList.remove("tpl-minimaliste", "tpl-serif");
 
@@ -211,7 +211,7 @@ function PreviewMinimalisteCV(_CV)
   page.classList.add("tpl-minimaliste");
 
   // Police par défaut propre à ce template (surchargeable via le select)
-  page.style.setProperty("--cv-font", _CV.customisation?.police || '"Helvetica Neue", Arial, sans-serif');
+  //page.style.setProperty("--cv-font", _CV.customisation?.police || '"Helvetica Neue", Arial, sans-serif');
 
   const adr = _CV.adresse;
   const adrLines = [adr.ligne1, adr.ligne2, [adr.codePostal, adr.ville, adr.pays].filter(Boolean).join(" ")]
@@ -287,7 +287,7 @@ function PreviewElegantSerifCV(_CV)
   page.classList.add("tpl-serif");
 
   // Police par défaut propre à ce template (surchargeable via le select)
-  page.style.setProperty("--cv-font", _CV.customisation?.police || '"Palatino Linotype", Palatino, Georgia, serif');
+  //page.style.setProperty("--cv-font", _CV.customisation?.police || '"Palatino Linotype", Palatino, Georgia, serif');
 
   const adr = _CV.adresse;
   const adrLines = [adr.ligne1, adr.ligne2, [adr.codePostal, adr.ville, adr.pays].filter(Boolean).join(" ")]
@@ -359,7 +359,7 @@ function PreviewSuisseCV(_CV)
   const page = $("#cv-preview");
 
   // Police par défaut propre à ce template (surchargeable via le select)
-  page.style.setProperty("--cv-font", _CV.customisation?.police || '"Helvetica Neue", Arial, sans-serif');
+  //page.style.setProperty("--cv-font", _CV.customisation?.police || '"Helvetica Neue", Arial, sans-serif');
 
   const adr = _CV.adresse;
   const adrLines = [adr.ligne1, adr.ligne2, [adr.codePostal, adr.ville, adr.pays].filter(Boolean).join(" ")]
@@ -433,7 +433,7 @@ function PreviewCompetencesCV(_CV)
   const page = $("#cv-preview");
 
   // Police par défaut propre à ce template (surchargeable via le select)
-  page.style.setProperty("--cv-font", _CV.customisation?.police || '"Segoe UI", Calibri, sans-serif');
+  //page.style.setProperty("--cv-font", _CV.customisation?.police || '"Segoe UI", Calibri, sans-serif');
 
   const adr = _CV.adresse;
   const adrLines = [adr.ligne1, adr.ligne2, [adr.codePostal, adr.ville, adr.pays].filter(Boolean).join(" ")]
