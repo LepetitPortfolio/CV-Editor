@@ -276,4 +276,48 @@ body.dark .exp-card .remove:hover { color: #f87171; }
 #cv-preview .mn-skills { font-size: calc(var(--cv-size, 12px) * 1.1); line-height: 1.7; margin: 3px 0; }
 #cv-preview .mn-skills b { color: var(--cv-secondaire, #0f766e); display: inline-block; min-width: 100px; }
 
+/* ============================================================
+   12. TEMPLATE 3 « Élégant serif » — classes es-*
+   Rôles (convention commune) : h1/h3 = --cv-principale,
+   accents (rôle, titres centrés, puces, intitulés, filets du
+   bloc contact) = --cv-secondaire, texte commun = --cv-ink.
+   Le cadre beige de la page est posé en JS sur #cv-preview
+   (page.style.border/background) — réinitialisé par
+   renderPreview() avant le switch.
+   ============================================================ */
+
+/* Nom + rôle + contact encadré */
+#cv-preview .es-h1 { font-size: calc(var(--cv-size, 12px) * 2.5); margin: 0; font-weight: 700; letter-spacing: .5px; text-transform: none; color: var(--cv-principale, #26221c); }
+#cv-preview .es-role { font-size: calc(var(--cv-size, 12px) * 1.25); text-transform: uppercase; letter-spacing: 4px; color: var(--cv-secondaire, #8a6d3b); margin: 4px 0 14px; }
+#cv-preview .es-contact { font-size: calc(var(--cv-size, 12px) * 1.1); color: var(--cv-ink, #4a4436); line-height: 1.7; border-top: 1px solid var(--cv-secondaire, #b5a880); border-bottom: 1px solid var(--cv-secondaire, #b5a880); padding: 10px 0; margin-bottom: 8px; }
+#cv-preview .es-contact a { color: inherit; text-decoration: none; }
+
+/* Titres de section centrés, flanqués de tirets */
+#cv-preview .es-h2 { font-size: calc(var(--cv-size, 12px) * 1.15); text-transform: uppercase; letter-spacing: 3px; color: var(--cv-secondaire, #8a6d3b); margin: 28px 0 10px; font-weight: 700; text-align: center; }
+#cv-preview .es-h2::before, #cv-preview .es-h2::after { content: "—"; color: var(--cv-secondaire, #b5a880); margin: 0 10px; font-weight: 400; }
+
+/* Expériences / formations */
+#cv-preview .es-h3 { font-size: calc(var(--cv-size, 12px) * 1.3); margin: 18px 0 1px; font-weight: 700; color: var(--cv-principale, #26221c); }
+#cv-preview .es-job-meta { font-size: calc(var(--cv-size, 12px) * 1.05); color: var(--cv-ink, #6d6552); font-style: italic; margin: 0 0 6px; }
+
+/* Textes et listes (puces dorées) */
+#cv-preview .es-p, #cv-preview .es-ul li { font-size: calc(var(--cv-size, 12px) * 1.12); line-height: 1.55; }
+#cv-preview .es-ul { margin: 6px 0 0; padding-left: 22px; }
+#cv-preview .es-ul li::marker { color: var(--cv-secondaire, #8a6d3b); }
+
+/* Compétences : intitulé en gras aligné */
+#cv-preview .es-skills { font-size: calc(var(--cv-size, 12px) * 1.12); line-height: 1.8; margin: 4px 0; }
+#cv-preview .es-skills b { color: var(--cv-secondaire, #8a6d3b); display: inline-block; min-width: 105px; }
+
+/* --- Habillages de page posés par les templates (via classes tpl-*) ---
+   Ajoutés/retirés par renderPreview() : un template qui change
+   l'habillage de la page (#cv-preview) le fait par classe, pour que
+   le CSS reste maître du rendu (notamment à l'impression). */
+#cv-preview.tpl-minimaliste { border-top: 6px solid var(--cv-secondaire, #0f766e); }
+#cv-preview.tpl-serif { border: 1px solid #d9d2c2; background: #fffdf8; }
+
+/* À l'impression : le cadre beige du serif disparaît (comme la
+   maquette), le filet du Minimaliste est conservé. */
+@media print { #cv-preview.tpl-serif { border: none; } }
+
 #site-footer { font-size: 11px; text-align: center; color: #94a3b8; padding: 12px 0; }

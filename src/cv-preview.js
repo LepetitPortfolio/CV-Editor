@@ -31,6 +31,9 @@ function renderPreview()
     case 2:
       PreviewMinimalisteCV(c);
       break;
+    case 3:
+      PreviewElegantSerifCV(c);
+      break;
 
     default:
       // Templates 1 à 5 pas encore implémentés : on évite une page vide
@@ -197,7 +200,7 @@ function PreviewMinimalisteCV(_CV)
   // Filet supérieur pleine largeur : posé sur la page elle-même pour
   // déborder du padding. renderPreview() le remet à zéro avant le
   // switch (voir point 2) — les autres templates n'en veulent pas.
-  page.style.borderTop = "6px solid var(--cv-secondaire, #0f766e)";
+  page.classList.add("tpl-minimaliste");
 
   // Police par défaut propre à ce template (surchargeable via le select)
   page.style.setProperty("--cv-font", _CV.customisation?.police || '"Helvetica Neue", Arial, sans-serif');
@@ -257,6 +260,82 @@ function PreviewMinimalisteCV(_CV)
     ${skills ? `<h2 class="mn-h2">Compétences</h2>${skills}` : ""}
     ${softsk ? `<h2 class="mn-h2">Compétences transversales</h2>${softsk}` : ""}
     ${formations ? `<h2 class="mn-h2">Formation</h2>${formations}` : ""}
+    ${autres}
+  `;
+}
+
+// ------------------------------------------------------------
+// TEMPLATE 3 — « Élégant serif » : sérif, titres de section
+// centrés flanqués de tirets, contact encadré de filets, cadre
+// beige autour de la page (classe tpl-serif).
+// Couleurs : h1/h3 = --cv-principale, accents = --cv-secondaire,
+// texte = --cv-ink (convention commune à tous les templates).
+// ------------------------------------------------------------
+function PreviewElegantSerifCV(_CV)
+{
+  const page = $("#cv-preview");
+
+  // Habillage de page (classe, retirée par renderPreview() avant le switch)
+  page.classList.add("tpl-serif");
+
+  // Police par défaut propre à ce template (surchargeable via le select)
+  page.style.setProperty("--cv-font", _CV.customisation?.police || '"Palatino Linotype", Palatino, Georgia, serif');
+
+  const adr = _CV.adresse;
+  const adrLines = [adr.ligne1, adr.ligne2, [adr.codePostal, adr.ville, adr.pays].filter(Boolean).join(" ")]
+    .map((s) => (s || "").trim()).filter(Boolean);
+
+  // Liens (Portfolio, LinkedIn, GitHub...) — inline, séparés par « · »
+  const links = _CV.otherlinks
+    .filter((l) => (l.libelle || "").trim() || (l.url || "").trim())
+    .map((l) => `<a href="${esc(l.url)}" target="_blank">${esc(l.libelle)} : ${esc(l.url)}</a>`)
+    .join(" · ");
+
+  const contactLines = [
+    adrLines.join(" — "),
+    [esc(_CV.tel), esc(_CV.email)].filter(Boolean).join(" — "),
+    links
+  ].filter(Boolean);
+
+  // Expériences : « Poste — Entreprise » + dates · lieu (en italique)
+  const exps = _CV.experiences.map((e) => `
+    <h3 class="es-h3">${esc(e.poste) || "Poste"}${e.entreprise ? " — " + esc(e.entreprise) : ""}</h3>
+    <p class="es-job-meta">${esc(e.debut)}${e.fin ? " – " + esc(e.fin) : " – aujourd'hui"}${e.lieu ? " · " + esc(e.lieu) : ""}</p>
+    ${e.missions.filter(Boolean).length ? `<ul class="es-ul">${e.missions.filter(Boolean).map((m) => `<li>${esc(m)}</li>`).join("")}</ul>` : ""}
+  `).join("");
+
+  // Compétences : intitulé en gras aligné (comme la maquette)
+  const skills = _CV.competences
+    .filter((s) => (s.intitule || "").trim() || (s.valeur || "").trim())
+    .map((s) => `<p class="es-skills"><b>${esc(s.intitule)} :</b> ${esc(s.valeur)}</p>`)
+    .join("");
+
+  // Soft-skills (affichés seulement si remplis)
+  const softsk = _CV.softskill
+    .filter((s) => (s.libelle || "").trim() || (s.desc || "").trim())
+    .map((s) => `<p class="es-skills"><b>${esc(s.libelle)} :</b> ${esc(s.desc)}</p>`)
+    .join("");
+
+  const formations = _CV.formations.map((f) => `
+    <h3 class="es-h3">${esc(f.intitule)}${f.lieu ? " — " + esc(f.lieu) : ""}</h3>
+    <p class="es-job-meta">${esc(f.annee)}</p>
+  `).join("");
+
+  // Sections libres (« Centres d'intérêt », etc.)
+  const autres = _CV.autresinformations.map((ai) => `
+    ${ai.libelle ? `<h2 class="es-h2">${esc(ai.libelle)}</h2>` : ""}
+    ${ai.informations.filter(Boolean).length ? `<p class="es-p">${ai.informations.filter(Boolean).map((i) => esc(i)).join(" · ")}</p>` : ""}
+  `).join("");
+
+  page.innerHTML = `
+    <h1 class="es-h1">${esc(_CV.nom) || "Votre nom"}</h1>
+    <p class="es-role">${esc(_CV.titre) || "Votre titre"}</p>
+    <p class="es-contact">${contactLines.join("<br>")}</p>
+    ${_CV.accroche?.trim() ? `<h2 class="es-h2">Profil</h2><p class="es-p">${esc(_CV.accroche)}</p>` : ""}
+    ${exps ? `<h2 class="es-h2">Expérience professionnelle</h2>${exps}` : ""}
+    ${skills ? `<h2 class="es-h2">Compétences</h2>${skills}` : ""}
+    ${softsk ? `<h2 class="es-h2">Compétences transversales</h2>${softsk}` : ""}
+    ${formations ? `<h2 class="es-h2">Formation</h2>${formations}` : ""}
     ${autres}
   `;
 }
