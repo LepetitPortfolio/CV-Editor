@@ -39,6 +39,9 @@ function renderPreview()
     case 4:
       PreviewSuisseCV(c);
       break;
+    case 5:
+      PreviewCompetencesCV(c);
+      break;
 
     default:
       // Templates 1 à 5 pas encore implémentés : on évite une page vide
@@ -413,6 +416,92 @@ function PreviewSuisseCV(_CV)
     ${skills ? `<h2 class="su-h2">Compétences</h2>${skills}` : ""}
     ${softsk ? `<h2 class="su-h2">Compétences transversales</h2>${softsk}` : ""}
     ${formations ? `<h2 class="su-h2">Formation</h2>${formations}` : ""}
+    ${autres}
+  `;
+}
+
+// ------------------------------------------------------------
+// TEMPLATE 5 — « Compétences en tête » : chips de compétences
+// clés générées depuis le champ Compétences, section Compétences
+// placée avant le Profil.
+// Couleurs : h1/h2/chips/intitulés = --cv-secondaire (h1 coloré,
+// cas unique dans les templates), h3 = --cv-principale,
+// texte = --cv-ink.
+// ------------------------------------------------------------
+function PreviewCompetencesCV(_CV)
+{
+  const page = $("#cv-preview");
+
+  // Police par défaut propre à ce template (surchargeable via le select)
+  page.style.setProperty("--cv-font", _CV.customisation?.police || '"Segoe UI", Calibri, sans-serif');
+
+  const adr = _CV.adresse;
+  const adrLines = [adr.ligne1, adr.ligne2, [adr.codePostal, adr.ville, adr.pays].filter(Boolean).join(" ")]
+    .map((s) => (s || "").trim()).filter(Boolean);
+
+  // Liens (Portfolio, LinkedIn, GitHub...) — inline, séparés par « · »
+  const links = _CV.otherlinks
+    .filter((l) => (l.libelle || "").trim() || (l.url || "").trim())
+    .map((l) => `<a href="${esc(l.url)}" target="_blank">${esc(l.libelle)} : ${esc(l.url)}</a>`)
+    .join(" · ");
+
+  const contactLines = [
+    adrLines.join(" — "),
+    [esc(_CV.tel), esc(_CV.email)].filter(Boolean).join(" — "),
+    links
+  ].filter(Boolean);
+
+  // Chips de compétences clés : découpées sur les virgules des
+  // valeurs du champ Compétences, dédoublonnées, vides ignorées.
+  const chips = Array.from(new Set(
+    _CV.competences
+      .flatMap((s) => String(s.valeur || "").split(","))
+      .map((c) => c.trim())
+      .filter(Boolean)
+  )).map((c) => `<li>${esc(c)}</li>`).join("");
+
+  // Compétences détaillées (intitulé : valeur)
+  const skills = _CV.competences
+    .filter((s) => (s.intitule || "").trim() || (s.valeur || "").trim())
+    .map((s) => `<p class="ch-skills"><b>${esc(s.intitule)} :</b> ${esc(s.valeur)}</p>`)
+    .join("");
+
+  // Soft-skills (affichés seulement si remplis)
+  const softsk = _CV.softskill
+    .filter((s) => (s.libelle || "").trim() || (s.desc || "").trim())
+    .map((s) => `<p class="ch-skills"><b>${esc(s.libelle)} :</b> ${esc(s.desc)}</p>`)
+    .join("");
+
+  // Expériences : « Poste — Entreprise » + dates · lieu
+  const exps = _CV.experiences.map((e) => `
+    <h3 class="ch-h3">${esc(e.poste) || "Poste"}${e.entreprise ? " — " + esc(e.entreprise) : ""}</h3>
+    <p class="ch-job-meta">${esc(e.debut)}${e.fin ? " – " + esc(e.fin) : " – aujourd'hui"}${e.lieu ? " · " + esc(e.lieu) : ""}</p>
+    ${e.missions.filter(Boolean).length ? `<ul class="ch-ul">${e.missions.filter(Boolean).map((m) => `<li>${esc(m)}</li>`).join("")}</ul>` : ""}
+  `).join("");
+
+  const formations = _CV.formations.map((f) => `
+    <h3 class="ch-h3">${esc(f.intitule)}${f.lieu ? " — " + esc(f.lieu) : ""}</h3>
+    <p class="ch-job-meta">${esc(f.annee)}</p>
+  `).join("");
+
+  // Sections libres (« Centres d'intérêt », etc.)
+  const autres = _CV.autresinformations.map((ai) => `
+    ${ai.libelle ? `<h2 class="ch-h2">${esc(ai.libelle)}</h2>` : ""}
+    ${ai.informations.filter(Boolean).length ? `<p class="ch-p">${ai.informations.filter(Boolean).map((i) => esc(i)).join(" · ")}</p>` : ""}
+  `).join("");
+
+  page.innerHTML = `
+    <div class="ch-head">
+      <h1 class="ch-h1">${esc(_CV.nom) || "Votre nom"}</h1>
+      <p class="ch-role">${esc(_CV.titre) || "Votre titre"}</p>
+      <p class="ch-contact">${contactLines.join("<br>")}</p>
+    </div>
+    ${chips ? `<h2 class="ch-h2">Compétences clés</h2><ul class="ch-chips">${chips}</ul>` : ""}
+    ${skills ? `${skills}` : ""}
+    ${softsk ? `<h2 class="ch-h2">Compétences transversales</h2>${softsk}` : ""}
+    ${_CV.accroche?.trim() ? `<h2 class="ch-h2">Profil</h2><p class="ch-p">${esc(_CV.accroche)}</p>` : ""}
+    ${exps ? `<h2 class="ch-h2">Expérience professionnelle</h2>${exps}` : ""}
+    ${formations ? `<h2 class="ch-h2">Formation</h2>${formations}` : ""}
     ${autres}
   `;
 }

@@ -20,7 +20,7 @@
 
 ### Templates &amp; personnalisation
 
-- **Système de templates** — liste déroulante de 6 modèles : **« Classique sobre »** (mono-colonne ATS), **« Moderne »** (bandeau coloré, sections à barre latérale) et **« Minimaliste »** (CV épuré, titres soulignés d'un filet, puces colorées, filet pleine largeur en tête) sont implémentés ; les 3 autres (« Élégant serif », « Suisse grandes majuscules », « Compétences en tête ») retombent proprement sur le Classique en attendant leur implémentation
+- **Système de templates** — liste déroulante de **6 modèles, tous implémentés** : « Classique sobre » (mono-colonne ATS), « Moderne » (bandeau coloré, sections à barre latérale), « Timeline minimaliste » (épuré, titres soulignés, filet pleine largeur), « Élégant serif » (accents dorés, titres centrés, contact encadré), « Suisse grandes majuscules » (typographie brute, badges de section pleins) et « Compétences en tête » (chips de compétences clés générées automatiquement). Une valeur inconnue retombe défensivement sur le Classique.
 - **Convention de couleurs** — 3 couleurs de customisation au rôle identique dans tous les templates :
   
   | Couleur             | Rôle                                                                 |
@@ -103,7 +103,7 @@ flowchart LR
 
 - **Table d'association (plugin pattern)** : `TAB_RENDERERS` (onglet → sous-fonction de rendu), `ADD_ACTIONS` / `REMOVE_ACTIONS` (bouton → action sur le JSON), `CV_TEMPLATES` / `CV_FONTS` (listes de configuration). Ajouter un type d'élément, un onglet ou un template = quelques lignes, sans toucher aux cascades.
 - **Séparation des responsabilités** : `cv-actions.js` manipule le JSON sans connaître le DOM ; `cv-events.js` attache les listeners et orchestre `save()` + rendus ; les modules de rendu produisent du HTML pur.
-- **Système de templates** : `renderPreview()` pose d'abord la **convention de couleurs commune** (variables CSS sur `#cv-preview`) et réinitialise les habillages des templates (ex. filet `border-top` du Minimaliste), puis route vers une sous-fonction par template (`PreviewClassiqueCV` n°0, `PreviewModerneCV` n°1, `PreviewMinimalisteCV` n°2) via un `switch`, avec repli sur le Classique pour les templates non implémentés.
+- **Système de templates** : `renderPreview()` pose d'abord la **convention de couleurs commune** (variables CSS sur `#cv-preview`), retire les habillages de page des autres templates (classes `tpl-minimaliste`, `tpl-serif`), puis route via un `switch` vers une sous-fonction par template (`PreviewClassiqueCV` n°0, `PreviewModerneCV` n°1, `PreviewMinimalisteCV` n°2, `PreviewElegantSerifCV` n°3, `PreviewSuisseCV` n°4, `PreviewCompetencesCV` n°5), avec repli défensif sur le Classique.
 - **Deux systèmes de couleurs étanches** : l'interface utilise `--editor-accent` (et déclinaisons), le CV utilise exclusivement `--cv-principale` / `--cv-secondaire` / `--cv-tertiaire` / `--cv-ink` — changer les couleurs du CV n'affecte jamais l'éditeur, et réciproquement.
 
 ### Points techniques notables
@@ -152,9 +152,12 @@ Aucune dépendance externe, aucun outil de build.
 
 ## ⚠️ Limitations &amp; problèmes connus
 
-- **Templates 3 à 5 non implémentés** : le rendu retombe sur le template Classique (le choix reste mémorisé dans le JSON et visible dans le select).
+- **Hygiène des habillages de page manquante** : les templates Minimaliste et Serif posent les classes `tpl-minimaliste` / `tpl-serif` sur `#cv-preview`, mais `renderPreview()` ne les retire pas en quittant le template → le filet teal ou le cadre beige restent visibles sur les autres templates. Fix : `page.classList.remove("tpl-minimaliste", "tpl-serif");` avant le `switch`.
+- **Footer imprimé dans le PDF** : le `@media print` masque `.app-footer` mais le footer réel est `#site-footer` — il apparaît donc à l'impression. Par ailleurs il est placé après `</body>` dans `index.html` (HTML invalide, réparé silencieusement par le navigateur).
+- **Select « Police »** : la comparaison `parseInt(police) === parseInt(f.stack)` donne `NaN === NaN` (toujours faux) → la police sauvegardée n'est jamais sélectionnée après rechargement. Fix : comparaison directe `c.customisation.police === f.stack`.
 - **Variable `accent` résiduelle (JS)** : `cv-model.js` déclare toujours `let accent = cv.customisation.accent || "#000000"` (clé inexistante → toujours `#000000`) et `cv-events.js` conserve un bloc de clic `.swatch` sans effet — les pastilles n'existent plus dans l'UI ni dans le CSS. Code mort à supprimer des deux fichiers.
 - **Bandeau du Moderne dans les marges** : le bandeau coloré s'arrête aux limites de `.cv-page` (padding blanc autour) — choix volontaire pour rester propre à l'impression, mais un bandeau pleine largeur demanderait des marges négatives.
+- **Chips du template « Compétences en tête »** : générées par découpe des valeurs du champ Compétences sur les virgules — pas de liste de chips indépendante.
 - **Libellé du slider** : la valeur affichée (« N px ») est correcte à l'ouverture de l'onglet mais ne se rafraîchit pas en direct pendant le glissement.
 - **CV multi-pages** : le `padding` du CV ne se répète pas aux sauts de page (contenu proche du bord en page 2+).
 - **Analyse de mots-clés basique** (fréquence) : pas de synonymes ni de racinisation (stemming).
@@ -162,16 +165,16 @@ Aucune dépendance externe, aucun outil de build.
 
 ## 🗺 Améliorations possibles
 
-- Implémenter les templates 3 à 5 (le routage par `switch` et la convention couleurs sont déjà en place)
-- Supprimer la variable `accent` et le bloc `.swatch` restants (fin de ménage)
-- Rafraîchir en direct le libellé « N px » pendant le glissement du slider
+- Corriger les problèmes connus ci-dessus (hygiène `tpl-*`, footer à l'impression, select Police, variable `accent`)
+- Liste de chips indépendante pour le template « Compétences en tête » (champ dédié dans le modèle)
 - Choix de l'ordre des sections et masquage de sections optionnelles
 - Fusion profonde (deep merge) lors de l'import JSON partiel + validation de la forme (rejeter tableaux/null)
 - Migration progressive vers les modules ES si un jour un serveur local ne fait pas peur (le découpage actuel est déjà « module-ready »)
 
 ## 🔗 Liens
 
-- 🌐 **Version en ligne** : [simon.lepetit.free.fr/CV\_Editor](http://simon.lepetit.free.fr/CV_Editor/)
+- 🌐 **Version en ligne** : [simon.lepetit.free.fr/CV\_Editor](http://simon.lepetit.free.fr/CV_Editor/) — même code, hébergé chez Free
+
 ---
 
 *Made with vanilla HTML/CSS/JS — no framework was harmed in the making of this tool.*
