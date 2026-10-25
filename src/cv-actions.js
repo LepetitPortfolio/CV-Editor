@@ -25,14 +25,84 @@ function addCvItem(btnId)
   return true;
 }
 
-// MODIFICATION — écrit la valeur d'un champ dans le JSON du CV
+// ============================================================
+// MODIFICATION
+// updateCvField est un simple répartiteur : il identifie la cible
+// (JD, data-bind, item de liste) puis délègue à une sous-fonction
+// qui ne connaît qu'UNE seule partie du modèle.
+// ============================================================
+
+// Cibles « items de liste » : attribut data-* -> collection du CV
+// + clés multi-lignes (valeur splittée sur les retours à la ligne).
+const LIST_TARGETS =
+{
+  otherlinks:          { get: () => cv.otherlinks },
+  exp:                { get: () => cv.experiences,       multiline: ["missions"] },
+  edu:                { get: () => cv.formations },
+  comp:               { get: () => cv.competences },
+  softskill:          { get: () => cv.softskill },
+  autresinformations: { get: () => cv.autresinformations, multiline: ["informations"] }
+};
+
+// Champs de customisation stockés en nombre (et non en string).
+const CUSTOMISATION_NUMERIC = ["Template", "police"];
+
+// --- JD (offre collée) : ne modifie pas le CV, pas de save nécessaire ---
+function updateJd(t)
+{
+  jd = t.value;
+  renderJdResults();
+}
+
+// --- Champs simples à la racine du CV (nom, titre, accroche, email, tel) ---
+function writeCvRoot(bind, value)
+{
+  cv[bind] = value;
+}
+
+// --- Onglet Personnalisation : data-bind="customisation.<clé>" ---
+function writeCustomisation(bind, value)
+{
+  const key = bind.split(".")[1];
+  cv.customisation[key] = CUSTOMISATION_NUMERIC.includes(key)
+    ? parseInt(value, 10)
+    : value;
+}
+
+// --- Onglet Profil : data-bind="adresse.<clé>" ---
+function writeAdresse(bind, value)
+{
+  const key = bind.split(".")[1];
+  cv.adresse[key] = value;
+}
+
+// --- Items de listes : data-<collection>="<index>" data-key="<clé>" ---
+// Renvoie false si aucun attribut connu n'est présent (champ non reconnu).
+function writeListItem(t, value)
+{
+  for (const attr in LIST_TARGETS)
+  {
+    const index = t.dataset[attr];
+    if (index === undefined || !t.dataset.key) continue;
+
+    const target = LIST_TARGETS[attr];
+    const item = target.get()[+index];
+    const key = t.dataset.key;
+    item[key] = target.multiline && target.multiline.includes(key)
+      ? value.split("\n")
+      : value;
+    return true;
+  }
+  return false;
+}
+
+// --- Répartiteur : renvoie true si le CV a changé (save nécessaire) ---
 function updateCvField(t)
 {
-  // Cas particulier : la JD ne modifie pas le CV (pas de save nécessaire)
+  // Cas particulier : la JD ne modifie pas le CV
   if (t.id === "jd-input")
   {
-    jd = t.value;
-    renderJdResults();
+    updateJd(t);
     return false;
   }
 
@@ -40,60 +110,25 @@ function updateCvField(t)
   {
     const bind = t.dataset.bind;
 
-    // IMPORTANT : chaînage else if — un data-bind doit écrire dans UNE seule
-    // cible. Auparavant, "customisation.*" retombait ensuite dans le else
-    // final, ce qui créait une clé parasite "customisation.police" à la
-    // racine du JSON (double écriture).
+    // IMPORTANT : un data-bind écrit dans UNE seule cible (chaînage
+    // if/return, pas de retombée) — évite la clé parasite historique
+    // "customisation.police" écrite à la racine du JSON.
     if (bind.startsWith("customisation."))
     {
-      const key = bind.split(".")[1];
-      const numericKeys = ["Template", "police"];
-      cv.customisation[key] = numericKeys.includes(key) ? parseInt(t.value, 10) : t.value;
+      writeCustomisation(bind, t.value);
+      return true;
     }
-    else if (bind.startsWith("adresse."))
+    if (bind.startsWith("adresse."))
     {
-      const key = bind.split(".")[1];
-      cv.adresse[key] = t.value;
+      writeAdresse(bind, t.value);
+      return true;
     }
-    else
-    {
-      cv[bind] = t.value;
-    }
-  }
-  else if (t.dataset.otherlinks !== undefined)
-  {
-    cv.otherlinks[+t.dataset.otherlinks][t.dataset.key] = t.value;
-  }
-  else if (t.dataset.exp !== undefined && t.dataset.key)
-  {
-    const i = +t.dataset.exp;
-    const key = t.dataset.key;
-    cv.experiences[i][key] = key === "missions" ? t.value.split("\n") : t.value;
-  }
-  else if (t.dataset.edu !== undefined && t.dataset.key)
-  {
-    cv.formations[+t.dataset.edu][t.dataset.key] = t.value;
-  }
-  else if (t.dataset.comp !== undefined)
-  {
-    cv.competences[+t.dataset.comp][t.dataset.key] = t.value;
-  }
-  else if (t.dataset.softskill !== undefined)
-  {
-    cv.softskill[+t.dataset.softskill][t.dataset.key] = t.value;
-  }
-  else if (t.dataset.autresinformations !== undefined && t.dataset.key)
-  {
-    const i = +t.dataset.autresinformations;
-    const key = t.dataset.key;
-    cv.autresinformations[i][key] = key === "informations" ? t.value.split("\n") : t.value;
-  }
-  else
-  {
-    return false; // champ non reconnu
+
+    writeCvRoot(bind, t.value);
+    return true;
   }
 
-  return true; // le CV a changé
+  return writeListItem(t, t.value);
 }
 
 // SUPPRESSION — retire un élément du JSON du CV par son index
