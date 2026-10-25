@@ -18,6 +18,9 @@ function renderPreview()
     case 0:
       PreviewClassiqueCV(c);
       break;
+    case 1:
+      PreviewModerneCV(c);
+      break;
 
     default:
       // Templates 1 à 5 pas encore implémentés : on évite une page vide
@@ -98,5 +101,85 @@ function PreviewClassiqueCV(_CV)
     ${exps ? `<div class="cv-section-title">Expériences professionnelles</div>${exps}` : ""}
     ${formations ? `<div class="cv-section-title">Formation</div>${formations}` : ""}
     ${autreinfo ? `${autreinfo}` : ""}
+  `;
+}
+
+// ------------------------------------------------------------
+// TEMPLATE 1 — « Moderne » : bandeau coloré en tête, sections
+// soulignées par une barre latérale, compétences à intitulé gras.
+// ------------------------------------------------------------
+function PreviewModerneCV(_CV)
+{
+  const page = $("#cv-preview");
+  page.style.setProperty("--cv-ink", "#2d3748");
+  page.style.setProperty("--tm-color", _CV.customisation?.couleurprincipale || "#1e4e8c");
+  page.style.setProperty("--tm-meta", _CV.customisation?.couleursecondaire || "#1e4e8c");
+  page.style.setProperty("--cv-size", (parseFloat(_CV.customisation?.taille) || 12) + "px");
+  page.style.setProperty("--cv-font", _CV.customisation?.police || '"Segoe UI", Arial, sans-serif');
+
+  // Ligne d'adresse
+  const adr = _CV.adresse;
+  const adrLines = [adr.ligne1, adr.ligne2, [adr.codePostal, adr.ville, adr.pays].filter(Boolean).join(" ")]
+    .map((s) => (s || "").trim()).filter(Boolean);
+
+  // Liens (Portfolio, LinkedIn, GitHub...) — inline, séparés par « · »
+  const links = _CV.otherlinks
+    .filter((l) => (l.libelle || "").trim() || (l.url || "").trim())
+    .map((l) => `<a href="${esc(l.url)}" target="_blank">${esc(l.libelle)} : ${esc(l.url)}</a>`)
+    .join(" · ");
+
+  const contactLines = [
+    adrLines.join(" — "),
+    [esc(_CV.tel), esc(_CV.email)].filter(Boolean).join(" — "),
+    links
+  ].filter(Boolean);
+
+  const accroche = (acc) => acc && acc.trim()
+    ? `<h2 class="tm-h2">Profil</h2><p class="tm-p">${esc(acc)}</p>` : "";
+
+  // Expériences : « Poste — Entreprise » + dates · lieu
+  const exps = _CV.experiences.map((e) => `
+    <h3 class="tm-h3">${esc(e.poste) || "Poste"}${e.entreprise ? " — " + esc(e.entreprise) : ""}</h3>
+    <p class="tm-job-meta">${esc(e.debut)}${e.fin ? " – " + esc(e.fin) : " – aujourd'hui"}${e.lieu ? " · " + esc(e.lieu) : ""}</p>
+    ${e.missions.filter(Boolean).length ? `<ul class="tm-ul">${e.missions.filter(Boolean).map((m) => `<li>${esc(m)}</li>`).join("")}</ul>` : ""}
+  `).join("");
+
+  // Compétences : intitulé en gras aligné, comme ta maquette
+  const skills = _CV.competences
+    .filter((s) => (s.intitule || "").trim() || (s.valeur || "").trim())
+    .map((s) => `<p class="tm-skills"><b>${esc(s.intitule)} :</b> ${esc(s.valeur)}</p>`)
+    .join("");
+
+  // Soft-skills (affichés seulement si remplis)
+  const softsk = _CV.softskill
+    .filter((s) => (s.libelle || "").trim() || (s.desc || "").trim())
+    .map((s) => `<p class="tm-skills"><b>${esc(s.libelle)} :</b> ${esc(s.desc)}</p>`)
+    .join("");
+
+  const formations = _CV.formations.map((f) => `
+    <h3 class="tm-h3">${esc(f.intitule)}${f.lieu ? " — " + esc(f.lieu) : ""}</h3>
+    <p class="tm-job-meta">${esc(f.annee)}</p>
+  `).join("");
+
+  // Sections libres (« Centres d'intérêt », etc.) : libellé + éléments séparés par « · »
+  const autres = _CV.autresinformations.map((ai) => `
+    ${ai.libelle ? `<h2 class="tm-h2">${esc(ai.libelle)}</h2>` : ""}
+    ${ai.informations.filter(Boolean).length ? `<p class="tm-p">${ai.informations.filter(Boolean).map((i) => esc(i)).join(" · ")}</p>` : ""}
+  `).join("");
+
+  page.innerHTML = `
+    <header class="tm-header">
+      <h1 class="tm-h1">${esc(_CV.nom) || "Votre nom"}</h1>
+      <p class="tm-role">${esc(_CV.titre) || "Votre titre"}</p>
+      <p class="tm-contact">${contactLines.join("<br>")}</p>
+    </header>
+    <div class="tm-body">
+      ${accroche(_CV.accroche)}
+      ${exps ? `<h2 class="tm-h2">Expérience professionnelle</h2>${exps}` : ""}
+      ${skills ? `<h2 class="tm-h2">Compétences</h2>${skills}` : ""}
+      ${softsk ? `<h2 class="tm-h2">Compétences transversales</h2>${softsk}` : ""}
+      ${formations ? `<h2 class="tm-h2">Formation</h2>${formations}` : ""}
+      ${autres}
+    </div>
   `;
 }
