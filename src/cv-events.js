@@ -36,7 +36,7 @@ const onFieldChange = (e) =>
 document.addEventListener("input", onFieldChange);
 document.addEventListener("change", onFieldChange);
 
-// Clics (tabs, swatches, ajouts, suppressions)
+// Clics (tabs, ajouts, suppressions)
 document.addEventListener("click", (e) => 
 {
   const t = e.target;

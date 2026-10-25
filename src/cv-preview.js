@@ -44,9 +44,8 @@ function renderPreview()
       break;
 
     default:
-      // Templates 1 à 5 pas encore implémentés : on évite une page vide
-      // ou cassée en revenant au template Classique (le select garde
-      // le choix de l'utilisateur, la valeur est mémorisée dans le JSON).
+      // Index de template inconnu (données corrompues ou import exotique) :
+      // on retombe sur le Classique pour éviter une page vide.
       PreviewClassiqueCV(c);
       break;
   }

@@ -71,12 +71,12 @@ const CV_FONTS =
 
 const CV_TEMPLATES =
 [
-  { label: "Classique sobre",     stack: 0 },
-  { label: "Moderne",     stack: 1 },
-  { label: "Timeline minimaliste",     stack: 2 },
-  { label: "Élégant serif",     stack: 3 },
-  { label: "Suisse grandes majuscules",     stack: 4 },
-  { label: "Compétences en tête style épuré",     stack: 5 }
+  { label: "Classique sobre",                 index: 0 },
+  { label: "Moderne",                         index: 1 },
+  { label: "Timeline minimaliste",            index: 2 },
+  { label: "Élégant serif",                   index: 3 },
+  { label: "Suisse grandes majuscules",       index: 4 },
+  { label: "Compétences en tête style épuré", index: 5 }
 ];
 
 // Fusion profonde : complète un objet (partiel) avec les valeurs par défaut,

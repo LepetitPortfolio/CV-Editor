@@ -6,15 +6,7 @@
 //          renderJdResults, renderAll
 // Dépend de : cv, jd, currentTab, CV_FONTS ($, esc, extractKeywords)
 // ============================================================
-function field(label, path, value, opts = {})
-{
-  const id = "f-" + path;
-  const tag = opts.textarea ? "textarea" : "input";
-  return `<div class="field">
-    <label for="${id}">${label}</label>
-    <${tag} id="${id}" data-path="${path}" ${opts.textarea ? `rows="${opts.rows || 3}"` : ""}>${opts.textarea ? esc(value) : ""}</${tag}>
-  </div>`;
-}
+
 
 // ------------------------------------------------------------
 // Une sous-fonction par onglet (retourne le HTML du panneau)
@@ -141,7 +133,7 @@ function renderCustomisationTab()
       <div class="field">
         <label>Template :</label>
         <select data-bind="customisation.Template">
-        ${CV_TEMPLATES.map((t) => `<option value="${esc(t.stack)}" ${parseInt(c.customisation.Template) === parseInt(t.stack) ? "selected" : ""}>${esc(t.label)}</option>`).join("")}
+        ${CV_TEMPLATES.map((t) => `<option value="${t.index}" ${parseInt(c.customisation.Template) === t.index ? "selected" : ""}>${esc(t.label)}</option>`).join("")}
         </select>
       </div>
       <div class="field">
