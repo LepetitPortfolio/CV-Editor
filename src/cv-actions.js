@@ -65,6 +65,11 @@ function updateCvField(t)
           break;
       }
     }
+    if (t.dataset.bind.startsWith("adresse."))
+    {
+      const key = t.dataset.bind.split(".")[1];
+      cv.adresse[key] = t.value;
+    }
     else
     {
       cv[t.dataset.bind] = t.value;

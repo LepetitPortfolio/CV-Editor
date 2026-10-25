@@ -28,6 +28,19 @@ function renderProfilTab()
         <div class="field"><label>Titre</label><input data-bind="titre" value="${esc(c.titre)}"></div>
       </div>
       <div class="field" style="margin-top:.7rem"><label>Accroche</label><textarea data-bind="accroche" rows="4">${esc(c.accroche)}</textarea></div>
+      <div class="field" style="margin-top:.7rem">
+        <div class="grid" style="margin-top:.7rem">
+          <div class="field"><label>Adresse Ligne 1 </label><input data-bind="adresse.ligne1" value="${esc(c.adresse.ligne1)}"></div>
+        </div>
+        <div class="grid" style="margin-top:.7rem">
+          <div class="field"><label>Adresse Ligne 2 (Facultatif) </label><input data-bind="adresse.ligne2" value="${esc(c.adresse.ligne2)}"></div>
+        </div>
+        <div class="grid" style="margin-top:.7rem">
+          <div class="field"><label>Code Postal </label><input data-bind="adresse.codePostal" value="${esc(c.adresse.codePostal)}"></div>
+          <div class="field"><label>Ville </label><input data-bind="adresse.ville" value="${esc(c.adresse.ville)}"></div>
+          <div class="field"><label>Pays (Facultatif) </label><input data-bind="adresse.pays" value="${esc(c.adresse.pays)}"></div>
+        </div>
+      </div>
       <div class="grid" style="margin-top:.7rem">
         <div class="field"><label>Email</label><input data-bind="email" value="${esc(c.email)}"></div>
         <div class="field"><label>Téléphone</label><input data-bind="tel" value="${esc(c.tel)}"></div>

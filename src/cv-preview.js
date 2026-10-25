@@ -11,15 +11,11 @@ function renderPreview()
 
   // ===== Application de la customisation au rendu du CV =====
 
-  console.log("Rendering CV preview with template:", c.customisation?.Template);
-
   const template = c.customisation?.Template || 0;
-
 
   switch (parseInt(template)) 
   {
     case 0:
-      console.log(template);
       PreviewClassiqueCV(c);
       break;
 
@@ -43,7 +39,10 @@ function PreviewClassiqueCV(_CV)
   page.style.setProperty("--cv-size", (parseFloat(_CV.customisation?.taille) || 12) + "px");
   page.style.setProperty("--cv-font", _CV.customisation?.police || "Arial, Helvetica, sans-serif");
 
-  const contacts = `<div class="cv-contact"><strong>Tel : </strong>${esc(_CV.tel) || "06 ..."}</div>
+  const contacts = `
+                    <div class="cv-contact"><strong>Adresse : </strong><br>${esc(_CV.adresse.ligne1) || ""}${esc(_CV.adresse.ligne2) ? `<br>${esc(_CV.adresse.ligne2)}` : ""}</div>
+                    <div class="cv-contact">${esc(_CV.adresse.codePostal)+" " || ""}${esc(_CV.adresse.ville)+" " || ""} ${esc(_CV.adresse.pays)+" " || ""}</div>
+                    <div class="cv-contact"><strong>Tel : </strong>${esc(_CV.tel) || "06 ..."}</div>
                     <div class="cv-contact"><strong>Mail : </strong>${esc(_CV.email) || "mail@example.com"}</div>`
   
   const links = _CV.otherlinks.map((l) => `<div class="cv-Link-line"><strong>${esc(l.libelle)} : </strong><a href="${esc(l.url)}" target="_blank">${esc(l.url)}</a>`).join(" · ");

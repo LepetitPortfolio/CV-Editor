@@ -12,13 +12,13 @@ const DEFAULT_CV =
   nom: "Gérard Bouchard",
   titre: "",
   accroche: "",
-  Adresse:
+  adresse:
   {
-    Ligne1: "",
-    Ligne2: "",
-    CodePostal: "",
-    Ville: "",
-    Pays: ""
+    ligne1: "",
+    ligne2: "",
+    codePostal: "",
+    ville: "",
+    pays: ""
   },
   email: "",
   tel: "",
