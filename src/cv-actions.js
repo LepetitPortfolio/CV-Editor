@@ -43,17 +43,26 @@ function updateCvField(t)
       const key = t.dataset.bind.split(".")[1];
       cv.customisation[key] = t.value;
 
-      // Application immédiate de l'accent sur toute l'interface
-      if (key === "accent")
+      switch (key)
       {
-        accent = t.value;
-        document.querySelectorAll(".swatch").forEach((s) => s.classList.toggle("active", s.dataset.couleursecondaire === accent));
-      }
-
-      if (key === "taille")
-      {
-        const lbl = document.getElementById("taille-val");
-        if (lbl) lbl.textContent = t.value + " px";
+        case "Template":
+          document.body.dataset.template = t.value;
+          break;
+        case "police":
+          document.body.style.setProperty("--font-family", t.value);
+          break;
+        case "taille":
+          document.body.style.setProperty("--font-size", t.value + "px");
+          break;
+        case "CouleurPrincipale":
+          document.body.style.setProperty("--couleur-principale", t.value);
+          break;
+        case "CouleurSecondaire":
+          document.body.style.setProperty("--couleur-secondaire", t.value);
+          break;
+        case "Couleurtertiaire":
+          document.body.style.setProperty("--couleur-tertiaire", t.value);
+          break;
       }
     }
     else

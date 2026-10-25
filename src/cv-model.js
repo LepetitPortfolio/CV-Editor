@@ -12,6 +12,14 @@ const DEFAULT_CV =
   nom: "Gérard Bouchard",
   titre: "",
   accroche: "",
+  Adresse:
+  {
+    Ligne1: "",
+    Ligne2: "",
+    CodePostal: "",
+    Ville: "",
+    Pays: ""
+  },
   email: "",
   tel: "",
   otherlinks : 
@@ -63,12 +71,12 @@ const CV_FONTS =
 
 const CV_TEMPLATES =
 [
-  { label: 0,     stack: "Classique sobre" },
-  { label: 1,     stack: "Moderne" },
-  { label: 2,     stack: "Timeline minimaliste" },
-  { label: 3,     stack: "Élégant serif" },
-  { label: 4,     stack: "Suisse grandes majuscules" },
-  { label: 5,     stack: "Compétences en tête style épuré" }
+  { label: "Classique sobre",     stack: 0 },
+  { label: "Moderne",     stack: 1 },
+  { label: "Timeline minimaliste",     stack: 2 },
+  { label: "Élégant serif",     stack: 3 },
+  { label: "Suisse grandes majuscules",     stack: 4 },
+  { label: "Compétences en tête style épuré",     stack: 5 }
 ];
 
 // Chargement (localStorage) ou défaut
