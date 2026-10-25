@@ -139,13 +139,13 @@ function renderCustomisationTab()
       <div class="field">
         <label>Template :</label>
         <select data-bind="customisation.Template">
-        ${CV_TEMPLATES.map((t) => `<option value="${esc(t.stack)}" ${c.customisation.Template === t.stack ? "selected" : ""}>${esc(t.label)}</option>`).join("")}
+        ${CV_TEMPLATES.map((t) => `<option value="${esc(t.stack)}" ${parseInt(c.customisation.Template) === parseInt(t.stack) ? "selected" : ""}>${esc(t.label)}</option>`).join("")}
         </select>
       </div>
       <div class="field">
         <label>Police</label>
         <select data-bind="customisation.police">
-        ${CV_FONTS.map((f) => `<option value="${esc(f.stack)}" ${c.customisation.police === f.stack ? "selected" : ""}>${esc(f.label)}</option>`).join("")}
+        ${CV_FONTS.map((f) => `<option value="${esc(f.stack)}" ${parseInt(c.customisation.police) === parseInt(f.stack) ? "selected" : ""}>${esc(f.label)}</option>`).join("")}
         </select>
       </div>
       <div class="field">
