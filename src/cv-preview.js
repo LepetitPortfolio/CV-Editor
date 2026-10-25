@@ -18,6 +18,8 @@ function renderPreview()
   page.style.setProperty("--cv-size", (parseFloat(c.customisation?.taille) || 12) + "px");
   page.style.setProperty("--cv-font", c.customisation?.police || "Arial, Helvetica, sans-serif");
 
+  page.classList.remove("tpl-minimaliste", "tpl-serif");
+
   const template = parseInt(c.customisation?.Template) || 0;
 
   switch (template)
@@ -33,6 +35,9 @@ function renderPreview()
       break;
     case 3:
       PreviewElegantSerifCV(c);
+      break;
+    case 4:
+      PreviewSuisseCV(c);
       break;
 
     default:
@@ -336,6 +341,78 @@ function PreviewElegantSerifCV(_CV)
     ${skills ? `<h2 class="es-h2">Compétences</h2>${skills}` : ""}
     ${softsk ? `<h2 class="es-h2">Compétences transversales</h2>${softsk}` : ""}
     ${formations ? `<h2 class="es-h2">Formation</h2>${formations}` : ""}
+    ${autres}
+  `;
+}
+
+// ------------------------------------------------------------
+// TEMPLATE 4 — « Suisse grandes majuscules » : typographie brute,
+// h1 massif, badges de section pleins, dates roses en majuscules.
+// Couleurs : h1/h3/badges = --cv-principale, accents (rôle, dates,
+// puces) = --cv-secondaire, texte = --cv-ink.
+// ------------------------------------------------------------
+function PreviewSuisseCV(_CV)
+{
+  const page = $("#cv-preview");
+
+  // Police par défaut propre à ce template (surchargeable via le select)
+  page.style.setProperty("--cv-font", _CV.customisation?.police || '"Helvetica Neue", Arial, sans-serif');
+
+  const adr = _CV.adresse;
+  const adrLines = [adr.ligne1, adr.ligne2, [adr.codePostal, adr.ville, adr.pays].filter(Boolean).join(" ")]
+    .map((s) => (s || "").trim()).filter(Boolean);
+
+  // Liens (Portfolio, LinkedIn, GitHub...) — inline, séparés par « · »
+  const links = _CV.otherlinks
+    .filter((l) => (l.libelle || "").trim() || (l.url || "").trim())
+    .map((l) => `<a href="${esc(l.url)}" target="_blank">${esc(l.libelle)} : ${esc(l.url)}</a>`)
+    .join(" · ");
+
+  const contactLines = [
+    adrLines.join(" — "),
+    [esc(_CV.tel), esc(_CV.email)].filter(Boolean).join(" — "),
+    links
+  ].filter(Boolean);
+
+  // Expériences : « POSTE — ENTREPRISE » + dates · lieu (majuscules via CSS)
+  const exps = _CV.experiences.map((e) => `
+    <h3 class="su-h3">${esc(e.poste) || "Poste"}${e.entreprise ? " — " + esc(e.entreprise) : ""}</h3>
+    <p class="su-job-meta">${esc(e.debut)}${e.fin ? " – " + esc(e.fin) : " – aujourd'hui"}${e.lieu ? " · " + esc(e.lieu) : ""}</p>
+    ${e.missions.filter(Boolean).length ? `<ul class="su-ul">${e.missions.filter(Boolean).map((m) => `<li>${esc(m)}</li>`).join("")}</ul>` : ""}
+  `).join("");
+
+  // Compétences : intitulé en petites majuscules, neutre (fidèle à la maquette)
+  const skills = _CV.competences
+    .filter((s) => (s.intitule || "").trim() || (s.valeur || "").trim())
+    .map((s) => `<p class="su-skills"><b>${esc(s.intitule)} :</b> ${esc(s.valeur)}</p>`)
+    .join("");
+
+  // Soft-skills (affichés seulement si remplis)
+  const softsk = _CV.softskill
+    .filter((s) => (s.libelle || "").trim() || (s.desc || "").trim())
+    .map((s) => `<p class="su-skills"><b>${esc(s.libelle)} :</b> ${esc(s.desc)}</p>`)
+    .join("");
+
+  const formations = _CV.formations.map((f) => `
+    <h3 class="su-h3">${esc(f.intitule)}${f.lieu ? " — " + esc(f.lieu) : ""}</h3>
+    <p class="su-job-meta">${esc(f.annee)}</p>
+  `).join("");
+
+  // Sections libres (« Centres d'intérêt », etc.)
+  const autres = _CV.autresinformations.map((ai) => `
+    ${ai.libelle ? `<h2 class="su-h2">${esc(ai.libelle)}</h2>` : ""}
+    ${ai.informations.filter(Boolean).length ? `<p class="su-p">${ai.informations.filter(Boolean).map((i) => esc(i)).join(" · ")}</p>` : ""}
+  `).join("");
+
+  page.innerHTML = `
+    <h1 class="su-h1">${esc(_CV.nom) || "Votre nom"}</h1>
+    <p class="su-role">${esc(_CV.titre) || "Votre titre"}</p>
+    <p class="su-contact">${contactLines.join("<br>")}</p>
+    ${_CV.accroche?.trim() ? `<h2 class="su-h2">Profil</h2><p class="su-p">${esc(_CV.accroche)}</p>` : ""}
+    ${exps ? `<h2 class="su-h2">Expérience professionnelle</h2>${exps}` : ""}
+    ${skills ? `<h2 class="su-h2">Compétences</h2>${skills}` : ""}
+    ${softsk ? `<h2 class="su-h2">Compétences transversales</h2>${softsk}` : ""}
+    ${formations ? `<h2 class="su-h2">Formation</h2>${formations}` : ""}
     ${autres}
   `;
 }

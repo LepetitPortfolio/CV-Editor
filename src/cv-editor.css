@@ -320,4 +320,34 @@ body.dark .exp-card .remove:hover { color: #f87171; }
    maquette), le filet du Minimaliste est conservé. */
 @media print { #cv-preview.tpl-serif { border: none; } }
 
-#site-footer { font-size: 11px; text-align: center; color: #94a3b8; padding: 12px 0; }
+/* ============================================================
+   13. TEMPLATE 4 « Suisse grandes majuscules » — classes su-*
+   Rôles (convention commune) : h1/h3 + badges de section =
+   --cv-principale (fond noir, texte blanc), accents (rôle, dates,
+   puces) = --cv-secondaire (rose #d6336c dans la maquette),
+   texte commun = --cv-ink.
+   Note : les intitulés de compétences restent volontairement
+   neutres (texte du CV) dans ce template — seul le style change.
+   ============================================================ */
+
+/* Nom + rôle + contact (filets haut/bas) */
+#cv-preview .su-h1 { font-size: calc(var(--cv-size, 12px) * 2.85); margin: 0; padding: 34px 0 6px; font-weight: 900; letter-spacing: -.5px; text-transform: uppercase; color: var(--cv-principale, #111); }
+#cv-preview .su-role { font-size: calc(var(--cv-size, 12px) * 1.1); text-transform: uppercase; letter-spacing: 5px; color: var(--cv-secondaire, #d6336c); font-weight: 700; margin: 0 0 14px; }
+#cv-preview .su-contact { font-size: calc(var(--cv-size, 12px) * 1.05); color: var(--cv-ink, #333); line-height: 1.7; border-top: 3px solid var(--cv-principale, #111); border-bottom: 1px solid var(--cv-principale, #111); padding: 10px 0; }
+#cv-preview .su-contact a { color: inherit; text-decoration: none; }
+
+/* Titres de section : badges noirs à texte blanc */
+#cv-preview .su-h2 { font-size: calc(var(--cv-size, 12px) * 1.1); text-transform: uppercase; letter-spacing: 2px; margin: 28px 0 12px; font-weight: 900; background: var(--cv-principale, #111); color: #fff; display: inline-block; padding: 3px 12px; }
+
+/* Expériences / formations (tout en majuscules) */
+#cv-preview .su-h3 { font-size: calc(var(--cv-size, 12px) * 1.25); margin: 18px 0 1px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: var(--cv-principale, #111); }
+#cv-preview .su-job-meta { font-size: calc(var(--cv-size, 12px) * 1.05); color: var(--cv-secondaire, #d6336c); font-weight: 700; margin: 0 0 6px; text-transform: uppercase; letter-spacing: 1px; }
+
+/* Textes et listes (puces roses) */
+#cv-preview .su-p, #cv-preview .su-ul li { font-size: calc(var(--cv-size, 12px) * 1.12); line-height: 1.55; }
+#cv-preview .su-ul { margin: 6px 0 0; padding-left: 20px; }
+#cv-preview .su-ul li::marker { color: var(--cv-secondaire, #d6336c); }
+
+/* Compétences : intitulé en petites majuscules, neutre */
+#cv-preview .su-skills { font-size: calc(var(--cv-size, 12px) * 1.12); line-height: 1.75; margin: 4px 0; }
+#cv-preview .su-skills b { display: inline-block; min-width: 105px; text-transform: uppercase; letter-spacing: 1px; font-size: calc(var(--cv-size, 12px) * 1.0); }
