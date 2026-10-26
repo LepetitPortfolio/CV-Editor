@@ -1,10 +1,21 @@
 /* ============================================================
    cv-editor.css — Éditeur de CV (standalone, 100% local)
-   Sommaire : 1. Base   2. Topbar/boutons   3. Layout/aperçu
-   4. Onglets   5. Formulaires   6. JD matching   7. CV Classique
-   8. Impression   9. Mode sombre
-   10. Moderne (tm-*)   11. Minimaliste (mn-*)   12. Élégant serif (es-*)
-   13. Suisse (su-*)   14. Compétences en tête (ch-*)
+   Sommaire : 
+   1. Base   
+   2. Topbar/boutons   
+   3. Layout/aperçu
+   4. Onglets   
+   5. Formulaires   
+   6. JD matching   
+   7. CV Classique
+   8. Impression   
+   9. Mode sombre
+   10. Moderne (tm-*)   
+   11. Minimaliste (mn-*)   
+   12. Élégant serif (es-*)
+   13. Suisse (su-*)   
+   14. Compétences en tête (ch-*) 
+   15. Photo de profil (.cv-photo)
    ============================================================ */
 
 /* ===== 1. Base ===== */
@@ -168,6 +179,10 @@ body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg); co
   /* On ne masque PAS .preview-frame (sinon le CV qu'il contient disparaît aussi) :
      on retire juste son habillage visuel. */
   .preview-frame { background: none; padding: 0; border-radius: 0; box-shadow: none; }
+    /* Mode sombre : body.dark .preview-frame est PLUS SPÉCIFIQUE que la
+     règle .preview-frame ci-dessus — sans ces !important, le fond #1e293b
+     du cadre resterait imprimé autour du CV (bande noire en PDF). */
+  body.dark .preview-frame { background: none !important; box-shadow: none !important; }
   .preview-scroll { max-height: none; overflow: visible; border-radius: 0; }
   .cv-page { max-width: none; padding: 12mm; box-shadow: none; }
   /* Astuce anti en-tête/pied de page ("1 sur 1", date, URL...) :
@@ -449,3 +464,12 @@ body.dark .exp-card .remove:hover { color: #f87171; }
 
 /* Compétences en tête : à droite du bloc .ch-head. */
 #cv-preview .ch-photo { float: right; margin: 0 0 .4rem .9rem; }
+
+/* Vignette photo dans le formulaire (onglet Profil) */
+.photo-thumb
+{
+  display: block; width: 64px; height: 64px;
+  object-fit: cover; object-position: top;
+  border-radius: 8px; border: 1px solid var(--border);
+  margin-bottom: .4rem;
+}

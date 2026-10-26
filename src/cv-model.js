@@ -112,7 +112,13 @@ let jd = "";            // job description collée
 let currentTab = "profil";
 
 // Persistance de l'état courant
-function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(cv)); }
+// try/catch : avec une photo, le quota localStorage (~5 Mo) peut être
+// dépassé — sans lui, l'exception casserait chaque handler d'input.
+function save()
+{
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(cv)); }
+  catch (e) { alert("Sauvegarde impossible : stockage local plein ?\nEnvisagez d'exporter votre CV en JSON."); }
+}
 
 // Normalise customisation.police vers un index valide de CV_FONTS.
 // Migration : les anciennes données stockaient le stack CSS complet

@@ -57,7 +57,7 @@ function PreviewClassiqueCV(_CV)
   const page = $("#cv-preview");
 
   // Photo de profil (affichée seulement si renseignée)
-  const photo = _CV.photo ? `<img class="cv-photo" src="${_CV.photo}" alt="" />` : "";
+  const photo = _CV.photo ? `<img class="cv-photo" src="${esc(_CV.photo)}"  alt="" />` : "";
 
   const contacts = `
                     <div class="cv-contact"><strong>Adresse : </strong><br>${esc(_CV.adresse.ligne1) || ""}${esc(_CV.adresse.ligne2) ? `<br>${esc(_CV.adresse.ligne2)}` : ""}</div>
@@ -132,7 +132,7 @@ function PreviewModerneCV(_CV)
   const page = $("#cv-preview");
 
   // Photo de profil (affichée seulement si renseignée)
-  const photo = _CV.photo ? `<img class="cv-photo tm-photo" src="${_CV.photo}" alt="" />` : "";
+  const photo = _CV.photo ? `<img class="cv-photo tm-photo" src="${esc(_CV.photo)}"  alt="" />` : "";
 
   // Ligne d'adresse
   const adr = _CV.adresse;
@@ -213,7 +213,7 @@ function PreviewMinimalisteCV(_CV)
   const page = $("#cv-preview");
 
   // Photo de profil (affichée seulement si renseignée)
-  const photo = _CV.photo ? `<img class="cv-photo mn-photo" src="${_CV.photo}" alt="" />` : "";
+  const photo = _CV.photo ? `<img class="cv-photo mn-photo" src="${esc(_CV.photo)}"  alt="" />` : "";
 
   // Filet supérieur pleine largeur : posé sur la page elle-même pour
   // déborder du padding. renderPreview() le remet à zéro avant le
@@ -295,7 +295,7 @@ function PreviewElegantSerifCV(_CV)
   const page = $("#cv-preview");
 
   // Photo de profil (affichée seulement si renseignée)
-  const photo = _CV.photo ? `<img class="cv-photo es-photo" src="${_CV.photo}" alt="" />` : "";
+  const photo = _CV.photo ? `<img class="cv-photo es-photo" src="${esc(_CV.photo)}"  alt="" />` : "";
 
   // Habillage de page (classe, retirée par renderPreview() avant le switch)
   page.classList.add("tpl-serif");
@@ -374,7 +374,7 @@ function PreviewSuisseCV(_CV)
   const page = $("#cv-preview");
 
   // Photo de profil (affichée seulement si renseignée)
-  const photo = _CV.photo ? `<img class="cv-photo su-photo" src="${_CV.photo}" alt="" />` : "";
+  const photo = _CV.photo ? `<img class="cv-photo su-photo" src="${esc(_CV.photo)}"  alt="" />` : "";
 
   // Police par défaut propre à ce template (surchargeable via le select)
   //page.style.setProperty("--cv-font", _CV.customisation?.police || '"Helvetica Neue", Arial, sans-serif');
@@ -452,7 +452,7 @@ function PreviewCompetencesCV(_CV)
   const page = $("#cv-preview");
 
   // Photo de profil (affichée seulement si renseignée)
-  const photo = _CV.photo ? `<img class="cv-photo ch-photo" src="${_CV.photo}" alt="" />` : "";
+  const photo = _CV.photo ? `<img class="cv-photo ch-photo" src="${esc(_CV.photo)}"  alt="" />` : "";
 
   // Police par défaut propre à ce template (surchargeable via le select)
   //page.style.setProperty("--cv-font", _CV.customisation?.police || '"Segoe UI", Calibri, sans-serif');
