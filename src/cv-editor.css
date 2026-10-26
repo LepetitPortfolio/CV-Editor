@@ -474,9 +474,16 @@ body.dark .exp-card .remove:hover { color: #f87171; }
   margin-bottom: .4rem;
 }
 
+.photo-thumb-editor
+{
+  display: block; width: 150px; height: 225px;
+  object-fit: cover; object-position:center ;
+  margin: .4rem;
+}
+
 /* ============================================================
    15 bis. PERSONNALISATION PHOTO (onglet Customisation) —
-  classes photo-aN, photo-fn et photo-cn posées sur #cv-preview par renderPreview().
+   classes photo-aN, photo-fn et photo-cn posées sur #cv-preview par renderPreview().
    "Selon le template" (défaut) ne pose AUCUNE classe : les règles
    par template ci-dessus restent alors maîtresses. Une valeur
    explicite pose une classe, et ces sélecteurs (1 id + 2 classes)
