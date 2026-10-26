@@ -118,14 +118,14 @@ body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg); co
 .alert.good { background: #f0fdf4; border: 1px solid #86efac; color: #14532d; }
 
 /* ===== 7. Aperçu du CV — template Classique (ATS-friendly) ===== */
-/* Convention commune à TOUS les templates (posées par cv-preview.js) :
-   --cv-principale = couleurprincipale : textes forts (h1, intitulés)
-   --cv-secondaire = couleursecondaire : accents (titres de section, filets)
+/* Convention v2, commune à TOUS les templates (posées par cv-preview.js) :
+   --cv-principale = couleurprincipale : identité (nom, titre du poste,
+   titres de section) + décorations (filets, bordures, puces, badges)
+   --cv-secondaire = couleursecondaire : mots clés scannables (intitulés
+   de poste, entreprises, libellés de compétences, dates)
    --cv-tertiaire  = couleurtertiaire  : texte commun (--cv-ink en dérive)
    --cv-ink = couleur du texte de corps (posée depuis couleurtertiaire)
-   --cv-size / --cv-font = taille et police.
-   Le Classique utilise : texte = --cv-ink, textes forts = --cv-principale,
-   accents = --cv-secondaire. */
+   --cv-size / --cv-font = taille et police. */
 .cv-page 
 {
   background: #fff; max-width: 720px; margin: 0 auto; padding: 2rem 2.2rem;
@@ -133,14 +133,14 @@ body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg); co
   color: var(--cv-ink, #1f2937);
 }
 .cv-page h1 { font-size: 24px; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; color: var(--cv-principale, #111827); }
-.cv-title { font-size: 15px; font-weight: 600; color: var(--cv-secondaire, #000000); margin: 2px 0 4px; }
+.cv-title { font-size: 15px; font-weight: 600; color: var(--cv-principale, #000000); margin: 2px 0 4px; }
 .cv-contact { font-size: calc(var(--cv-size, 12px) * 0.92); color: var(--cv-ink, #4b5563); }
 .cv-contact a, .cv-Link-line a { color: inherit; text-decoration: none; }
-.cv-header { border-bottom: 3px solid var(--cv-secondaire, #000000); padding-bottom: 10px; margin-bottom: 12px; }
+.cv-header { border-bottom: 3px solid var(--cv-principale, #000000); padding-bottom: 10px; margin-bottom: 12px; }
 .cv-section-title 
 {
   font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em;
-  color: var(--cv-secondaire, #000000); border-bottom: 2px solid var(--cv-secondaire, #000000);
+  color: var(--cv-principale, #000000); border-bottom: 2px solid var(--cv-principale, #000000);
   padding-bottom: 2px; margin: 16px 0 6px;
 }
 .cv-accroche { font-size: var(--cv-size, 12px); color: var(--cv-ink, #374151); }
@@ -148,13 +148,13 @@ body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg); co
 .cv-other-info { font-size: var(--cv-size, 12px); color: var(--cv-ink, #374151); }
 .cv-job { margin-bottom: 12px; break-inside: avoid; page-break-inside: avoid; }
 .cv-job-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap; }
-.cv-job-title { font-size: 13.5px; font-weight: 700; color: var(--cv-principale, #111827); }
+.cv-job-title { font-size: 13.5px; font-weight: 700; color: var(--cv-secondaire, #111827); }
 .cv-job-title .company { color: var(--cv-secondaire, #000000); }
-.cv-job-dates { font-size: calc(var(--cv-size, 12px) * 0.92); color: var(--cv-ink, #6b7280); white-space: nowrap; }
+.cv-job-dates { font-size: calc(var(--cv-size, 12px) * 0.92); color: var(--cv-secondaire, #6b7280); white-space: nowrap; }
 .cv-job ul { margin: 3px 0 0 18px; }
 .cv-job li { font-size: var(--cv-size, 12px); color: var(--cv-ink, #374151); margin-bottom: 2px; }
 .cv-edu { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; font-size: var(--cv-size, 12px); color: var(--cv-ink, #374151); break-inside: avoid; }
-.cv-edu strong { color: var(--cv-principale, #111827); }
+.cv-edu strong { color: var(--cv-secondaire, #111827); }
 
 /* ===== 8. Impression : seul le CV est exporté ===== */
 @media print 
@@ -224,7 +224,7 @@ body.dark .exp-card .remove:hover { color: #f87171; }
   color: #fff;
   padding: 26px 30px 22px;
 }
-#cv-preview .tm-h1 { font-size: calc(var(--cv-size, 12px) * 2.25); margin: 0 0 2px; font-family: var(--cv-font, "Segoe UI", Arial, sans-serif); }
+#cv-preview .tm-h1 { font-size: calc(var(--cv-size, 12px) * 2.25); margin: 0 0 2px; font-family: var(--cv-font, "Segoe UI", Arial, sans-serif); color: #fff; }
 #cv-preview .tm-role 
 {
   font-size: calc(var(--cv-size, 12px) * 1.25); font-weight: 600;
@@ -247,7 +247,7 @@ body.dark .exp-card .remove:hover { color: #f87171; }
 }
 
 /* Expériences / formations */
-#cv-preview .tm-h3 { font-size: calc(var(--cv-size, 12px) * 1.25); margin: 14px 0 1px; }
+#cv-preview .tm-h3 { font-size: calc(var(--cv-size, 12px) * 1.25); margin: 14px 0 1px; color: var(--cv-secondaire, #1e4e8c); }
 #cv-preview .tm-job-meta 
 {
   font-size: calc(var(--cv-size, 12px) * 1.05);
@@ -260,35 +260,33 @@ body.dark .exp-card .remove:hover { color: #f87171; }
 
 /* Compétences : intitulé en gras, largeur d'étiquette alignée */
 #cv-preview .tm-skills { font-size: calc(var(--cv-size, 12px) * 1.12); line-height: 1.7; margin: 4px 0; }
-#cv-preview .tm-skills b { color: var(--cv-principale, #1e4e8c); display: inline-block; min-width: 105px; }
+#cv-preview .tm-skills b { color: var(--cv-secondaire, #1e4e8c); display: inline-block; min-width: 105px; }
 
 /* ============================================================
    11. TEMPLATE 2 « Minimaliste » — classes mn-*
-   Rôles (convention commune) : h1/h3 = --cv-principale,
-   accents (rôle, titres de section, filet, puces, intitulés) =
-   --cv-secondaire, texte commun = --cv-ink.
-   Le filet supérieur est posé en JS directement sur #cv-preview
-   (page.style.borderTop) pour déborder du padding de la page.
+   Rôles (convention v2) : h1/rôle/titres de section/filet/puces =
+   --cv-principale ; intitulés de poste, dates et libellés de
+   compétences = --cv-secondaire ; texte commun = --cv-ink.
    ============================================================ */
 
 /* Nom + rôle + contact */
 #cv-preview .mn-h1 { font-size: calc(var(--cv-size, 12px) * 2.2); margin: 0; font-weight: 800; letter-spacing: .5px; text-transform: none; color: var(--cv-principale, #222); }
-#cv-preview .mn-role { font-size: calc(var(--cv-size, 12px) * 1.15); text-transform: uppercase; letter-spacing: 3px; color: var(--cv-secondaire, #0f766e); font-weight: 700; margin: 4px 0 10px; }
+#cv-preview .mn-role { font-size: calc(var(--cv-size, 12px) * 1.15); text-transform: uppercase; letter-spacing: 3px; color: var(--cv-principale, #0f766e); font-weight: 700; margin: 4px 0 10px; }
 #cv-preview .mn-contact { font-size: calc(var(--cv-size, 12px) * 1.05); color: var(--cv-ink, #444); line-height: 1.7; margin: 0 0 6px; }
 #cv-preview .mn-contact a { color: inherit; text-decoration: none; }
 
 /* Titres de section soulignés */
-#cv-preview .mn-h2 { font-size: calc(var(--cv-size, 12px) * 1.0); text-transform: uppercase; letter-spacing: 2.5px; color: var(--cv-secondaire, #0f766e); margin: 26px 0 4px; font-weight: 800; }
-#cv-preview .mn-h2::after { content: ""; display: block; width: 42px; height: 3px; background: var(--cv-secondaire, #0f766e); margin-top: 5px; }
+#cv-preview .mn-h2 { font-size: calc(var(--cv-size, 12px) * 1.0); text-transform: uppercase; letter-spacing: 2.5px; color: var(--cv-principale, #0f766e); margin: 26px 0 4px; font-weight: 800; }
+#cv-preview .mn-h2::after { content: ""; display: block; width: 42px; height: 3px; background: var(--cv-principale, #0f766e); margin-top: 5px; }
 
 /* Expériences / formations */
-#cv-preview .mn-h3 { font-size: calc(var(--cv-size, 12px) * 1.2); margin: 14px 0 1px; font-weight: 700; color: var(--cv-principale, #222); }
-#cv-preview .mn-job-meta { font-size: calc(var(--cv-size, 12px) * 1.0); color: var(--cv-ink, #666); margin: 0 0 5px; }
+#cv-preview .mn-h3 { font-size: calc(var(--cv-size, 12px) * 1.2); margin: 14px 0 1px; font-weight: 700; color: var(--cv-secondaire, #222); }
+#cv-preview .mn-job-meta { font-size: calc(var(--cv-size, 12px) * 1.0); color: var(--cv-secondaire, #666); margin: 0 0 5px; }
 
 /* Textes et listes (puces colorées) */
 #cv-preview .mn-p, #cv-preview .mn-ul li { font-size: calc(var(--cv-size, 12px) * 1.1); line-height: 1.55; }
 #cv-preview .mn-ul { margin: 4px 0 2px; padding-left: 18px; }
-#cv-preview .mn-ul li::marker { color: var(--cv-secondaire, #0f766e); }
+#cv-preview .mn-ul li::marker { color: var(--cv-principale, #0f766e); }
 
 /* Compétences : intitulé en gras aligné */
 #cv-preview .mn-skills { font-size: calc(var(--cv-size, 12px) * 1.1); line-height: 1.7; margin: 3px 0; }
@@ -296,32 +294,29 @@ body.dark .exp-card .remove:hover { color: #f87171; }
 
 /* ============================================================
    12. TEMPLATE 3 « Élégant serif » — classes es-*
-   Rôles (convention commune) : h1/h3 = --cv-principale,
-   accents (rôle, titres centrés, puces, intitulés, filets du
-   bloc contact) = --cv-secondaire, texte commun = --cv-ink.
-   Le cadre beige de la page est posé en JS sur #cv-preview
-   (page.style.border/background) — réinitialisé par
-   renderPreview() avant le switch.
+   Rôles (convention v2) : h1/rôle/titres centrés/tirets/filets du
+   bloc contact/puces = --cv-principale ; intitulés de poste, dates
+   et libellés = --cv-secondaire ; texte commun = --cv-ink.
    ============================================================ */
 
 /* Nom + rôle + contact encadré */
 #cv-preview .es-h1 { font-size: calc(var(--cv-size, 12px) * 2.5); margin: 0; font-weight: 700; letter-spacing: .5px; text-transform: none; color: var(--cv-principale, #26221c); }
-#cv-preview .es-role { font-size: calc(var(--cv-size, 12px) * 1.25); text-transform: uppercase; letter-spacing: 4px; color: var(--cv-secondaire, #8a6d3b); margin: 4px 0 14px; }
-#cv-preview .es-contact { font-size: calc(var(--cv-size, 12px) * 1.1); color: var(--cv-ink, #4a4436); line-height: 1.7; border-top: 1px solid var(--cv-secondaire, #b5a880); border-bottom: 1px solid var(--cv-secondaire, #b5a880); padding: 10px 0; margin-bottom: 8px; }
+#cv-preview .es-role { font-size: calc(var(--cv-size, 12px) * 1.25); text-transform: uppercase; letter-spacing: 4px; color: var(--cv-principale, #8a6d3b); margin: 4px 0 14px; }
+#cv-preview .es-contact { font-size: calc(var(--cv-size, 12px) * 1.1); color: var(--cv-ink, #4a4436); line-height: 1.7; border-top: 1px solid var(--cv-principale, #b5a880); border-bottom: 1px solid var(--cv-principale, #b5a880); padding: 10px 0; margin-bottom: 8px; }
 #cv-preview .es-contact a { color: inherit; text-decoration: none; }
 
 /* Titres de section centrés, flanqués de tirets */
-#cv-preview .es-h2 { font-size: calc(var(--cv-size, 12px) * 1.15); text-transform: uppercase; letter-spacing: 3px; color: var(--cv-secondaire, #8a6d3b); margin: 28px 0 10px; font-weight: 700; text-align: center; }
-#cv-preview .es-h2::before, #cv-preview .es-h2::after { content: "—"; color: var(--cv-secondaire, #b5a880); margin: 0 10px; font-weight: 400; }
+#cv-preview .es-h2 { font-size: calc(var(--cv-size, 12px) * 1.15); text-transform: uppercase; letter-spacing: 3px; color: var(--cv-principale, #8a6d3b); margin: 28px 0 10px; font-weight: 700; text-align: center; }
+#cv-preview .es-h2::before, #cv-preview .es-h2::after { content: "—"; color: var(--cv-principale, #b5a880); margin: 0 10px; font-weight: 400; }
 
 /* Expériences / formations */
-#cv-preview .es-h3 { font-size: calc(var(--cv-size, 12px) * 1.3); margin: 18px 0 1px; font-weight: 700; color: var(--cv-principale, #26221c); }
-#cv-preview .es-job-meta { font-size: calc(var(--cv-size, 12px) * 1.05); color: var(--cv-ink, #6d6552); font-style: italic; margin: 0 0 6px; }
+#cv-preview .es-h3 { font-size: calc(var(--cv-size, 12px) * 1.3); margin: 18px 0 1px; font-weight: 700; color: var(--cv-secondaire, #26221c); }
+#cv-preview .es-job-meta { font-size: calc(var(--cv-size, 12px) * 1.05); color: var(--cv-secondaire, #6d6552); font-style: italic; margin: 0 0 6px; }
 
 /* Textes et listes (puces dorées) */
 #cv-preview .es-p, #cv-preview .es-ul li { font-size: calc(var(--cv-size, 12px) * 1.12); line-height: 1.55; }
 #cv-preview .es-ul { margin: 6px 0 0; padding-left: 22px; }
-#cv-preview .es-ul li::marker { color: var(--cv-secondaire, #8a6d3b); }
+#cv-preview .es-ul li::marker { color: var(--cv-principale, #8a6d3b); }
 
 /* Compétences : intitulé en gras aligné */
 #cv-preview .es-skills { font-size: calc(var(--cv-size, 12px) * 1.12); line-height: 1.8; margin: 4px 0; }
@@ -331,7 +326,7 @@ body.dark .exp-card .remove:hover { color: #f87171; }
    Ajoutés/retirés par renderPreview() : un template qui change
    l'habillage de la page (#cv-preview) le fait par classe, pour que
    le CSS reste maître du rendu (notamment à l'impression). */
-#cv-preview.tpl-minimaliste { border-top: 6px solid var(--cv-secondaire, #0f766e); }
+#cv-preview.tpl-minimaliste { border-top: 6px solid var(--cv-principale, #0f766e); }
 #cv-preview.tpl-serif { border: 1px solid #d9d2c2; background: #fffdf8; }
 
 /* À l'impression : le cadre beige du serif disparaît (comme la
@@ -340,17 +335,14 @@ body.dark .exp-card .remove:hover { color: #f87171; }
 
 /* ============================================================
    13. TEMPLATE 4 « Suisse grandes majuscules » — classes su-*
-   Rôles (convention commune) : h1/h3 + badges de section =
-   --cv-principale (fond noir, texte blanc), accents (rôle, dates,
-   puces) = --cv-secondaire (rose #d6336c dans la maquette),
-   texte commun = --cv-ink.
-   Note : les intitulés de compétences restent volontairement
-   neutres (texte du CV) dans ce template — seul le style change.
+   Rôles (convention v2) : h1/rôle/filets/badges de section/puces =
+   --cv-principale ; intitulés de poste, dates et libellés de
+   compétences = --cv-secondaire ; texte commun = --cv-ink.
    ============================================================ */
 
 /* Nom + rôle + contact (filets haut/bas) */
 #cv-preview .su-h1 { font-size: calc(var(--cv-size, 12px) * 2.85); margin: 0; padding: 34px 0 6px; font-weight: 900; letter-spacing: -.5px; text-transform: uppercase; color: var(--cv-principale, #111); }
-#cv-preview .su-role { font-size: calc(var(--cv-size, 12px) * 1.1); text-transform: uppercase; letter-spacing: 5px; color: var(--cv-secondaire, #d6336c); font-weight: 700; margin: 0 0 14px; }
+#cv-preview .su-role { font-size: calc(var(--cv-size, 12px) * 1.1); text-transform: uppercase; letter-spacing: 5px; color: var(--cv-principale, #d6336c); font-weight: 700; margin: 0 0 14px; }
 #cv-preview .su-contact { font-size: calc(var(--cv-size, 12px) * 1.05); color: var(--cv-ink, #333); line-height: 1.7; border-top: 3px solid var(--cv-principale, #111); border-bottom: 1px solid var(--cv-principale, #111); padding: 10px 0; }
 #cv-preview .su-contact a { color: inherit; text-decoration: none; }
 
@@ -358,46 +350,45 @@ body.dark .exp-card .remove:hover { color: #f87171; }
 #cv-preview .su-h2 { font-size: calc(var(--cv-size, 12px) * 1.1); text-transform: uppercase; letter-spacing: 2px; margin: 28px 0 12px; font-weight: 900; background: var(--cv-principale, #111); color: #fff; display: inline-block; padding: 3px 12px; }
 
 /* Expériences / formations (tout en majuscules) */
-#cv-preview .su-h3 { font-size: calc(var(--cv-size, 12px) * 1.25); margin: 18px 0 1px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: var(--cv-principale, #111); }
+#cv-preview .su-h3 { font-size: calc(var(--cv-size, 12px) * 1.25); margin: 18px 0 1px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: var(--cv-secondaire, #111); }
 #cv-preview .su-job-meta { font-size: calc(var(--cv-size, 12px) * 1.05); color: var(--cv-secondaire, #d6336c); font-weight: 700; margin: 0 0 6px; text-transform: uppercase; letter-spacing: 1px; }
 
 /* Textes et listes (puces roses) */
 #cv-preview .su-p, #cv-preview .su-ul li { font-size: calc(var(--cv-size, 12px) * 1.12); line-height: 1.55; }
 #cv-preview .su-ul { margin: 6px 0 0; padding-left: 20px; }
-#cv-preview .su-ul li::marker { color: var(--cv-secondaire, #d6336c); }
+#cv-preview .su-ul li::marker { color: var(--cv-principale, #d6336c); }
 
 /* Compétences : intitulé en petites majuscules, neutre */
 #cv-preview .su-skills { font-size: calc(var(--cv-size, 12px) * 1.12); line-height: 1.75; margin: 4px 0; }
-#cv-preview .su-skills b { display: inline-block; min-width: 105px; text-transform: uppercase; letter-spacing: 1px; font-size: calc(var(--cv-size, 12px) * 1.0); }
+#cv-preview .su-skills b { display: inline-block; min-width: 105px; text-transform: uppercase; letter-spacing: 1px; font-size: calc(var(--cv-size, 12px) * 1.0); color: var(--cv-secondaire, #111); }
 
 /* ============================================================
    14. TEMPLATE 5 « Compétences en tête » — classes ch-*
-   Rôles (convention commune) : h1/h2/filets/chips/intitulés =
-   --cv-secondaire (bleu #2563eb dans la maquette — ici le h1 est
-   coloré, c'est le seul template qui l'affiche ainsi), h3 =
-   --cv-principale, texte commun = --cv-ink.
+   Rôles (convention v2) : h1/rôle/titres de section/filet/puces =
+   --cv-principale ; chips, intitulés de poste, dates et libellés =
+   --cv-secondaire ; texte commun = --cv-ink.
    Les chips sont générées par le JS à partir des valeurs du
    champ Compétences (séparées par des virgules).
    ============================================================ */
 
 /* Bloc d'en-tête (filet coloré sous le contact) */
-#cv-preview .ch-head { display: block; border-bottom: 2px solid var(--cv-secondaire, #2563eb); padding-bottom: 14px; margin-bottom: 18px; }
-#cv-preview .ch-h1 { font-size: calc(var(--cv-size, 12px) * 2.2); margin: 0; font-weight: 700; text-transform: none; color: var(--cv-secondaire, #2563eb); }
+#cv-preview .ch-head { display: block; border-bottom: 2px solid var(--cv-principale, #2563eb); padding-bottom: 14px; margin-bottom: 18px; }
+#cv-preview .ch-h1 { font-size: calc(var(--cv-size, 12px) * 2.2); margin: 0; font-weight: 700; text-transform: none; color: var(--cv-principale, #2563eb); }
 #cv-preview .ch-role { font-size: calc(var(--cv-size, 12px) * 1.12); text-transform: uppercase; letter-spacing: 2px; color: var(--cv-principale, #1f2937); font-weight: 600; margin: 3px 0 8px; }
 #cv-preview .ch-contact { font-size: calc(var(--cv-size, 12px) * 1.05); color: var(--cv-ink, #4b5563); line-height: 1.7; margin: 0; }
 #cv-preview .ch-contact a { color: inherit; text-decoration: none; }
 
 /* Titres de section (bleus) */
-#cv-preview .ch-h2 { font-size: calc(var(--cv-size, 12px) * 1.1); text-transform: uppercase; letter-spacing: 1.5px; color: var(--cv-secondaire, #2563eb); margin: 26px 0 10px; font-weight: 700; }
+#cv-preview .ch-h2 { font-size: calc(var(--cv-size, 12px) * 1.1); text-transform: uppercase; letter-spacing: 1.5px; color: var(--cv-principale, #2563eb); margin: 26px 0 10px; font-weight: 700; }
 
 /* Expériences / formations */
-#cv-preview .ch-h3 { font-size: calc(var(--cv-size, 12px) * 1.25); margin: 15px 0 1px; font-weight: 700; color: var(--cv-principale, #1f2937); }
-#cv-preview .ch-job-meta { font-size: calc(var(--cv-size, 12px) * 1.05); color: var(--cv-ink, #6b7280); margin: 0 0 5px; }
+#cv-preview .ch-h3 { font-size: calc(var(--cv-size, 12px) * 1.25); margin: 15px 0 1px; font-weight: 700; color: var(--cv-secondaire, #1f2937); }
+#cv-preview .ch-job-meta { font-size: calc(var(--cv-size, 12px) * 1.05); color: var(--cv-secondaire, #6b7280); margin: 0 0 5px; }
 
 /* Textes et listes (puces bleues) */
 #cv-preview .ch-p, #cv-preview .ch-ul li { font-size: calc(var(--cv-size, 12px) * 1.12); line-height: 1.55; }
 #cv-preview .ch-ul { margin: 5px 0 0; padding-left: 20px; }
-#cv-preview .ch-ul li::marker { color: var(--cv-secondaire, #2563eb); }
+#cv-preview .ch-ul li::marker { color: var(--cv-principale, #2563eb); }
 
 /* Chips de compétences clés (générées par le JS) */
 #cv-preview .ch-chips { margin: 4px 0 2px; padding: 0; list-style: none; }
