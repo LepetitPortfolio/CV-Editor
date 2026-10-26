@@ -403,3 +403,49 @@ body.dark .exp-card .remove:hover { color: #f87171; }
 /* Compétences : intitulé en gras aligné (bleu) */
 #cv-preview .ch-skills { font-size: calc(var(--cv-size, 12px) * 1.12); line-height: 1.75; margin: 4px 0; }
 #cv-preview .ch-skills b { display: inline-block; min-width: 105px; color: var(--cv-secondaire, #2563eb); }
+
+/* ============================================================
+   15. PHOTO DE PROFIL — classes .cv-photo (+ variantes par template)
+   Positionnement choisi :
+   - Classique (.cv-photo)     : flottante à droite de l'en-tête
+   - Moderne (.tm-photo)       : ovale, à droite dans le bandeau
+   - Minimaliste (.mn-photo)   : flottante à droite, épurée
+   - Élégant serif (.es-photo) : centrée au-dessus du nom, ovale,
+                                liseré doré (= couleur principale)
+   - Suisse (.su-photo)        : rectangle à droite, liseré couleur principale
+   - Compétences (.ch-photo)   : flottante à droite de l'en-tête
+   La photo est un <img> inséré en tête d'en-tête par cv-preview.js
+   (chaîne vide si absente → aucun impact sur la mise en page).
+   ============================================================ */
+
+/* Socle commun : vignette RECTANGULAIRE au format portrait (≈ 4:5),
+   cadrée sur le haut (visage), jamais déformée grâce à
+   object-fit/object-position. */
+#cv-preview .cv-photo { width: 88px; height: 108px; object-fit: cover; object-position: top; break-inside: avoid; page-break-inside: avoid; }
+
+/* Classique : à droite du nom/contacts, s'insère dans l'en-tête
+   fileté existant (.cv-header). Le float laisse le texte couler
+   autour — motif CV classique. */
+#cv-preview .cv-header .cv-photo { float: right; margin: 0 0 .4rem .9rem; }
+
+/* Moderne : ovale (border-radius 50% sur un cadre non carré),
+   liseré blanc, posée dans le bandeau coloré. */
+#cv-preview .tm-photo { float: right; margin: 0 0 .5rem 1.1rem; border-radius: 50%; border: 3px solid #fff; }
+
+/* Minimaliste : à droite, sobre (léger arrondi, pas de bordure). */
+#cv-preview .mn-photo { float: right; margin: 0 0 .5rem 1.1rem; border-radius: 3px; }
+
+/* Élégant serif : centrée AU-DESSUS du nom (le <img> est déjà
+   premier enfant), ovale, liseré doré = couleur principale. */
+#cv-preview .es-photo
+{
+  display: block; float: none; margin: 0 auto 14px;
+  width: 102px; height: 128px;
+  border-radius: 50%; border: 3px solid var(--cv-principale, #b5a880);
+}
+
+/* Suisse : rectangle net, liseré couleur principale, à droite. */
+#cv-preview .su-photo { float: right; margin: 0 0 .5rem 1.1rem; border: 3px solid var(--cv-principale, #111); }
+
+/* Compétences en tête : à droite du bloc .ch-head. */
+#cv-preview .ch-photo { float: right; margin: 0 0 .4rem .9rem; }
