@@ -56,6 +56,9 @@ function PreviewClassiqueCV(_CV)
 {
   const page = $("#cv-preview");
 
+  // Photo de profil (affichée seulement si renseignée)
+  const photo = _CV.photo ? `<img class="cv-photo" src="${_CV.photo}" alt="" />` : "";
+
   const contacts = `
                     <div class="cv-contact"><strong>Adresse : </strong><br>${esc(_CV.adresse.ligne1) || ""}${esc(_CV.adresse.ligne2) ? `<br>${esc(_CV.adresse.ligne2)}` : ""}</div>
                     <div class="cv-contact">${esc(_CV.adresse.codePostal)+" " || ""}${esc(_CV.adresse.ville)+" " || ""} ${esc(_CV.adresse.pays)+" " || ""}</div>
@@ -105,6 +108,7 @@ function PreviewClassiqueCV(_CV)
 
   $("#cv-preview").innerHTML = `
     <div class="cv-header">
+      ${photo}
       <h1>${esc(_CV.nom) || "Votre nom"}</h1>
       <div class="cv-title">${esc(_CV.titre) || "Votre titre"}</div>
       <div class="cv-contact">${contacts}</div>
@@ -126,6 +130,9 @@ function PreviewClassiqueCV(_CV)
 function PreviewModerneCV(_CV)
 {
   const page = $("#cv-preview");
+
+  // Photo de profil (affichée seulement si renseignée)
+  const photo = _CV.photo ? `<img class="cv-photo tm-photo" src="${_CV.photo}" alt="" />` : "";
 
   // Ligne d'adresse
   const adr = _CV.adresse;
@@ -179,6 +186,7 @@ function PreviewModerneCV(_CV)
 
   page.innerHTML = `
     <header class="tm-header">
+      ${photo}
       <h1 class="tm-h1">${esc(_CV.nom) || "Votre nom"}</h1>
       <p class="tm-role">${esc(_CV.titre) || "Votre titre"}</p>
       <p class="tm-contact">${contactLines.join("<br>")}</p>
@@ -203,6 +211,9 @@ function PreviewModerneCV(_CV)
 function PreviewMinimalisteCV(_CV)
 {
   const page = $("#cv-preview");
+
+  // Photo de profil (affichée seulement si renseignée)
+  const photo = _CV.photo ? `<img class="cv-photo mn-photo" src="${_CV.photo}" alt="" />` : "";
 
   // Filet supérieur pleine largeur : posé sur la page elle-même pour
   // déborder du padding. renderPreview() le remet à zéro avant le
@@ -259,6 +270,7 @@ function PreviewMinimalisteCV(_CV)
   `).join("");
 
   page.innerHTML = `
+    ${photo}
     <h1 class="mn-h1">${esc(_CV.nom) || "Votre nom"}</h1>
     <p class="mn-role">${esc(_CV.titre) || "Votre titre"}</p>
     <p class="mn-contact">${contactLines.join("<br>")}</p>
@@ -281,6 +293,9 @@ function PreviewMinimalisteCV(_CV)
 function PreviewElegantSerifCV(_CV)
 {
   const page = $("#cv-preview");
+
+  // Photo de profil (affichée seulement si renseignée)
+  const photo = _CV.photo ? `<img class="cv-photo es-photo" src="${_CV.photo}" alt="" />` : "";
 
   // Habillage de page (classe, retirée par renderPreview() avant le switch)
   page.classList.add("tpl-serif");
@@ -335,6 +350,7 @@ function PreviewElegantSerifCV(_CV)
   `).join("");
 
   page.innerHTML = `
+    ${photo}
     <h1 class="es-h1">${esc(_CV.nom) || "Votre nom"}</h1>
     <p class="es-role">${esc(_CV.titre) || "Votre titre"}</p>
     <p class="es-contact">${contactLines.join("<br>")}</p>
@@ -356,6 +372,9 @@ function PreviewElegantSerifCV(_CV)
 function PreviewSuisseCV(_CV)
 {
   const page = $("#cv-preview");
+
+  // Photo de profil (affichée seulement si renseignée)
+  const photo = _CV.photo ? `<img class="cv-photo su-photo" src="${_CV.photo}" alt="" />` : "";
 
   // Police par défaut propre à ce template (surchargeable via le select)
   //page.style.setProperty("--cv-font", _CV.customisation?.police || '"Helvetica Neue", Arial, sans-serif');
@@ -407,6 +426,7 @@ function PreviewSuisseCV(_CV)
   `).join("");
 
   page.innerHTML = `
+    ${photo}
     <h1 class="su-h1">${esc(_CV.nom) || "Votre nom"}</h1>
     <p class="su-role">${esc(_CV.titre) || "Votre titre"}</p>
     <p class="su-contact">${contactLines.join("<br>")}</p>
@@ -430,6 +450,9 @@ function PreviewSuisseCV(_CV)
 function PreviewCompetencesCV(_CV)
 {
   const page = $("#cv-preview");
+
+  // Photo de profil (affichée seulement si renseignée)
+  const photo = _CV.photo ? `<img class="cv-photo ch-photo" src="${_CV.photo}" alt="" />` : "";
 
   // Police par défaut propre à ce template (surchargeable via le select)
   //page.style.setProperty("--cv-font", _CV.customisation?.police || '"Segoe UI", Calibri, sans-serif');
@@ -491,6 +514,7 @@ function PreviewCompetencesCV(_CV)
 
   page.innerHTML = `
     <div class="ch-head">
+      ${photo}
       <h1 class="ch-h1">${esc(_CV.nom) || "Votre nom"}</h1>
       <p class="ch-role">${esc(_CV.titre) || "Votre titre"}</p>
       <p class="ch-contact">${contactLines.join("<br>")}</p>

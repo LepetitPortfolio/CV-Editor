@@ -10,6 +10,8 @@ const STORAGE_KEY = "cv-editor-standalone-v1";
 const DEFAULT_CV = 
 {
   nom: "Gérard Bouchard",
+  photo : "",
+  photoPosition : {},
   titre: "",
   accroche: "",
   adresse:

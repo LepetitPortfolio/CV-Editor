@@ -5,7 +5,8 @@
 // Expose : (aucun — attache les listeners)
 // Dépend de : save, DEFAULT_CV ($ de cv-utils.js),
 //             addCvItem, updateCvField, removeCvItem (cv-actions.js),
-//             renderAll, switchTab (cv-panel.js)
+//             renderAll, switchTab (cv-panel.js),
+//             resizePhoto (cv-model.js)
 // ============================================================
 const onFieldChange = (e) =>
 {
@@ -60,6 +61,10 @@ document.addEventListener("click", (e) =>
     if (removeCvItem(t.id, +t.dataset.remove)) { save(); renderAll(); }
     return;
   }
+
+  // Photo de profil (les boutons sont recréés par renderPanel → délégation)
+  if (t.id === "btn-photo-add") { $("#photo-input")?.click(); return; }
+  if (t.id === "btn-photo-remove") { cv.photo = ""; save(); renderAll(); return; }
 });
 
 // Export / Import / Print / Reset
@@ -103,5 +108,22 @@ $("#file-input").addEventListener("change", (e) =>
     catch { alert("Fichier JSON invalide"); }
   };
   reader.readAsText(file);
+  e.target.value = "";
+});
+
+// Photo : l'input #photo-input est recréé par renderPanel → écoute
+// déléguée sur document. Ce "change" remonte aussi à onFieldChange,
+// mais updateCvField() l'ignore (pas de data-bind) → pas d'effet de bord.
+document.addEventListener("change", (e) =>
+{
+  if (e.target.id !== "photo-input") return;
+  const file = e.target.files?.[0];
+  if (!file) return;
+  resizePhoto(file, (dataUrl) =>
+  {
+    cv.photo = dataUrl;
+    save();
+    renderAll();
+  });
   e.target.value = "";
 });

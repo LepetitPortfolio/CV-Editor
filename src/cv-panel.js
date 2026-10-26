@@ -19,6 +19,15 @@ function renderProfilTab()
         <div class="field"><label>Nom</label><input data-bind="nom" value="${esc(c.nom)}"></div>
         <div class="field"><label>Titre</label><input data-bind="titre" value="${esc(c.titre)}"></div>
       </div>
+      <div class="field" style="margin-top:.7rem">
+        <label>Photo de profil (facultatif)</label>
+        <input type="file" id="photo-input" accept="image/*" hidden />
+        ${c.photo ? `<img class="photo-thumb" src="${c.photo}" alt="Photo de profil" />` : ""}
+        <div>
+          <button class="btn" id="btn-photo-add">${c.photo ? "Changer la photo" : "+ Ajouter une photo"}</button>
+          ${c.photo ? `<button class="btn reset" id="btn-photo-remove">Retirer</button>` : ""}
+        </div>
+      </div>
       <div class="field" style="margin-top:.7rem"><label>Accroche</label><textarea data-bind="accroche" rows="4">${esc(c.accroche)}</textarea></div>
       <div class="field" style="margin-top:.7rem">
         <div class="grid" style="margin-top:.7rem">
