@@ -200,9 +200,11 @@ function renderPanel()
   const box = $("#panel-container");
   const render = TAB_RENDERERS[currentTab];
   box.innerHTML = render ? render() : "";
-  if (currentTab === "poste") { renderJdResults(); }
+  if (currentTab === "poste") 
+  { 
+    renderJdResults(); 
+  }
 
-  renderPreview();
 }
 
 function renderJdResults()
