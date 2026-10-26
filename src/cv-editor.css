@@ -473,3 +473,29 @@ body.dark .exp-card .remove:hover { color: #f87171; }
   border-radius: 8px; border: 1px solid var(--border);
   margin-bottom: .4rem;
 }
+
+/* ============================================================
+   15 bis. PERSONNALISATION PHOTO (onglet Customisation) —
+  classes photo-aN, photo-fn et photo-cn posées sur #cv-preview par renderPreview().
+   "Selon le template" (défaut) ne pose AUCUNE classe : les règles
+   par template ci-dessus restent alors maîtresses. Une valeur
+   explicite pose une classe, et ces sélecteurs (1 id + 2 classes)
+   sont plus spécifiques que les règles par template (1 id + 1
+   classe) → ils gagnent toujours, sur les 6 templates.
+   ============================================================ */
+
+/* Ancrage (position) */
+#cv-preview.photo-a1 .cv-photo { float: right; margin: 0 0 .4rem .9rem; }
+#cv-preview.photo-a2 .cv-photo { float: left; margin: 0 .9rem .4rem 0; }
+#cv-preview.photo-a3 .cv-photo { display: block; float: none; margin: 0 auto 14px; }
+
+/* Forme */
+#cv-preview.photo-f1 .cv-photo { border-radius: 0; }
+#cv-preview.photo-f2 .cv-photo { border-radius: 8px; }
+#cv-preview.photo-f3 .cv-photo { border-radius: 50%; }
+
+/* Encadrement (liseré) */
+#cv-preview.photo-c1 .cv-photo { border: none; }
+#cv-preview.photo-c2 .cv-photo { border: 1px solid #cbd5e1; }
+#cv-preview.photo-c3 .cv-photo { border: 3px solid var(--cv-principale, #111); }
+#cv-preview.photo-c4 .cv-photo { border: 3px solid #fff; }

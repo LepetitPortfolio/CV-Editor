@@ -23,11 +23,33 @@ function renderProfilTab()
         <label>Photo de profil (facultatif)</label>
         <input type="file" id="photo-input" accept="image/*" hidden />
         ${c.photo ? `<img class="photo-thumb" src="${c.photo}" alt="Photo de profil" />` : ""}
-        <div>
-          <button class="btn" id="btn-photo-add">${c.photo ? "Changer la photo" : "+ Ajouter une photo"}</button>
-          ${c.photo ? `<button class="btn reset" id="btn-photo-remove">Retirer</button>` : ""}
+        <div class="grid">
+          <div>
+            <button class="btn" id="btn-photo-add">${c.photo ? "Changer la photo" : "+ Ajouter une photo"}</button>
+            ${c.photo ? `<button class="btn reset" id="btn-photo-remove">Retirer</button>` : ""}
+          </div>
+          <div class="grid" style="margin-top:.7rem">
+            <div class="field">
+            <label>Photo — position (ancre)</label>
+            <select data-bind="customisation.photoAncre">
+            ${CV_PHOTO_ANCRES.map((a) => `<option value="${a.value}" ${(parseInt(c.customisation.photoAncre) || 0) === a.value ? "selected" : ""}>${esc(a.label)}</option>`).join("")}
+           </select>
+          </div>
+          <div class="field">
+            <label>Photo — forme</label>
+            <select data-bind="customisation.photoForme">
+            ${CV_PHOTO_FORMES.map((f) => `<option value="${f.value}" ${(parseInt(c.customisation.photoForme) || 0) === f.value ? "selected" : ""}>${esc(f.label)}</option>`).join("")}
+            </select>
+          </div>
+          <div class="field">
+            <label>Photo — encadrement</label>
+            <select data-bind="customisation.photoCadre">
+            ${CV_PHOTO_CADRES.map((d) => `<option value="${d.value}" ${(parseInt(c.customisation.photoCadre) || 0) === d.value ? "selected" : ""}>${esc(d.label)}</option>`).join("")}
+            </select>
+          </div>
         </div>
       </div>
+    </div>
       <div class="field" style="margin-top:.7rem"><label>Accroche</label><textarea data-bind="accroche" rows="4">${esc(c.accroche)}</textarea></div>
       <div class="field" style="margin-top:.7rem">
         <div class="grid" style="margin-top:.7rem">

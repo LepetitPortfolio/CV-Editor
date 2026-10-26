@@ -11,7 +11,12 @@ const DEFAULT_CV =
 {
   nom: "Gérard Bouchard",
   photo : "",
-  photoPosition : {},
+  photodetails : 
+  {
+    photoAncre : 0,
+    photoForme : 0,
+    photoCadre : 0,
+  },
   titre: "",
   accroche: "",
   adresse:
@@ -79,6 +84,32 @@ const CV_TEMPLATES =
   { label: "Élégant serif",                   index: 3 },
   { label: "Suisse grandes majuscules",       index: 4 },
   { label: "Compétences en tête style épuré", index: 5 }
+];
+
+// Options de personnalisation de la photo (index 0 = "selon le template")
+const CV_PHOTO_ANCRES =
+[
+  { value: 0, label: "Selon le template" },
+  { value: 1, label: "À droite" },
+  { value: 2, label: "À gauche" },
+  { value: 3, label: "Centrée au-dessus du nom" }
+];
+
+const CV_PHOTO_FORMES =
+[
+  { value: 0, label: "Selon le template" },
+  { value: 1, label: "Rectangle" },
+  { value: 2, label: "Arrondie" },
+  { value: 3, label: "Ovale" }
+];
+
+const CV_PHOTO_CADRES =
+[
+  { value: 0, label: "Selon le template" },
+  { value: 1, label: "Aucun liseré" },
+  { value: 2, label: "Filet discret" },
+  { value: 3, label: "Couleur principale" },
+  { value: 4, label: "Blanc (bandeau Moderne)" }
 ];
 
 // Fusion profonde : complète un objet (partiel) avec les valeurs par défaut,

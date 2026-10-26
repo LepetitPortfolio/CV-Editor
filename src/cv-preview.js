@@ -19,6 +19,16 @@ function renderPreview()
   page.style.setProperty("--cv-font", cvFontStack());
 
   page.classList.remove("tpl-minimaliste", "tpl-serif");
+  // Personnalisation photo : on retire les classes du rendu précédent
+  // puis on pose celles choisies (valeur > 0). 0 = "selon le template"
+  // → aucune classe → les règles par template restent maîtresses.
+  page.classList.remove("photo-a1", "photo-a2", "photo-a3", "photo-f1", "photo-f2", "photo-f3", "photo-c1", "photo-c2", "photo-c3", "photo-c4");
+  const photoAncre = parseInt(c.customisation?.photoAncre) || 0;
+  const photoForme = parseInt(c.customisation?.photoForme) || 0;
+  const photoCadre = parseInt(c.customisation?.photoCadre) || 0;
+  if (photoAncre > 0) page.classList.add("photo-a" + photoAncre);
+  if (photoForme > 0) page.classList.add("photo-f" + photoForme);
+  if (photoCadre > 0) page.classList.add("photo-c" + photoCadre);
 
   const template = parseInt(c.customisation?.Template) || 0;
 

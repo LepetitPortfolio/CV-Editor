@@ -45,7 +45,7 @@ const LIST_TARGETS =
 };
 
 // Champs de customisation stockés en nombre (et non en string).
-const CUSTOMISATION_NUMERIC = ["Template", "police"];
+const CUSTOMISATION_NUMERIC = ["Template", "police", "photoAncre", "photoForme", "photoCadre"];
 
 // --- JD (offre collée) : ne modifie pas le CV, pas de save nécessaire ---
 function updateJd(t)
