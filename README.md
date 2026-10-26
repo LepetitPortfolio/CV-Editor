@@ -22,12 +22,15 @@
 - **Convention de couleurs** — 3 couleurs de customisation au rôle identique dans tous les templates :
   | Couleur | Rôle |
   |---|---|
-  | `couleurprincipale` | Textes forts (h1, intitulés, bandeau / titres de section du Moderne) |
-  | `couleursecondaire` | Accents (titre du CV, filet d'en-tête, titres de section, dates) |
-  | `couleurtertiaire` | Texte commun du CV (rarement changée) |
+  | `couleurprincipale` | Identité (nom, titre du poste, titres de section) + décorations (filets, bordures, puces, badges, bandeaux) |
+  | `couleursecondaire` | Mots clés scannables (intitulés de poste, entreprises, libellés de compétences) + dates |
+  | `couleurtertiaire` | Texte commun du CV (rarement changée, dérivée en `--cv-ink`) |
+
 - **Police** : liste déroulante de 7 polices sûres pour les ATS (Arial, Helvetica, Calibri, Verdana, Tahoma, Georgia, Times New Roman), avec pile CSS et fallback. Stockée en **index numérique** (0–6) dans le JSON, avec **migration automatique** des anciennes données au chargement
 - **Taille** : slider (2–50 px), initialisé sur la valeur sauvegardée, **libellé « N px » rafraîchi en direct** pendant le glissement
 - **Mode sombre 🌙** : bascule d'un clic, préférence sauvegardée, détection de la préférence système (`prefers-color-scheme`). Le CV reste sur fond blanc — le mode sombre ne concerne que l'interface d'édition
+- **🖼 Photo de profil (facultative)** — ajout/retrait depuis l'onglet Profil. L'image est **redimensionnée automatiquement** (300 px de large max, JPEG qualité 0.85) pour tenir dans le `localStorage` (~5 Mo) : même une photo de 4 Mo passe. Affichée sur **les 6 templates** avec une forme adaptée à chacun, incluse dans l'export JSON.
+- **🎨 Couleur d'accent de l'éditeur** — picker dans la barre d'actions, persisté en `localStorage`, **double-clic = retour à l'orange par défaut**. Préférence d'interface : volontairement **absente du JSON exporté**.
 
 ### Export
 - **🖨 Exporter PDF (ATS)** — seul le CV est imprimé, en A4, texte sélectionnable, sans en-têtes/pieds de page du navigateur, fond blanc garanti quel que soit le thème actif
@@ -62,15 +65,15 @@ Le JavaScript est découpé en modules chargés via des `<script defer>` **dans 
 CV-Editor/
 ├── src/
 │   ├── index.html       # Structure : topbar, onglets, aperçu + les 9 balises <script defer>
-│   ├── cv-editor.css    # UI (--editor-*), styles du CV (--cv-*), mode sombre, @media print
+│   ├── cv-editor.css    # UI (--editor-*), styles du CV (--cv-*, 15 sections), mode sombre, @media print
 │   ├── cv-model.js      # Données : DEFAULT_CV, CV_FONTS, CV_TEMPLATES, deepMerge(), état global, save()
-│   ├── cv-utils.js      # Utilitaires : $, esc (échappement HTML anti-XSS)
+│   ├── cv-utils.js      # Utilitaires : $, esc (échappement anti-XSS), resizePhoto()
 │   ├── cv-keywords.js   # Moteur de mots-clés : STOPWORDS, extractKeywords()
 │   ├── cv-preview.js    # Rendu du CV : renderPreview() (convention couleurs) + 1 fonction par template
 │   ├── cv-panel.js      # Formulaires : un renderXTab() par onglet, TAB_RENDERERS, switchTab(), renderPanel(), renderJdResults(), renderAll()
 │   ├── cv-actions.js    # Actions JSON : updateCvField() répartiteur + sous-fonctions write* (), addCvItem(), removeCvItem()
 │   ├── cv-events.js     # Câblage : listeners input/change/click, export/import/print/reset
-│   ├── cv-theme.js      # Mode sombre : applyTheme(), persistance, préférence système
+│   ├── cv-theme.js      # Thème & couleurs : applyTheme() (mode sombre), applyEditorAccent() (accent UI), persistance
 │   └── main.js          # Init (chargé en dernier)
 ├── analyse-technique-éditeur-de-cv-avec-export-pdf-compatible-ats.pdf
 └── .gitattributes
@@ -109,11 +112,14 @@ flowchart LR
 - **Champs multi-lignes** : les `missions` et `informations` sont stockées en tableaux (`split("\n")`) et restituées ligne par ligne ; les entrées vides sont filtrées au rendu (soft-skills, liens, sections libres).
 - **Export PDF propre** : `@media print` masque l'interface mais **déshabille** `.preview-frame` au lieu de le cacher (cacher le parent du CV produirait une page blanche) ; `@page { margin: 0 }` supprime les en-têtes/pieds de page du navigateur (« 1 sur 1 », date, URL), les marges visibles étant recréées par le `padding: 12mm` du CV ; `html, body { background: #fff !important; }` garantit un fond blanc même en mode sombre ; `break-inside: avoid` empêche les coupures au milieu d'un bloc.
 - **Échappement systématique (`esc`)** : toutes les valeurs saisies sont échappées avant injection.
+- **Pipeline photo local** : `resizePhoto()` réduit l'image en `canvas` → **data-URL JPEG** (300 px, qualité 0.85) stockée dans `cv.photo` — aucune requête réseau, et le `localStorage` (~5 Mo) reste souverain. L'affichage est 100 % CSS : un socle `.cv-photo` (format portrait 4:5, `object-fit: cover`, `object-position: top`) décliné par template (`tm-photo` ovale dans le bandeau, `es-photo` ovale centrée, `su-photo` rectangle liseré, etc.). Absente = chaîne vide → mise en page inchangée.
+- **Accent d'interface dynamique** : `applyEditorAccent()` pose `--editor-accent` et dérive `--editor-accent-soft` via `color-mix(in srgb, ${color} 14%, #fff)` — toute l'interface suit sans classe utilitaire. Stocké sous `cv-editor-accent`, **jamais dans le JSON du CV**.
 
 ## 📄 Modèle de données (JSON)
 
 ```json
 {
+  "photo": "",
   "nom": "", "titre": "", "accroche": "", "email": "", "tel": "",
   "adresse": { "ligne1": "", "ligne2": "", "codePostal": "", "ville": "", "pays": "" },
   "otherlinks": [{ "libelle": "GitHub", "url": "..." }],
@@ -153,6 +159,7 @@ Aucune dépendance externe, aucun outil de build.
 - **CV multi-pages** : le `padding` du CV ne se répète pas aux sauts de page (contenu proche du bord en page 2+).
 - **Analyse de mots-clés basique** (fréquence) : pas de synonymes ni de racinisation (stemming).
 - **Données liées au navigateur** (localStorage) : pensez à l'export JSON pour sauvegarder.
+- **Photo dans le localStorage** : la photo est stockée en data-URL dans les données du CV — quelques photos volumineuses (ou un localStorage partagé avec d’autres apps) peuvent approcher la limite ~5 Mo. La réduction automatique (300 px) limite le risque.
 
 ## 🗺 Améliorations possibles
 
