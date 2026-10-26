@@ -172,8 +172,6 @@ Aucune dépendance externe, aucun outil de build.
 
 - 🌐 **Version en ligne** : [simon.lepetit.free.fr/CV_Editor](http://simon.lepetit.free.fr/CV_Editor/) — même code, hébergé chez Free
 
-*(Le code source, c'est la page même où vous lisez ce README — et mon profil GitHub est accessible dans le header du site.)*
-
 ---
 
 *Made with vanilla HTML/CSS/JS — no framework was harmed in the making of this tool.*
