@@ -1,7 +1,7 @@
 "use strict";
 
 // ============================================================
-// cv-panel.js — Rendu du formulaire d'édition (par onglet)
+// cv-panel.js (v5) — Rendu du formulaire d'édition (par onglet)
 // Expose : renderXTab(), TAB_RENDERERS, switchTab, renderPanel,
 //          renderJdResults, renderAll
 // Dépend de : cv, jd, currentTab, CV_FONTS ($, esc, extractKeywords)
@@ -27,9 +27,19 @@ function rubriqueToggle(key, label, vide)
 // formation, une compétence...). Écrit item.affiche via le même
 // mécanisme que les autres champs (data-<collection> + data-key).
 // Convention : affiche === false = masquée, absente = affichée.
-function itemToggle(attr, i, item)
+// En tête de carte : poignée de glissement (drag & drop) + boutons
+// ↑/↓ pour réordonner les entrées.
+function itemTools(attr, i, item, total)
 {
-  return `<div class="item-toggle-row"><label class="item-toggle" title="Afficher / cacher cette entrée sur le CV"><input type="checkbox" data-${attr}="${i}" data-key="affiche" ${item?.affiche !== false ? "checked" : ""}> Afficher sur le CV</label></div>`;
+  const on = item?.affiche !== false;
+  return `<div class="item-toggle-row">
+    <span class="reorder-handle" draggable="true" title="Glisser pour réordonner">⠿</span>
+    <label class="item-toggle" title="Afficher / cacher cette entrée sur le CV"><input type="checkbox" data-${attr}="${i}" data-key="affiche" ${on ? "checked" : ""}> Afficher sur le CV</label>
+    <span class="item-move">
+      <button class="move-btn" data-move-item="${attr}" data-index="${i}" data-dir="-1" ${i === 0 ? "disabled" : ""} title="Monter">↑</button>
+      <button class="move-btn" data-move-item="${attr}" data-index="${i}" data-dir="1" ${i === total - 1 ? "disabled" : ""} title="Descendre">↓</button>
+    </span>
+  </div>`;
 }
 
 function renderProfilTab()
@@ -110,8 +120,8 @@ function renderExperiencesTab()
 {
   const c = cv;
   return rubriqueToggle("Experiences", "Expériences", c.experiences.length === 0) + c.experiences.map((e, i) => `
-      <div class="exp-card">
-        ${itemToggle("exp", i, e)}
+      <div class="exp-card" data-card="exp" data-index="${i}">
+        ${itemTools("exp", i, e, c.experiences.length)}
         ${c.experiences.length > 0 ? `<button class="remove"  id="btn-remove-exp" data-remove="${i}" title="Supprimer">✕</button>` : ""}
         <div class="grid">
           <div class="field"><label>Poste</label><input data-exp="${i}" data-key="poste" value="${esc(e.poste)}"></div>
@@ -130,8 +140,8 @@ function renderExperiencesTab()
 
       ${rubriqueToggle("Formations", "Formations", c.formations.length === 0)}
       ${c.formations.map((f, i) => `
-      <div class="exp-card">
-        ${itemToggle("edu", i, f)}
+      <div class="exp-card" data-card="edu" data-index="${i}">
+        ${itemTools("edu", i, f, c.formations.length)}
         ${c.formations.length > 0 ? `<button class="remove" id="btn-remove-edu" data-remove="${i}" title="Supprimer">✕</button>` : ""}
         <div class="grid" style="margin-bottom:.5rem">
           <div class="field"><label>Formation</label><input data-edu="${i}" data-key="intitule" value="${esc(f.intitule)}"></div>
@@ -146,8 +156,8 @@ function renderCompetencesTab()
 {
   const c = cv;
   return rubriqueToggle("Competences", "Compétences", c.competences.length === 0) + c.competences.map((comp, i) => `
-      <div class="exp-card">
-        ${itemToggle("comp", i, comp)}
+      <div class="exp-card" data-card="comp" data-index="${i}">
+        ${itemTools("comp", i, comp, c.competences.length)}
         ${c.competences.length > 0 ? `<button class="remove" id="btn-remove-comp" data-remove="${i}" title="Supprimer">✕</button>` : ""}
           <div class="field"><label>Intitulé</label><input data-comp="${i}" data-key="intitule" value="${esc(comp.intitule)}"></div>
           <div class="field"><label>Compétences (séparés par des virgules)</label><textarea data-comp="${i}" data-key="valeur" rows="2">${esc(comp.valeur)}</textarea></div>
@@ -159,8 +169,8 @@ function renderSoftSkillTab()
 {
   const c = cv;
   return rubriqueToggle("Softskill", "Soft-skills", c.softskill.length === 0) + c.softskill.map((s, i) => `
-      <div class="exp-card">
-        ${itemToggle("softskill", i, s)}
+      <div class="exp-card" data-card="softskill" data-index="${i}">
+        ${itemTools("softskill", i, s, c.softskill.length)}
         ${c.softskill.length > 0 ? `<button class="remove" id="btn-remove-softskill" data-remove="${i}" title="Supprimer">✕</button>` : ""}
         <div class="grid">
           <div class="field"><label>Libelle</label><input data-softskill="${i}" data-key="libelle" value="${esc(s.libelle)}"></div>
@@ -174,8 +184,8 @@ function renderAutresInformationsTab()
 {
   const c = cv;
   return rubriqueToggle("Autres", "Autres informations", c.autresinformations.length === 0) + c.autresinformations.map((ai, i) => `
-      <div class="exp-card">
-        ${itemToggle("autresinformations", i, ai)}
+      <div class="exp-card" data-card="autresinformations" data-index="${i}">
+        ${itemTools("autresinformations", i, ai, c.autresinformations.length)}
         ${c.autresinformations.length > 0 ? `<button class="remove" id="btn-remove-autresinformations" data-remove="${i}" title="Supprimer">✕</button>` : ""}
         <div>
           <div class="field"><label>Libelle</label><input data-autresinformations="${i}" data-key="libelle" value="${esc(ai.libelle)}"></div>
@@ -193,6 +203,43 @@ function renderCustomisationTab()
   // FIX : la valeur du slider était codée en dur (12) et revenait à 12
   // après rechargement même si une autre taille était sauvegardée.
   const taille = parseFloat(c.customisation.taille) || 12;
+
+  // Ordre des rubriques : liste réordonnable (poignée ⠿ + boutons ↑/↓).
+  // L'ordre est commun à tous les templates et persisté dans
+  // customisation.ordreSections.
+  // SEULES les rubriques « en place » sont listées : visibles ET non
+  // vides — exactement celles que l'aperçu rend. Une rubrique masquée
+  // ou vide n'occupe aucune place dans le CV → aucun sens à l'ordonner.
+  // Elles gardent leur position en mémoire et réapparaissent dans la
+  // liste dès qu'elles ont du contenu ou sont réaffichées.
+  const rubriqueEnPlace = (k) =>
+  {
+    if (cv.customisation?.["affiche" + k] === false) return false;
+    const data =
+      k === "Accroche"        ? String(cv.accroche || "").trim() :
+      k === "Experiences"     ? cv.experiences.length :
+      k === "Formations"      ? cv.formations.length :
+      k === "Competences"     ? cv.competences.length :
+      k === "Softskill"       ? cv.softskill.length :
+                                cv.autresinformations.length;
+    return Boolean(data);
+  };
+  const ordre = ordreSectionsEffectif();
+  // data-index = position dans l'ordre COMPLET (mêmes index que
+  // moveSection / le drop), même si on n'affiche qu'un sous-ensemble.
+  const lignes = ordre.map((k, i) => ({ k, i })).filter((r) => rubriqueEnPlace(r.k));
+  const ordreHtml = lignes.length === 0
+    ? `<div class="hint">Aucune rubrique visible avec du contenu pour l'instant — ajoutez des données ou réaffichez une rubrique.</div>`
+    : lignes.map(({ k, i }, j) => `
+      <div class="section-order-row" data-section="${k}" data-index="${i}">
+        <span class="reorder-handle" draggable="true" title="Glisser pour réordonner">⠿</span>
+        <span class="section-order-label">${esc(SECTION_LABELS[k] || k)}</span>
+        <span class="section-order-tools">
+          <button class="move-btn" data-move-section="${k}" data-dir="-1" ${j === 0 ? "disabled" : ""} title="Monter">↑</button>
+          <button class="move-btn" data-move-section="${k}" data-dir="1" ${j === lignes.length - 1 ? "disabled" : ""} title="Descendre">↓</button>
+        </span>
+      </div>`).join("");
+
   return `
       <div class="field">
         <label>Template :</label>
@@ -220,6 +267,11 @@ function renderCustomisationTab()
       </div><div class="field">
         <label>Couleur Tertiaire</label>
         <input type="color" data-bind="customisation.couleurtertiaire" value="${esc(c.customisation.couleurtertiaire)}">
+      </div>
+      <div class="field">
+        <label>Ordre des rubriques du CV</label>
+        <div class="section-order-list" id="section-order">${ordreHtml}</div>
+        <div class="hint">Glissez la poignée ⠿ ou utilisez ↑/↓. L'ordre s'applique à tous les templates. Les rubriques vides ou masquées n'apparaissent pas ici (et n'occupent aucune place dans le CV).</div>
       </div>`;
 
 }

@@ -1,10 +1,11 @@
 "use strict";
 
 // ============================================================
-// cv-events.js — Câblage des événements de l'interface
+// cv-events.js (v5) — Câblage des événements de l'interface
 // Expose : (aucun — attache les listeners)
 // Dépend de : save, DEFAULT_CV ($ de cv-utils.js),
 //             addCvItem, updateCvField, removeCvItem (cv-actions.js),
+//             moveCvItem, moveSection, ordreSectionsEffectif (cv-actions.js / cv-model.js),
 //             renderAll, switchTab (cv-panel.js),
 //             resizePhoto (cv-model.js)
 // ============================================================
@@ -73,6 +74,25 @@ document.addEventListener("click", (e) =>
     return;
   }
 
+  // Réordonnancement : boutons ↑/↓ des entrées et des rubriques.
+  // data-index absent (rubriques) → l'index courant se calcule via
+  // ordreSectionsEffectif() ; moveSection() écrit l'ordre normalisé.
+  if (t.classList.contains("move-btn"))
+  {
+    if (t.dataset.moveItem !== undefined)
+    {
+      const from = +t.dataset.index;
+      if (moveCvItem(t.dataset.moveItem, from, from + (+t.dataset.dir))) { save(); renderAll(); }
+    }
+    else if (t.dataset.moveSection)
+    {
+      const key = t.dataset.moveSection;
+      const to = ordreSectionsEffectif().indexOf(key) + (+t.dataset.dir);
+      if (moveSection(key, to)) { save(); renderAll(); }
+    }
+    return;
+  }
+
   // Photo de profil (les boutons sont recréés par renderPanel → délégation)
   if (t.id === "btn-photo-add") { $("#photo-input")?.click(); return; }
   if (t.id === "btn-photo-remove") { cv.photo = ""; save(); renderAll(); return; }
@@ -137,4 +157,74 @@ document.addEventListener("change", (e) =>
     renderAll();
   });
   e.target.value = "";
+});
+// ============================================================
+// DRAG & DROP — réordonnancement des entrées et des rubriques.
+// Les poignées .reorder-handle sont les seules zones draggable
+// (la carte ne l'est PAS : le drag d'un texte dans un <input> ou
+// un <textarea> resterait utilisable). Le state est gardé en
+// variable module car dataTransfer est illisible pendant dragover.
+// ============================================================
+let dragReorder = null; // { attr, section, from } ou null
+
+document.addEventListener("dragstart", (e) =>
+{
+  const t = e.target;
+  if (!t.classList?.contains("reorder-handle")) return;
+  const host = t.closest("[data-index]");
+  if (!host) return;
+  dragReorder =
+  {
+    attr: host.dataset.card || null,              // carte d'entrée...
+    section: host.dataset.section || null,       // ...ou ligne de rubrique
+    from: +host.dataset.index
+  };
+  t.classList.add("dragging");
+  e.dataTransfer.effectAllowed = "move";
+  try { e.dataTransfer.setData("text/plain", String(dragReorder.from)); } catch {}
+});
+
+// Survol : n'autorise le drop que sur les hôtes du MÊME type
+// (même collection d'entrées, ou liste des rubriques).
+document.addEventListener("dragover", (e) =>
+{
+  if (!dragReorder) return;
+  const host = e.target.closest?.("[data-index]");
+  if (!host) return;
+  const memeType = dragReorder.section
+    ? host.dataset.section !== undefined
+    : host.dataset.card === dragReorder.attr;
+  if (!memeType || +host.dataset.index === dragReorder.from) return;
+  e.preventDefault(); // indispensable pour autoriser le drop
+  document.querySelectorAll(".drop-target").forEach((el) => el.classList.remove("drop-target"));
+  host.classList.add("drop-target");
+});
+
+document.addEventListener("drop", (e) =>
+{
+  if (!dragReorder) return;
+  const host = e.target.closest?.("[data-index]");
+  const state = dragReorder;
+  dragReorder = null;
+  document.querySelectorAll(".drop-target").forEach((el) => el.classList.remove("drop-target"));
+  if (!host) return;
+  const memeType = state.section
+    ? host.dataset.section !== undefined
+    : host.dataset.card === state.attr;
+  if (!memeType) return;
+  e.preventDefault();
+  const to = +host.dataset.index;
+  if (state.section)
+  {
+    if (moveSection(state.section, to)) { save(); renderAll(); }
+  }
+  else if (moveCvItem(state.attr, state.from, to)) { save(); renderAll(); }
+});
+
+// Annulation (Échap, drop hors zone) : nettoyage
+document.addEventListener("dragend", () =>
+{
+  dragReorder = null;
+  document.querySelectorAll(".dragging").forEach((el) => el.classList.remove("dragging"));
+  document.querySelectorAll(".drop-target").forEach((el) => el.classList.remove("drop-target"));
 });

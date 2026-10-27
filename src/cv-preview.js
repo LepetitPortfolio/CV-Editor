@@ -1,7 +1,7 @@
 "use strict";
 
 // ============================================================
-// cv-preview.js — Rendu de l'aperçu du CV (template ATS)
+// cv-preview.js (v5) — Rendu de l'aperçu du CV (template ATS)
 // Expose : renderPreview
 // Dépend de : cv ($, esc de cv-utils.js)
 // ============================================================
@@ -22,6 +22,15 @@ function rubrique(key, arr)
   return rubriqueVisible(key)
     ? arr.filter((it) => it?.affiche !== false)
     : [];
+}
+
+// Rend les sections dans l'ordre choisi (customisation.ordreSections,
+// réglé dans l'onglet Personnalisation). Chaque template construit un
+// map { clé: html } (clés de SECTION_KEYS) puis délègue ici : l'ordre
+// n'est donc défini qu'à UN endroit. Clé absente ou vide → rien.
+function sectionsOrdonnees(map)
+{
+  return ordreSectionsEffectif().map((k) => map[k] || "").join("");
 }
 
 function renderPreview()
@@ -144,6 +153,16 @@ function PreviewClassiqueCV(_CV)
       <div>${ai.informations.filter(Boolean).map((i) => `${esc(i)}`).join(" - ")}</div>
     </div>`).join("");
 
+  const sections =
+  {
+    Accroche: rubriqueVisible("Accroche") && _CV.accroche ? `<div class="cv-section-title">Profil</div><div class="cv-accroche">${esc(_CV.accroche)}</div>` : "",
+    Experiences: exps ? `<div class="cv-section-title">Expériences professionnelles</div>${exps}` : "",
+    Competences: skills ? `<div class="cv-section-title">Compétences</div>${skills}` : "",
+    Softskill: softsk ? `<div class="cv-section-title">Compétences transversales</div>${softsk}` : "",
+    Formations: formations ? `<div class="cv-section-title">Formation</div>${formations}` : "",
+    Autres: autreinfo
+  };
+
   $("#cv-preview").innerHTML = `
     <div class="cv-header">
       ${photo}
@@ -152,13 +171,7 @@ function PreviewClassiqueCV(_CV)
       <div class="cv-contact">${contacts}</div>
       ${links ? `<div class="cv-contact">${links}</div>` : ""}
     </div>
-    ${rubriqueVisible("Accroche") && _CV.accroche ? `<div class="cv-section-title">Profil</div><div class="cv-accroche">${esc(_CV.accroche)}</div>` : ""}
-    ${skills ? `<div class="cv-section-title">Compétences</div>${skills}` : ""}
-    ${softsk ? `<div class="cv-section-title">Compétences transversales</div>${softsk}` : ""}
-    ${exps ? `<div class="cv-section-title">Expériences professionnelles</div>${exps}` : ""}
-    ${formations ? `<div class="cv-section-title">Formation</div>${formations}` : ""}
-    ${autreinfo ? `${autreinfo}` : ""}
-  `;
+  ` + sectionsOrdonnees(sections);
 }
 
 // ------------------------------------------------------------
@@ -222,6 +235,16 @@ function PreviewModerneCV(_CV)
     ${ai.informations.filter(Boolean).length ? `<p class="tm-p">${ai.informations.filter(Boolean).map((i) => esc(i)).join(" · ")}</p>` : ""}
   `).join("");
 
+  const sections =
+  {
+    Accroche: rubriqueVisible("Accroche") ? accroche(_CV.accroche) : "",
+    Experiences: exps ? `<h2 class="tm-h2">Expérience professionnelle</h2>${exps}` : "",
+    Competences: skills ? `<h2 class="tm-h2">Compétences</h2>${skills}` : "",
+    Softskill: softsk ? `<h2 class="tm-h2">Compétences transversales</h2>${softsk}` : "",
+    Formations: formations ? `<h2 class="tm-h2">Formation</h2>${formations}` : "",
+    Autres: autres
+  };
+
   page.innerHTML = `
     <header class="tm-header">
       ${photo}
@@ -230,12 +253,7 @@ function PreviewModerneCV(_CV)
       <p class="tm-contact">${contactLines.join("<br>")}</p>
     </header>
     <div class="tm-body">
-      ${rubriqueVisible("Accroche") ? accroche(_CV.accroche) : ""}
-      ${exps ? `<h2 class="tm-h2">Expérience professionnelle</h2>${exps}` : ""}
-      ${skills ? `<h2 class="tm-h2">Compétences</h2>${skills}` : ""}
-      ${softsk ? `<h2 class="tm-h2">Compétences transversales</h2>${softsk}` : ""}
-      ${formations ? `<h2 class="tm-h2">Formation</h2>${formations}` : ""}
-      ${autres}
+      ${sectionsOrdonnees(sections)}
     </div>
   `;
 }
@@ -307,18 +325,22 @@ function PreviewMinimalisteCV(_CV)
     ${ai.informations.filter(Boolean).length ? `<p class="mn-p">${ai.informations.filter(Boolean).map((i) => esc(i)).join(" · ")}</p>` : ""}
   `).join("");
 
+  const sections =
+  {
+    Accroche: rubriqueVisible("Accroche") && _CV.accroche?.trim() ? `<h2 class="mn-h2">Profil</h2><p class="mn-p">${esc(_CV.accroche)}</p>` : "",
+    Experiences: exps ? `<h2 class="mn-h2">Expérience professionnelle</h2>${exps}` : "",
+    Competences: skills ? `<h2 class="mn-h2">Compétences</h2>${skills}` : "",
+    Softskill: softsk ? `<h2 class="mn-h2">Compétences transversales</h2>${softsk}` : "",
+    Formations: formations ? `<h2 class="mn-h2">Formation</h2>${formations}` : "",
+    Autres: autres
+  };
+
   page.innerHTML = `
     ${photo}
     <h1 class="mn-h1">${esc(_CV.nom) || "Votre nom"}</h1>
     <p class="mn-role">${esc(_CV.titre) || "Votre titre"}</p>
     <p class="mn-contact">${contactLines.join("<br>")}</p>
-    ${rubriqueVisible("Accroche") && _CV.accroche?.trim() ? `<h2 class="mn-h2">Profil</h2><p class="mn-p">${esc(_CV.accroche)}</p>` : ""}
-    ${exps ? `<h2 class="mn-h2">Expérience professionnelle</h2>${exps}` : ""}
-    ${skills ? `<h2 class="mn-h2">Compétences</h2>${skills}` : ""}
-    ${softsk ? `<h2 class="mn-h2">Compétences transversales</h2>${softsk}` : ""}
-    ${formations ? `<h2 class="mn-h2">Formation</h2>${formations}` : ""}
-    ${autres}
-  `;
+  ` + sectionsOrdonnees(sections);
 }
 
 // ------------------------------------------------------------
@@ -387,18 +409,22 @@ function PreviewElegantSerifCV(_CV)
     ${ai.informations.filter(Boolean).length ? `<p class="es-p">${ai.informations.filter(Boolean).map((i) => esc(i)).join(" · ")}</p>` : ""}
   `).join("");
 
+  const sections =
+  {
+    Accroche: rubriqueVisible("Accroche") && _CV.accroche?.trim() ? `<h2 class="es-h2">Profil</h2><p class="es-p">${esc(_CV.accroche)}</p>` : "",
+    Experiences: exps ? `<h2 class="es-h2">Expérience professionnelle</h2>${exps}` : "",
+    Competences: skills ? `<h2 class="es-h2">Compétences</h2>${skills}` : "",
+    Softskill: softsk ? `<h2 class="es-h2">Compétences transversales</h2>${softsk}` : "",
+    Formations: formations ? `<h2 class="es-h2">Formation</h2>${formations}` : "",
+    Autres: autres
+  };
+
   page.innerHTML = `
     ${photo}
     <h1 class="es-h1">${esc(_CV.nom) || "Votre nom"}</h1>
     <p class="es-role">${esc(_CV.titre) || "Votre titre"}</p>
     <p class="es-contact">${contactLines.join("<br>")}</p>
-    ${rubriqueVisible("Accroche") && _CV.accroche?.trim() ? `<h2 class="es-h2">Profil</h2><p class="es-p">${esc(_CV.accroche)}</p>` : ""}
-    ${exps ? `<h2 class="es-h2">Expérience professionnelle</h2>${exps}` : ""}
-    ${skills ? `<h2 class="es-h2">Compétences</h2>${skills}` : ""}
-    ${softsk ? `<h2 class="es-h2">Compétences transversales</h2>${softsk}` : ""}
-    ${formations ? `<h2 class="es-h2">Formation</h2>${formations}` : ""}
-    ${autres}
-  `;
+  ` + sectionsOrdonnees(sections);
 }
 
 // ------------------------------------------------------------
@@ -463,18 +489,22 @@ function PreviewSuisseCV(_CV)
     ${ai.informations.filter(Boolean).length ? `<p class="su-p">${ai.informations.filter(Boolean).map((i) => esc(i)).join(" · ")}</p>` : ""}
   `).join("");
 
+  const sections =
+  {
+    Accroche: rubriqueVisible("Accroche") && _CV.accroche?.trim() ? `<h2 class="su-h2">Profil</h2><p class="su-p">${esc(_CV.accroche)}</p>` : "",
+    Experiences: exps ? `<h2 class="su-h2">Expérience professionnelle</h2>${exps}` : "",
+    Competences: skills ? `<h2 class="su-h2">Compétences</h2>${skills}` : "",
+    Softskill: softsk ? `<h2 class="su-h2">Compétences transversales</h2>${softsk}` : "",
+    Formations: formations ? `<h2 class="su-h2">Formation</h2>${formations}` : "",
+    Autres: autres
+  };
+
   page.innerHTML = `
     ${photo}
     <h1 class="su-h1">${esc(_CV.nom) || "Votre nom"}</h1>
     <p class="su-role">${esc(_CV.titre) || "Votre titre"}</p>
     <p class="su-contact">${contactLines.join("<br>")}</p>
-    ${rubriqueVisible("Accroche") && _CV.accroche?.trim() ? `<h2 class="su-h2">Profil</h2><p class="su-p">${esc(_CV.accroche)}</p>` : ""}
-    ${exps ? `<h2 class="su-h2">Expérience professionnelle</h2>${exps}` : ""}
-    ${skills ? `<h2 class="su-h2">Compétences</h2>${skills}` : ""}
-    ${softsk ? `<h2 class="su-h2">Compétences transversales</h2>${softsk}` : ""}
-    ${formations ? `<h2 class="su-h2">Formation</h2>${formations}` : ""}
-    ${autres}
-  `;
+  ` + sectionsOrdonnees(sections);
 }
 
 // ------------------------------------------------------------
@@ -551,6 +581,18 @@ function PreviewCompetencesCV(_CV)
     ${ai.informations.filter(Boolean).length ? `<p class="ch-p">${ai.informations.filter(Boolean).map((i) => esc(i)).join(" · ")}</p>` : ""}
   `).join("");
 
+  // Compétences : les chips suivent la section (même clé) — l'ordre
+  // choisi place donc le bloc « Compétences clés » avec les détails.
+  const sections =
+  {
+    Accroche: rubriqueVisible("Accroche") && _CV.accroche?.trim() ? `<h2 class="ch-h2">Profil</h2><p class="ch-p">${esc(_CV.accroche)}</p>` : "",
+    Experiences: exps ? `<h2 class="ch-h2">Expérience professionnelle</h2>${exps}` : "",
+    Competences: (rubriqueVisible("Competences") && chips ? `<h2 class="ch-h2">Compétences clés</h2><ul class="ch-chips">${chips}</ul>` : "") + (skills ? `${skills}` : ""),
+    Softskill: softsk ? `<h2 class="ch-h2">Compétences transversales</h2>${softsk}` : "",
+    Formations: formations ? `<h2 class="ch-h2">Formation</h2>${formations}` : "",
+    Autres: autres
+  };
+
   page.innerHTML = `
     <div class="ch-head">
       ${photo}
@@ -558,12 +600,5 @@ function PreviewCompetencesCV(_CV)
       <p class="ch-role">${esc(_CV.titre) || "Votre titre"}</p>
       <p class="ch-contact">${contactLines.join("<br>")}</p>
     </div>
-    ${rubriqueVisible("Competences") && chips ? `<h2 class="ch-h2">Compétences clés</h2><ul class="ch-chips">${chips}</ul>` : ""}
-    ${skills ? `${skills}` : ""}
-    ${softsk ? `<h2 class="ch-h2">Compétences transversales</h2>${softsk}` : ""}
-    ${rubriqueVisible("Accroche") && _CV.accroche?.trim() ? `<h2 class="ch-h2">Profil</h2><p class="ch-p">${esc(_CV.accroche)}</p>` : ""}
-    ${exps ? `<h2 class="ch-h2">Expérience professionnelle</h2>${exps}` : ""}
-    ${formations ? `<h2 class="ch-h2">Formation</h2>${formations}` : ""}
-    ${autres}
-  `;
+  ` + sectionsOrdonnees(sections);
 }

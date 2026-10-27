@@ -1,11 +1,38 @@
 "use strict";
 
 // ============================================================
-// cv-model.js — Modèle de données & état global
+// cv-model.js (v5) — Modèle de données & état global
 // Expose : STORAGE_KEY, DEFAULT_CV, CV_FONTS, save(),
 //          cv, jd, currentTab
 // ============================================================
 const STORAGE_KEY = "cv-editor-standalone-v1";
+
+// ------------------------------------------------------------
+// Ordre des rubriques du CV (réordonnancement drag & drop / ↑↓).
+// Ordre par défaut = ordre historique des templates. La clé
+// customisation.ordreSections stocke l'ordre choisi ; absente =
+// ordre par défaut (compatibilité anciens JSON). Ces clés sont les
+// mêmes que celles des toggles affiche* : cohérence garantie.
+// ------------------------------------------------------------
+const SECTION_KEYS =
+[
+  "Accroche",
+  "Experiences",
+  "Competences",
+  "Softskill",
+  "Formations",
+  "Autres"
+];
+
+const SECTION_LABELS =
+{
+  Accroche: "Profil (accroche)",
+  Experiences: "Expériences",
+  Competences: "Compétences",
+  Softskill: "Soft-skills",
+  Formations: "Formations",
+  Autres: "Autres informations"
+};
 
 const DEFAULT_CV = 
 {
@@ -62,6 +89,16 @@ const DEFAULT_CV =
     afficheCompetences : true,
     afficheSoftskill : true,
     afficheAutres : true,
+    // Ordre choisi des rubriques (voir SECTION_KEYS). Absent = défaut.
+    ordreSections :
+    [
+      "Accroche",
+      "Experiences",
+      "Competences",
+      "Softskill",
+      "Formations",
+      "Autres"
+    ],
     police : 0,
     taille : 12,
     couleurprincipale : "#000000",
@@ -179,6 +216,18 @@ function cvFontStack()
 {
   const i = cv.customisation?.police;
   return CV_FONTS[i]?.stack || CV_FONTS[0].stack;
+}
+
+// Ordre des rubriques effectif : l'ordre choisi (s'il existe), nettoyé
+// (clés inconnues ignorées), complété par les rubriques manquantes à
+// leur position par défaut — puis re-sauvegardé tel quel dans
+// customisation.ordreSections au premier déplacement.
+function ordreSectionsEffectif()
+{
+  const choisi = Array.isArray(cv.customisation?.ordreSections)
+    ? cv.customisation.ordreSections.filter((k) => SECTION_KEYS.includes(k))
+    : [];
+  return choisi.concat(SECTION_KEYS.filter((k) => !choisi.includes(k)));
 }
 
 normalizePolice(); // appelé à chaque chargement (localStorage ou défaut)

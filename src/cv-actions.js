@@ -1,9 +1,10 @@
 "use strict";
 
 // ============================================================
-// cv-actions.js — Actions sur les données du CV (JSON)
-// Expose : addCvItem, updateCvField, removeCvItem
-// Dépend de : cv, jd (renderJdResults de cv-panel.js)
+// cv-actions.js (v5) — Actions sur les données du CV (JSON)
+// Expose : addCvItem, updateCvField, removeCvItem,
+//          moveCvItem, moveSection
+// Dépend de : cv, jd, SECTION_KEYS (renderJdResults, ordreSectionsEffectif)
 // ============================================================
 
 // AJOUT — crée un nouvel élément dans le JSON du CV
@@ -148,5 +149,47 @@ function removeCvItem(btnId, index)
   const getCollection = REMOVE_ACTIONS[btnId];
   if (!getCollection) return false;
   getCollection().splice(index, 1);
+  return true;
+}
+
+// ============================================================
+// DÉPLACEMENT — réordonnancement des entrées et des rubriques.
+// L'ordre des entrées EST l'ordre des tableaux du modèle : déplacer
+// une entrée = la déplacer dans le PDF, tous templates confondus.
+// ============================================================
+
+// Déplace l'entrée d'une collection de l'index "from" vers l'index
+// "to" (0 = première). Rejette les index hors bornes sans rien faire.
+function moveCvItem(attr, from, to)
+{
+  const target = LIST_TARGETS[attr];
+  if (!target) return false;
+  const arr = target.get();
+  from = +from;
+  to = +to;
+  if (!Number.isInteger(from) || !Number.isInteger(to)
+      || from < 0 || from >= arr.length
+      || to < 0 || to >= arr.length)
+  {
+    return false;
+  }
+  const [item] = arr.splice(from, 1);
+  arr.splice(to, 0, item);
+  return true;
+}
+
+// Déplace une rubrique (clé SECTION_KEYS) à la position "to".
+// Écrit l'ordre complet normalisé dans customisation.ordreSections :
+// un ancien JSON sans cette clé est donc migré à la volée.
+function moveSection(key, to)
+{
+  if (!SECTION_KEYS.includes(key)) return false;
+  const ordre = ordreSectionsEffectif();
+  const from = ordre.indexOf(key);
+  to = +to;
+  if (from < 0 || !Number.isInteger(to) || to < 0 || to >= ordre.length) return false;
+  ordre.splice(from, 1);
+  ordre.splice(to, 0, key);
+  cv.customisation.ordreSections = ordre;
   return true;
 }

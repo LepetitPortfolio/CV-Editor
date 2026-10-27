@@ -5,7 +5,7 @@
    2. Topbar/boutons   
    3. Layout/aperçu
    4. Onglets   
-   5. Formulaires   
+   5. Formulaires (cartes, toggles, réordonnancement)   
    6. JD matching   
    7. CV Classique
    8. Impression   
@@ -143,16 +143,20 @@ body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg); co
   color: #b91c1c;
 }
 
-/* Case « Afficher sur le CV » d'UNE entrée (expérience, formation,
-   compétence, soft-skill, autre info). Même logique visuelle que
-   .rubrique-toggle mais en plus discret : c'est un réglage par ligne.
-   padding-right : laisse la place au bouton ✕ (position:absolute
-   en haut à droite de .exp-card). */
+/* ----- Toolbar de carte : réordonner / masquer, visible d'un coup d'œil ----- */
+/* Fond teinté, débordant sur les bords haut de la carte (marges
+   négatives) : la ligne « outils » se lit comme une barre, pas comme
+   un champ de saisie de plus. Padding-right laisse la place au ✕. */
 .item-toggle-row
 {
   display: flex;
-  padding-right: 2rem;
-  margin-bottom: .3rem;
+  align-items: center;
+  gap: 10px;
+  margin: -.8rem -.8rem .7rem -.8rem;   /* colle aux bords de .exp-card */
+  padding: 7px 2.5rem 7px 10px;
+  border-bottom: 1px solid var(--border);
+  border-radius: 8px 8px 0 0;           /* suit les coins de la carte */
+  background: rgba(0, 0, 0, .04);
 }
 .item-toggle
 {
@@ -176,6 +180,90 @@ body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg); co
 {
   color: #b91c1c;
 }
+
+/* Poignée de glissement : seule zone draggable (la carte ne l'est pas,
+   pour ne pas casser la sélection de texte dans les <input>/<textarea>). */
+.reorder-handle
+{
+  cursor: grab;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1;
+  user-select: none;
+  flex: none;
+}
+.reorder-handle:hover { color: var(--editor-accent); }
+.reorder-handle:active { cursor: grabbing; }
+.reorder-handle.dragging { opacity: .4; }
+
+/* Boutons ↑/↓ : pleins, couleur d'accent — LE point de visibilité */
+.item-move { margin-left: auto; display: inline-flex; gap: 4px; flex: none; }
+.move-btn
+{
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
+  min-width: 26px;
+  padding: 4px 6px;
+  color: var(--editor-accent);
+  background: rgba(0, 0, 0, .05);
+  border: 1px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.move-btn:hover:not(:disabled) { background: var(--editor-accent); color: #fff; }
+.move-btn:active:not(:disabled) { transform: translateY(1px); }
+.move-btn:disabled { opacity: .3; cursor: default; }
+
+/* ----- Feedback : survol d'un outil → la carte s'illumine ----- */
+/* On comprend que l'outil agit sur la carte entière, pas juste le bouton. */
+.exp-card:has(.move-btn:hover),
+.exp-card:has(.reorder-handle:hover),
+.exp-card:has(.item-toggle:hover)
+{
+  border-color: var(--editor-accent);
+  box-shadow: 0 0 0 1px var(--editor-accent);
+}
+
+/* Cible de survol pendant un drag : filet accentué en haut */
+.drop-target { box-shadow: 0 -2px 0 0 var(--editor-accent); }
+
+/* Liste « Ordre des rubriques » (onglet Personnalisation) : même langage */
+.section-order-list
+{
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px;
+}
+.section-order-row
+{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: #fdfdfd;
+}
+.section-order-row:has(.reorder-handle:hover),
+.section-order-row:has(.move-btn:hover)
+{
+  border-color: var(--editor-accent);
+  box-shadow: 0 0 0 1px var(--editor-accent);
+}
+.section-order-label
+{
+  flex: 1;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--muted);
+}
+.section-order-tools { display: inline-flex; gap: 4px; flex: none; }
 
 /* ===== 6. JD matching (analyse de l'offre) ===== */
 .hint { font-size: 11.5px; color: #94a3b8; }
@@ -297,6 +385,13 @@ body.dark .exp-card .remove:hover { color: #f87171; }
 
 body.dark .item-toggle { color: var(--muted); }
 body.dark .item-toggle:has(input:not(:checked)) { color: #f87171; }
+
+/* Toolbar de carte & réordonnancement */
+body.dark .item-toggle-row { background: rgba(255, 255, 255, .05); border-bottom-color: #253248; }
+body.dark .move-btn { background: rgba(255, 255, 255, .08); color: var(--editor-accent); }
+body.dark .move-btn:hover:not(:disabled) { background: var(--editor-accent); color: #fff; }
+body.dark .section-order-row { background: #0e1729; border-color: #253248; }
+body.dark .drop-target { box-shadow: 0 -2px 0 0 var(--editor-accent); }
 
 /* ============================================================
    10. TEMPLATE 1 « Moderne » (bandeau) — classes tm-*
