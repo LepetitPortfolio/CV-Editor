@@ -30,6 +30,7 @@
 - **Taille** : slider (2–50 px), initialisé sur la valeur sauvegardée, **libellé « N px » rafraîchi en direct** pendant le glissement
 - **Mode sombre 🌙** : bascule d'un clic, préférence sauvegardée, détection de la préférence système (`prefers-color-scheme`). Le CV reste sur fond blanc — le mode sombre ne concerne que l'interface d'édition
 - **🖼 Photo de profil (facultative)** — ajout/retrait depuis l'onglet Profil. L'image est **redimensionnée automatiquement** (300 px de large max, JPEG qualité 0.85) pour tenir dans le `localStorage` (~5 Mo) : même une photo de 4 Mo passe. Affichée sur **les 6 templates** avec une forme adaptée à chacun, incluse dans l'export JSON.
+- **🎛 Réglages photo — ancrage, forme, encadrement** — dans l'onglet Profil, visibles **uniquement quand une photo est présente** : position (Selon le template / À droite / À gauche / Centrée au-dessus du nom), forme (Rectangle / Arrondie / Ovale) et encadrement (Aucun liseré / Filet discret / Couleur principale / Blanc). Le défaut « Selon le template » préserve le look propre à chacun des 6 templates ; toute valeur explicite le surcharge, de façon composable. Persistés dans `customisation` (index numériques), donc inclus à l'export JSON.
 - **🎨 Couleur d'accent de l'éditeur** — picker dans la barre d'actions, persisté en `localStorage`, **double-clic = retour à l'orange par défaut**. Préférence d'interface : volontairement **absente du JSON exporté**.
 
 ### Export
@@ -66,7 +67,7 @@ CV-Editor/
 ├── src/
 │   ├── index.html       # Structure : topbar, onglets, aperçu + les 9 balises <script defer>
 │   ├── cv-editor.css    # UI (--editor-*), styles du CV (--cv-*, 15 sections), mode sombre, @media print
-│   ├── cv-model.js      # Données : DEFAULT_CV, CV_FONTS, CV_TEMPLATES, deepMerge(), état global, save()
+│   ├── cv-model.js      # Données : DEFAULT_CV, CV_FONTS, CV_TEMPLATES, CV_PHOTO_*, deepMerge(), état global, save()
 │   ├── cv-utils.js      # Utilitaires : $, esc (échappement anti-XSS), resizePhoto()
 │   ├── cv-keywords.js   # Moteur de mots-clés : STOPWORDS, extractKeywords()
 │   ├── cv-preview.js    # Rendu du CV : renderPreview() (convention couleurs) + 1 fonction par template
@@ -113,6 +114,7 @@ flowchart LR
 - **Export PDF propre** : `@media print` masque l'interface mais **déshabille** `.preview-frame` au lieu de le cacher (cacher le parent du CV produirait une page blanche) ; `@page { margin: 0 }` supprime les en-têtes/pieds de page du navigateur (« 1 sur 1 », date, URL), les marges visibles étant recréées par le `padding: 12mm` du CV ; `html, body { background: #fff !important; }` garantit un fond blanc même en mode sombre ; `break-inside: avoid` empêche les coupures au milieu d'un bloc.
 - **Échappement systématique (`esc`)** : toutes les valeurs saisies sont échappées avant injection.
 - **Pipeline photo local** : `resizePhoto()` réduit l'image en `canvas` → **data-URL JPEG** (300 px, qualité 0.85) stockée dans `cv.photo` — aucune requête réseau, et le `localStorage` (~5 Mo) reste souverain. L'affichage est 100 % CSS : un socle `.cv-photo` (format portrait 4:5, `object-fit: cover`, `object-position: top`) décliné par template (`tm-photo` ovale dans le bandeau, `es-photo` ovale centrée, `su-photo` rectangle liseré, etc.). Absente = chaîne vide → mise en page inchangée.
+- **Réglages photo par surcharge de classes** : `renderPreview()` pose des classes `photo-a*` (ancrage), `photo-f*` (forme), `photo-c*` (liseré) sur `#cv-preview` — et les retire avant chaque rendu (même mécanique que `tpl-minimaliste`/`tpl-serif`). La valeur 0 (« Selon le template ») ne pose aucune classe ; les sélecteurs de surcharge (`#cv-preview.photo-a1 .cv-photo`, 1 id + 2 classes) sont plus spécifiques que les règles par template (1 id + 1 classe) → ils gagnent toujours, sans toucher aux styles existants.
 - **Accent d'interface dynamique** : `applyEditorAccent()` pose `--editor-accent` et dérive `--editor-accent-soft` via `color-mix(in srgb, ${color} 14%, #fff)` — toute l'interface suit sans classe utilitaire. Stocké sous `cv-editor-accent`, **jamais dans le JSON du CV**.
 
 ## 📄 Modèle de données (JSON)
@@ -136,6 +138,9 @@ flowchart LR
     "Template": 0,
     "police": 0,
     "taille": 12,
+    "photoAncre": 0,
+    "photoForme": 0,
+    "photoCadre": 0,
     "couleurprincipale": "#000000",
     "couleursecondaire": "#000000",
     "couleurtertiaire": "#000000"

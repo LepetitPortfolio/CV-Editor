@@ -46,7 +46,7 @@ function renderProfilTab()
         </div>
         </div>` : ""}
         <div>
-          <button class="btn" id="btn-photo-add">${c.photo ? "Changer la photo" : "+ Ajouter une photo"}</button>
+          <button class="btn primary" id="btn-photo-add">${c.photo ? "Changer la photo" : "+ Ajouter une photo"}</button>
           ${c.photo ? `<button class="btn reset" id="btn-photo-remove">Retirer</button>` : ""}
         </div>
       </div>
