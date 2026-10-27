@@ -11,12 +11,6 @@ const DEFAULT_CV =
 {
   nom: "Gérard Bouchard",
   photo : "",
-  photodetails : 
-  {
-    photoAncre : 0,
-    photoForme : 0,
-    photoCadre : 0,
-  },
   titre: "",
   accroche: "",
   adresse:
@@ -56,6 +50,9 @@ const DEFAULT_CV =
   customisation :
   {
     Template : 0,
+    photoAncre : 0,
+    photoForme : 0,
+    photoCadre : 0,
     police : 0,
     taille : 12,
     couleurprincipale : "#000000",

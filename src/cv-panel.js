@@ -24,7 +24,7 @@ function renderProfilTab()
         <input type="file" id="photo-input" accept="image/*" hidden />
         ${c.photo ? `<div class="grid"> 
         <img class="photo-thumb-editor" src="${c.photo}" alt="Photo de profil" />
-        <div class="grid" style="margin-top:.7rem">
+        <div style="margin-top:.7rem">
           <div class="field">
             <label>Photo — position (ancre)</label>
             <select data-bind="customisation.photoAncre">
