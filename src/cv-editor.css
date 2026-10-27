@@ -143,6 +143,40 @@ body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg); co
   color: #b91c1c;
 }
 
+/* Case « Afficher sur le CV » d'UNE entrée (expérience, formation,
+   compétence, soft-skill, autre info). Même logique visuelle que
+   .rubrique-toggle mais en plus discret : c'est un réglage par ligne.
+   padding-right : laisse la place au bouton ✕ (position:absolute
+   en haut à droite de .exp-card). */
+.item-toggle-row
+{
+  display: flex;
+  padding-right: 2rem;
+  margin-bottom: .3rem;
+}
+.item-toggle
+{
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--muted);
+}
+.item-toggle input
+{
+  width: auto;
+  accent-color: var(--editor-accent);
+}
+/* Entrée masquée = repérable d'un coup d'œil (rouge), comme les rubriques */
+.item-toggle:has(input:not(:checked))
+{
+  color: #b91c1c;
+}
+
 /* ===== 6. JD matching (analyse de l'offre) ===== */
 .hint { font-size: 11.5px; color: #94a3b8; }
 .kw-list { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 4px; }
@@ -260,6 +294,9 @@ body.dark .alert.good { background: #052e16; border-color: #166534; color: #86ef
 body.dark .hint { color: #7c8db0; }
 body.dark #site-footer { color: #8fa3c0; }
 body.dark .exp-card .remove:hover { color: #f87171; }
+
+body.dark .item-toggle { color: var(--muted); }
+body.dark .item-toggle:has(input:not(:checked)) { color: #f87171; }
 
 /* ============================================================
    10. TEMPLATE 1 « Moderne » (bandeau) — classes tm-*

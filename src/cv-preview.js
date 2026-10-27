@@ -14,9 +14,14 @@ function rubriqueVisible(key)
 
 // Renvoie la collection si sa rubrique est visible, [] sinon —
 // ainsi les map()/filter()/join() produisent naturellement du vide.
+// En bonus : les entrées masquées individuellement (item.affiche ===
+// false, case « Afficher sur le CV » de chaque carte) sont aussi
+// filtrées ICI — un seul point de contrôle pour les 6 templates.
 function rubrique(key, arr)
 {
-  return rubriqueVisible(key) ? arr : [];
+  return rubriqueVisible(key)
+    ? arr.filter((it) => it?.affiche !== false)
+    : [];
 }
 
 function renderPreview()
@@ -508,8 +513,9 @@ function PreviewCompetencesCV(_CV)
 
   // Chips de compétences clés : découpées sur les virgules des
   // valeurs du champ Compétences, dédoublonnées, vides ignorées.
+  // rubrique() : rubrique ET entrées masquées exclues des chips.
   const chips = Array.from(new Set(
-    _CV.competences
+    rubrique("Competences", _CV.competences)
       .flatMap((s) => String(s.valeur || "").split(","))
       .map((c) => c.trim())
       .filter(Boolean)

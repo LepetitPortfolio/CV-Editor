@@ -14,10 +14,22 @@
 
 // Case « Afficher sur le CV » : réutilisable en tête de chaque onglet.
 // Convention : clé absente ou true = affichée (compatibilité anciens JSON).
-function rubriqueToggle(key, label)
+// « vide » = true → la case n'est PAS rendue : inutile de proposer de
+// masquer une rubrique qui n'a aucune donnée.
+function rubriqueToggle(key, label, vide)
 {
+  if (vide) return "";
   const on = cv.customisation?.["affiche" + key] !== false;
   return `<label class="rubrique-toggle"><input type="checkbox" data-bind="customisation.affiche${key}" ${on ? "checked" : ""}> ${label} — afficher sur le CV</label>`;
+}
+
+// Case « Afficher sur le CV » d'UNE entrée (une expérience, une
+// formation, une compétence...). Écrit item.affiche via le même
+// mécanisme que les autres champs (data-<collection> + data-key).
+// Convention : affiche === false = masquée, absente = affichée.
+function itemToggle(attr, i, item)
+{
+  return `<div class="item-toggle-row"><label class="item-toggle" title="Afficher / cacher cette entrée sur le CV"><input type="checkbox" data-${attr}="${i}" data-key="affiche" ${item?.affiche !== false ? "checked" : ""}> Afficher sur le CV</label></div>`;
 }
 
 function renderProfilTab()
@@ -64,7 +76,7 @@ function renderProfilTab()
           ${c.photo ? `<button class="btn reset" id="btn-photo-remove">Retirer</button>` : ""}
         </div>
       </div>
-      ${rubriqueToggle("Accroche", "Accroche")}
+      ${rubriqueToggle("Accroche", "Accroche", !String(c.accroche || "").trim())}
       <div class="field" style="margin-top:.7rem"><label>Accroche</label><textarea data-bind="accroche" rows="4">${esc(c.accroche)}</textarea></div>
       <div class="field" style="margin-top:.7rem">
         <div class="grid" style="margin-top:.7rem">
@@ -97,8 +109,9 @@ function renderProfilTab()
 function renderExperiencesTab()
 {
   const c = cv;
-  return rubriqueToggle("Experiences", "Expériences") + c.experiences.map((e, i) => `
+  return rubriqueToggle("Experiences", "Expériences", c.experiences.length === 0) + c.experiences.map((e, i) => `
       <div class="exp-card">
+        ${itemToggle("exp", i, e)}
         ${c.experiences.length > 0 ? `<button class="remove"  id="btn-remove-exp" data-remove="${i}" title="Supprimer">✕</button>` : ""}
         <div class="grid">
           <div class="field"><label>Poste</label><input data-exp="${i}" data-key="poste" value="${esc(e.poste)}"></div>
@@ -115,9 +128,10 @@ function renderExperiencesTab()
       </div>`).join("")
       + `<button class="add-btn" id="btn-add-exp">+ Ajouter une expérience</button><br><br>
 
-      ${rubriqueToggle("Formations", "Formations")}
+      ${rubriqueToggle("Formations", "Formations", c.formations.length === 0)}
       ${c.formations.map((f, i) => `
       <div class="exp-card">
+        ${itemToggle("edu", i, f)}
         ${c.formations.length > 0 ? `<button class="remove" id="btn-remove-edu" data-remove="${i}" title="Supprimer">✕</button>` : ""}
         <div class="grid" style="margin-bottom:.5rem">
           <div class="field"><label>Formation</label><input data-edu="${i}" data-key="intitule" value="${esc(f.intitule)}"></div>
@@ -131,8 +145,9 @@ function renderExperiencesTab()
 function renderCompetencesTab()
 {
   const c = cv;
-  return rubriqueToggle("Competences", "Compétences") + c.competences.map((comp, i) => `
+  return rubriqueToggle("Competences", "Compétences", c.competences.length === 0) + c.competences.map((comp, i) => `
       <div class="exp-card">
+        ${itemToggle("comp", i, comp)}
         ${c.competences.length > 0 ? `<button class="remove" id="btn-remove-comp" data-remove="${i}" title="Supprimer">✕</button>` : ""}
           <div class="field"><label>Intitulé</label><input data-comp="${i}" data-key="intitule" value="${esc(comp.intitule)}"></div>
           <div class="field"><label>Compétences (séparés par des virgules)</label><textarea data-comp="${i}" data-key="valeur" rows="2">${esc(comp.valeur)}</textarea></div>
@@ -143,8 +158,9 @@ function renderCompetencesTab()
 function renderSoftSkillTab()
 {
   const c = cv;
-  return rubriqueToggle("Softskill", "Soft-skills") + c.softskill.map((s, i) => `
+  return rubriqueToggle("Softskill", "Soft-skills", c.softskill.length === 0) + c.softskill.map((s, i) => `
       <div class="exp-card">
+        ${itemToggle("softskill", i, s)}
         ${c.softskill.length > 0 ? `<button class="remove" id="btn-remove-softskill" data-remove="${i}" title="Supprimer">✕</button>` : ""}
         <div class="grid">
           <div class="field"><label>Libelle</label><input data-softskill="${i}" data-key="libelle" value="${esc(s.libelle)}"></div>
@@ -157,8 +173,9 @@ function renderSoftSkillTab()
 function renderAutresInformationsTab()
 {
   const c = cv;
-  return rubriqueToggle("Autres", "Autres informations") + c.autresinformations.map((ai, i) => `
+  return rubriqueToggle("Autres", "Autres informations", c.autresinformations.length === 0) + c.autresinformations.map((ai, i) => `
       <div class="exp-card">
+        ${itemToggle("autresinformations", i, ai)}
         ${c.autresinformations.length > 0 ? `<button class="remove" id="btn-remove-autresinformations" data-remove="${i}" title="Supprimer">✕</button>` : ""}
         <div>
           <div class="field"><label>Libelle</label><input data-autresinformations="${i}" data-key="libelle" value="${esc(ai.libelle)}"></div>
