@@ -11,6 +11,15 @@
 // ------------------------------------------------------------
 // Une sous-fonction par onglet (retourne le HTML du panneau)
 // ------------------------------------------------------------
+
+// Case « Afficher sur le CV » : réutilisable en tête de chaque onglet.
+// Convention : clé absente ou true = affichée (compatibilité anciens JSON).
+function rubriqueToggle(key, label)
+{
+  const on = cv.customisation?.["affiche" + key] !== false;
+  return `<label class="rubrique-toggle"><input type="checkbox" data-bind="customisation.affiche${key}" ${on ? "checked" : ""}> ${label} — afficher sur le CV</label>`;
+}
+
 function renderProfilTab()
 {
   const c = cv;
@@ -43,6 +52,11 @@ function renderProfilTab()
             ${CV_PHOTO_CADRES.map((d) => `<option value="${d.value}" ${(parseInt(c.customisation.photoCadre) || 0) === d.value ? "selected" : ""}>${esc(d.label)}</option>`).join("")}
             </select>
           </div>
+          <div class="field">
+            <label>Photo — taille <span class="range-val" id="photo-taille-val">${(parseInt(c.customisation.photoTaille) || 0) > 0 ? (parseInt(c.customisation.photoTaille) + " px") : "auto"}</span></label>
+            <input type="range" min="0" max="160" step="2" data-bind="customisation.photoTaille" value="${parseInt(c.customisation.photoTaille) || 0}">
+            <div class="hint">0 = taille selon le template</div>
+          </div>
         </div>
         </div>` : ""}
         <div>
@@ -50,6 +64,7 @@ function renderProfilTab()
           ${c.photo ? `<button class="btn reset" id="btn-photo-remove">Retirer</button>` : ""}
         </div>
       </div>
+      ${rubriqueToggle("Accroche", "Accroche")}
       <div class="field" style="margin-top:.7rem"><label>Accroche</label><textarea data-bind="accroche" rows="4">${esc(c.accroche)}</textarea></div>
       <div class="field" style="margin-top:.7rem">
         <div class="grid" style="margin-top:.7rem">
@@ -82,7 +97,7 @@ function renderProfilTab()
 function renderExperiencesTab()
 {
   const c = cv;
-  return c.experiences.map((e, i) => `
+  return rubriqueToggle("Experiences", "Expériences") + c.experiences.map((e, i) => `
       <div class="exp-card">
         ${c.experiences.length > 0 ? `<button class="remove"  id="btn-remove-exp" data-remove="${i}" title="Supprimer">✕</button>` : ""}
         <div class="grid">
@@ -100,6 +115,7 @@ function renderExperiencesTab()
       </div>`).join("")
       + `<button class="add-btn" id="btn-add-exp">+ Ajouter une expérience</button><br><br>
 
+      ${rubriqueToggle("Formations", "Formations")}
       ${c.formations.map((f, i) => `
       <div class="exp-card">
         ${c.formations.length > 0 ? `<button class="remove" id="btn-remove-edu" data-remove="${i}" title="Supprimer">✕</button>` : ""}
@@ -115,7 +131,7 @@ function renderExperiencesTab()
 function renderCompetencesTab()
 {
   const c = cv;
-  return c.competences.map((comp, i) => `
+  return rubriqueToggle("Competences", "Compétences") + c.competences.map((comp, i) => `
       <div class="exp-card">
         ${c.competences.length > 0 ? `<button class="remove" id="btn-remove-comp" data-remove="${i}" title="Supprimer">✕</button>` : ""}
           <div class="field"><label>Intitulé</label><input data-comp="${i}" data-key="intitule" value="${esc(comp.intitule)}"></div>
@@ -127,7 +143,7 @@ function renderCompetencesTab()
 function renderSoftSkillTab()
 {
   const c = cv;
-  return c.softskill.map((s, i) => `
+  return rubriqueToggle("Softskill", "Soft-skills") + c.softskill.map((s, i) => `
       <div class="exp-card">
         ${c.softskill.length > 0 ? `<button class="remove" id="btn-remove-softskill" data-remove="${i}" title="Supprimer">✕</button>` : ""}
         <div class="grid">
@@ -141,7 +157,7 @@ function renderSoftSkillTab()
 function renderAutresInformationsTab()
 {
   const c = cv;
-  return c.autresinformations.map((ai, i) => `
+  return rubriqueToggle("Autres", "Autres informations") + c.autresinformations.map((ai, i) => `
       <div class="exp-card">
         ${c.autresinformations.length > 0 ? `<button class="remove" id="btn-remove-autresinformations" data-remove="${i}" title="Supprimer">✕</button>` : ""}
         <div>

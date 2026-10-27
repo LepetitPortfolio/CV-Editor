@@ -17,6 +17,9 @@ const onFieldChange = (e) =>
   // d'"input" pendant le choix puis un "change" final redondant.
   if (e.type === "input" && t.tagName === "SELECT") return;
   if (e.type === "change" && t.type === "color") return;
+  // Les checkboxes émettent "input" PUIS "change" pour un clic :
+  // on ne traite que "change" (anti-double, comme les <select>).
+  if (e.type === "input" && t.type === "checkbox") return;
 
   if (!updateCvField(t)) return;
 
@@ -27,6 +30,14 @@ const onFieldChange = (e) =>
   {
     const label = $("#taille-val");
     if (label) label.textContent = `${parseFloat(t.value) || 12} px`;
+  }
+
+  // Libellé « auto / N px » du slider photo (même logique, sans re-render)
+  if (t.dataset.bind === "customisation.photoTaille")
+  {
+    const label = $("#photo-taille-val");
+    const v = parseFloat(t.value) || 0;
+    if (label) label.textContent = v > 0 ? `${v} px` : "auto";
   }
 
   save();

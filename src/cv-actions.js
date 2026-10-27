@@ -97,6 +97,9 @@ function writeListItem(t, value)
 // --- Répartiteur : renvoie true si le CV a changé (save nécessaire) ---
 function updateCvField(t)
 {
+  // Les checkboxes : c'est "checked" qui fait foi (value vaut toujours "on").
+  const value = t.type === "checkbox" ? t.checked : t.value;
+
   // Cas particulier : la JD ne modifie pas le CV
   if (t.id === "jd-input")
   {
@@ -113,20 +116,20 @@ function updateCvField(t)
     // "customisation.police" écrite à la racine du JSON.
     if (bind.startsWith("customisation."))
     {
-      writeCustomisation(bind, t.value);
+      writeCustomisation(bind, value);
       return true;
     }
     if (bind.startsWith("adresse."))
     {
-      writeAdresse(bind, t.value);
+      writeAdresse(bind, value);
       return true;
     }
 
-    writeCvRoot(bind, t.value);
+    writeCvRoot(bind, value);
     return true;
   }
 
-  return writeListItem(t, t.value);
+  return writeListItem(t, value);
 }
 
 // SUPPRESSION — retire un élément du JSON du CV par son index

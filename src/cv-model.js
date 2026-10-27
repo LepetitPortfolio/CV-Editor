@@ -53,6 +53,15 @@ const DEFAULT_CV =
     photoAncre : 0,
     photoForme : 0,
     photoCadre : 0,
+    photoTaille : 0,
+    // Visibilité des rubriques (cases "Afficher sur le CV" des onglets).
+    // Convention : clé absente = affichée (compatibilité anciens JSON).
+    afficheAccroche : true,
+    afficheExperiences : true,
+    afficheFormations : true,
+    afficheCompetences : true,
+    afficheSoftskill : true,
+    afficheAutres : true,
     police : 0,
     taille : 12,
     couleurprincipale : "#000000",

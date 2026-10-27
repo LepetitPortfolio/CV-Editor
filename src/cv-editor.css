@@ -118,6 +118,31 @@ body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg); co
   border-radius: 6px; padding: 8px 12px; cursor: pointer; margin-top: .3rem;
 }
 
+/* Case « <Rubrique> — afficher sur le CV » : un état décoché doit se voir
+   d'un coup d'œil, d'où le rouge quand la rubrique est masquée. */
+.rubrique-toggle
+{
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--muted);
+  margin-bottom: .7rem;
+}
+.rubrique-toggle input
+{
+  width: auto;
+  accent-color: var(--editor-accent);
+}
+.rubrique-toggle:has(input:not(:checked))
+{
+  color: #b91c1c;
+}
+
 /* ===== 6. JD matching (analyse de l'offre) ===== */
 .hint { font-size: 11.5px; color: #94a3b8; }
 .kw-list { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 4px; }
@@ -185,6 +210,14 @@ body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg); co
   body.dark .preview-frame { background: none !important; box-shadow: none !important; }
   .preview-scroll { max-height: none; overflow: visible; border-radius: 0; }
   .cv-page { max-width: none; padding: 12mm; box-shadow: none; }
+  /* Fix PDF : forcer les couleurs de fond (bandeaux, chips) à l'impression.
+  Sans cela, les navigateurs les suppriment par défaut → le bandeau du
+  template Moderne disparaissait et les textes redevenaient noirs. */
+  .cv-page
+  {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
   /* Astuce anti en-tête/pied de page ("1 sur 1", date, URL...) :
      les navigateurs les placent dans la marge de @page ; une marge à 0
      ne leur laisse aucune place → ils disparaissent. Les marges visibles
@@ -506,3 +539,14 @@ body.dark .exp-card .remove:hover { color: #f87171; }
 #cv-preview.photo-c2 .cv-photo { border: 1px solid #cbd5e1; }
 #cv-preview.photo-c3 .cv-photo { border: 3px solid var(--cv-principale, #111); }
 #cv-preview.photo-c4 .cv-photo { border: 3px solid #fff; }
+
+/* ----- 15 ter. Taille de la photo (slider) ----- */
+/* 0 = "auto" : aucune classe photo-t1, la taille du template fait foi.
+   Le slider pose --cv-photo-taille sur #cv-preview (cf. cv-preview.js).
+   aspect-ratio 4/5 : hauteur déduite, pas de déformation. */
+#cv-preview.photo-t1 .cv-photo
+{
+  width: var(--cv-photo-taille, 100px);
+  height: auto;
+  aspect-ratio: 4 / 5;
+}

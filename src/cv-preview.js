@@ -5,6 +5,20 @@
 // Expose : renderPreview
 // Dépend de : cv ($, esc de cv-utils.js)
 // ============================================================
+// Visibilité des rubriques : renvoie true si affichée. Convention :
+// clé absente ou true = affichée (les anciens JSON restent valides).
+function rubriqueVisible(key)
+{
+  return cv.customisation?.["affiche" + key] !== false;
+}
+
+// Renvoie la collection si sa rubrique est visible, [] sinon —
+// ainsi les map()/filter()/join() produisent naturellement du vide.
+function rubrique(key, arr)
+{
+  return rubriqueVisible(key) ? arr : [];
+}
+
 function renderPreview()
 {
   const c = cv;
@@ -22,13 +36,22 @@ function renderPreview()
   // Personnalisation photo : on retire les classes du rendu précédent
   // puis on pose celles choisies (valeur > 0). 0 = "selon le template"
   // → aucune classe → les règles par template restent maîtresses.
-  page.classList.remove("photo-a1", "photo-a2", "photo-a3", "photo-f1", "photo-f2", "photo-f3", "photo-c1", "photo-c2", "photo-c3", "photo-c4");
+  page.classList.remove("photo-a1", "photo-a2", "photo-a3", "photo-f1", "photo-f2", "photo-f3", "photo-c1", "photo-c2", "photo-c3", "photo-c4", "photo-t1");
   const photoAncre = parseInt(c.customisation?.photoAncre) || 0;
   const photoForme = parseInt(c.customisation?.photoForme) || 0;
   const photoCadre = parseInt(c.customisation?.photoCadre) || 0;
   if (photoAncre > 0) page.classList.add("photo-a" + photoAncre);
   if (photoForme > 0) page.classList.add("photo-f" + photoForme);
   if (photoCadre > 0) page.classList.add("photo-c" + photoCadre);
+  // Taille photo (slider) : classe + variable CSS (section 15 ter).
+  // 0 = "auto" : aucune classe, la taille du template fait foi.
+  const photoTaille = parseInt(c.customisation?.photoTaille) || 0;
+  if (photoTaille > 0)
+  {
+    page.classList.add("photo-t1");
+    page.style.setProperty("--cv-photo-taille", photoTaille + "px");
+  }
+  else page.style.removeProperty("--cv-photo-taille");
 
   const template = parseInt(c.customisation?.Template) || 0;
 
@@ -82,11 +105,11 @@ function PreviewClassiqueCV(_CV)
     .map((l) => `<span class="cv-Link-line"><strong>${esc(l.libelle)} : </strong><a href="${esc(l.url)}" target="_blank">${esc(l.url)}</a></span>`)
     .join(" · ");
 
-  const skills = _CV.competences.map((s) => `<div class="cv-skill-line"><strong>${esc(s.intitule)} : </strong>${esc(s.valeur)}</div>`).join("");
+  const skills = rubrique("Competences", _CV.competences).map((s) => `<div class="cv-skill-line"><strong>${esc(s.intitule)} : </strong>${esc(s.valeur)}</div>`).join("");
 
   // Soft-skills : un élément vide ne s'affiche plus du tout ;
   // si un seul des deux champs est rempli, pas de " : " orphelin.
-  const softsk = _CV.softskill
+  const softsk = rubrique("Softskill", _CV.softskill)
     .filter((s) => (s.libelle || "").trim() || (s.desc || "").trim())
     .map((s) => `
     <div class="cv-job">
@@ -95,7 +118,7 @@ function PreviewClassiqueCV(_CV)
       </div>
     </div>`).join("");
 
-  const exps = _CV.experiences.map((e) => `
+  const exps = rubrique("Experiences", _CV.experiences).map((e) => `
     <div class="cv-job">
       <div class="cv-job-head">
         <div class="cv-job-title">${esc(e.poste) || "Poste"} — <span class="company">${esc(e.entreprise)}</span></div>
@@ -104,13 +127,13 @@ function PreviewClassiqueCV(_CV)
       <ul>${e.missions.filter(Boolean).map((m) => `<li>${esc(m)}</li>`).join("")}</ul>
     </div>`).join("");
 
-  const formations = _CV.formations.map((f) => `
+  const formations = rubrique("Formations", _CV.formations).map((f) => `
     <div class="cv-edu">
       <div><strong>${esc(f.intitule)}</strong>${f.lieu ? " — " + esc(f.lieu) : ""}</div>
       <div>${esc(f.annee)}</div>
     </div>`).join("");
 
-    const autreinfo = _CV.autresinformations.map((ai) => `
+    const autreinfo = rubrique("Autres", _CV.autresinformations).map((ai) => `
     <div class="cv-section-title">${esc(ai.libelle)}</div>
     <div class="cv-other-info">
       <div>${ai.informations.filter(Boolean).map((i) => `${esc(i)}`).join(" - ")}</div>
@@ -124,7 +147,7 @@ function PreviewClassiqueCV(_CV)
       <div class="cv-contact">${contacts}</div>
       ${links ? `<div class="cv-contact">${links}</div>` : ""}
     </div>
-    ${_CV.accroche ? `<div class="cv-section-title">Profil</div><div class="cv-accroche">${esc(_CV.accroche)}</div>` : ""}
+    ${rubriqueVisible("Accroche") && _CV.accroche ? `<div class="cv-section-title">Profil</div><div class="cv-accroche">${esc(_CV.accroche)}</div>` : ""}
     ${skills ? `<div class="cv-section-title">Compétences</div>${skills}` : ""}
     ${softsk ? `<div class="cv-section-title">Compétences transversales</div>${softsk}` : ""}
     ${exps ? `<div class="cv-section-title">Expériences professionnelles</div>${exps}` : ""}
@@ -165,31 +188,31 @@ function PreviewModerneCV(_CV)
     ? `<h2 class="tm-h2">Profil</h2><p class="tm-p">${esc(acc)}</p>` : "";
 
   // Expériences : « Poste — Entreprise » + dates · lieu
-  const exps = _CV.experiences.map((e) => `
+  const exps = rubrique("Experiences", _CV.experiences).map((e) => `
     <h3 class="tm-h3">${esc(e.poste) || "Poste"}${e.entreprise ? " — " + esc(e.entreprise) : ""}</h3>
     <p class="tm-job-meta">${esc(e.debut)}${e.fin ? " – " + esc(e.fin) : " – aujourd'hui"}${e.lieu ? " · " + esc(e.lieu) : ""}</p>
     ${e.missions.filter(Boolean).length ? `<ul class="tm-ul">${e.missions.filter(Boolean).map((m) => `<li>${esc(m)}</li>`).join("")}</ul>` : ""}
   `).join("");
 
   // Compétences : intitulé en gras aligné, comme ta maquette
-  const skills = _CV.competences
+  const skills = rubrique("Competences", _CV.competences)
     .filter((s) => (s.intitule || "").trim() || (s.valeur || "").trim())
     .map((s) => `<p class="tm-skills"><b>${esc(s.intitule)} :</b> ${esc(s.valeur)}</p>`)
     .join("");
 
   // Soft-skills (affichés seulement si remplis)
-  const softsk = _CV.softskill
+  const softsk = rubrique("Softskill", _CV.softskill)
     .filter((s) => (s.libelle || "").trim() || (s.desc || "").trim())
     .map((s) => `<p class="tm-skills"><b>${esc(s.libelle)} :</b> ${esc(s.desc)}</p>`)
     .join("");
 
-  const formations = _CV.formations.map((f) => `
+  const formations = rubrique("Formations", _CV.formations).map((f) => `
     <h3 class="tm-h3">${esc(f.intitule)}${f.lieu ? " — " + esc(f.lieu) : ""}</h3>
     <p class="tm-job-meta">${esc(f.annee)}</p>
   `).join("");
 
   // Sections libres (« Centres d'intérêt », etc.) : libellé + éléments séparés par « · »
-  const autres = _CV.autresinformations.map((ai) => `
+  const autres = rubrique("Autres", _CV.autresinformations).map((ai) => `
     ${ai.libelle ? `<h2 class="tm-h2">${esc(ai.libelle)}</h2>` : ""}
     ${ai.informations.filter(Boolean).length ? `<p class="tm-p">${ai.informations.filter(Boolean).map((i) => esc(i)).join(" · ")}</p>` : ""}
   `).join("");
@@ -202,7 +225,7 @@ function PreviewModerneCV(_CV)
       <p class="tm-contact">${contactLines.join("<br>")}</p>
     </header>
     <div class="tm-body">
-      ${accroche(_CV.accroche)}
+      ${rubriqueVisible("Accroche") ? accroche(_CV.accroche) : ""}
       ${exps ? `<h2 class="tm-h2">Expérience professionnelle</h2>${exps}` : ""}
       ${skills ? `<h2 class="tm-h2">Compétences</h2>${skills}` : ""}
       ${softsk ? `<h2 class="tm-h2">Compétences transversales</h2>${softsk}` : ""}
@@ -250,31 +273,31 @@ function PreviewMinimalisteCV(_CV)
   ].filter(Boolean);
 
   // Expériences : « Poste — Entreprise » + dates · lieu
-  const exps = _CV.experiences.map((e) => `
+  const exps = rubrique("Experiences", _CV.experiences).map((e) => `
     <h3 class="mn-h3">${esc(e.poste) || "Poste"}${e.entreprise ? " — " + esc(e.entreprise) : ""}</h3>
     <p class="mn-job-meta">${esc(e.debut)}${e.fin ? " – " + esc(e.fin) : " – aujourd'hui"}${e.lieu ? " · " + esc(e.lieu) : ""}</p>
     ${e.missions.filter(Boolean).length ? `<ul class="mn-ul">${e.missions.filter(Boolean).map((m) => `<li>${esc(m)}</li>`).join("")}</ul>` : ""}
   `).join("");
 
   // Compétences : intitulé en gras aligné (comme la maquette)
-  const skills = _CV.competences
+  const skills = rubrique("Competences", _CV.competences)
     .filter((s) => (s.intitule || "").trim() || (s.valeur || "").trim())
     .map((s) => `<p class="mn-skills"><b>${esc(s.intitule)} :</b> ${esc(s.valeur)}</p>`)
     .join("");
 
   // Soft-skills (affichés seulement si remplis)
-  const softsk = _CV.softskill
+  const softsk = rubrique("Softskill", _CV.softskill)
     .filter((s) => (s.libelle || "").trim() || (s.desc || "").trim())
     .map((s) => `<p class="mn-skills"><b>${esc(s.libelle)} :</b> ${esc(s.desc)}</p>`)
     .join("");
 
-  const formations = _CV.formations.map((f) => `
+  const formations = rubrique("Formations", _CV.formations).map((f) => `
     <h3 class="mn-h3">${esc(f.intitule)}${f.lieu ? " — " + esc(f.lieu) : ""}</h3>
     <p class="mn-job-meta">${esc(f.annee)}</p>
   `).join("");
 
   // Sections libres (« Centres d'intérêt », etc.)
-  const autres = _CV.autresinformations.map((ai) => `
+  const autres = rubrique("Autres", _CV.autresinformations).map((ai) => `
     ${ai.libelle ? `<h2 class="mn-h2">${esc(ai.libelle)}</h2>` : ""}
     ${ai.informations.filter(Boolean).length ? `<p class="mn-p">${ai.informations.filter(Boolean).map((i) => esc(i)).join(" · ")}</p>` : ""}
   `).join("");
@@ -284,7 +307,7 @@ function PreviewMinimalisteCV(_CV)
     <h1 class="mn-h1">${esc(_CV.nom) || "Votre nom"}</h1>
     <p class="mn-role">${esc(_CV.titre) || "Votre titre"}</p>
     <p class="mn-contact">${contactLines.join("<br>")}</p>
-    ${_CV.accroche?.trim() ? `<h2 class="mn-h2">Profil</h2><p class="mn-p">${esc(_CV.accroche)}</p>` : ""}
+    ${rubriqueVisible("Accroche") && _CV.accroche?.trim() ? `<h2 class="mn-h2">Profil</h2><p class="mn-p">${esc(_CV.accroche)}</p>` : ""}
     ${exps ? `<h2 class="mn-h2">Expérience professionnelle</h2>${exps}` : ""}
     ${skills ? `<h2 class="mn-h2">Compétences</h2>${skills}` : ""}
     ${softsk ? `<h2 class="mn-h2">Compétences transversales</h2>${softsk}` : ""}
@@ -330,31 +353,31 @@ function PreviewElegantSerifCV(_CV)
   ].filter(Boolean);
 
   // Expériences : « Poste — Entreprise » + dates · lieu (en italique)
-  const exps = _CV.experiences.map((e) => `
+  const exps = rubrique("Experiences", _CV.experiences).map((e) => `
     <h3 class="es-h3">${esc(e.poste) || "Poste"}${e.entreprise ? " — " + esc(e.entreprise) : ""}</h3>
     <p class="es-job-meta">${esc(e.debut)}${e.fin ? " – " + esc(e.fin) : " – aujourd'hui"}${e.lieu ? " · " + esc(e.lieu) : ""}</p>
     ${e.missions.filter(Boolean).length ? `<ul class="es-ul">${e.missions.filter(Boolean).map((m) => `<li>${esc(m)}</li>`).join("")}</ul>` : ""}
   `).join("");
 
   // Compétences : intitulé en gras aligné (comme la maquette)
-  const skills = _CV.competences
+  const skills = rubrique("Competences", _CV.competences)
     .filter((s) => (s.intitule || "").trim() || (s.valeur || "").trim())
     .map((s) => `<p class="es-skills"><b>${esc(s.intitule)} :</b> ${esc(s.valeur)}</p>`)
     .join("");
 
   // Soft-skills (affichés seulement si remplis)
-  const softsk = _CV.softskill
+  const softsk = rubrique("Softskill", _CV.softskill)
     .filter((s) => (s.libelle || "").trim() || (s.desc || "").trim())
     .map((s) => `<p class="es-skills"><b>${esc(s.libelle)} :</b> ${esc(s.desc)}</p>`)
     .join("");
 
-  const formations = _CV.formations.map((f) => `
+  const formations = rubrique("Formations", _CV.formations).map((f) => `
     <h3 class="es-h3">${esc(f.intitule)}${f.lieu ? " — " + esc(f.lieu) : ""}</h3>
     <p class="es-job-meta">${esc(f.annee)}</p>
   `).join("");
 
   // Sections libres (« Centres d'intérêt », etc.)
-  const autres = _CV.autresinformations.map((ai) => `
+  const autres = rubrique("Autres", _CV.autresinformations).map((ai) => `
     ${ai.libelle ? `<h2 class="es-h2">${esc(ai.libelle)}</h2>` : ""}
     ${ai.informations.filter(Boolean).length ? `<p class="es-p">${ai.informations.filter(Boolean).map((i) => esc(i)).join(" · ")}</p>` : ""}
   `).join("");
@@ -364,7 +387,7 @@ function PreviewElegantSerifCV(_CV)
     <h1 class="es-h1">${esc(_CV.nom) || "Votre nom"}</h1>
     <p class="es-role">${esc(_CV.titre) || "Votre titre"}</p>
     <p class="es-contact">${contactLines.join("<br>")}</p>
-    ${_CV.accroche?.trim() ? `<h2 class="es-h2">Profil</h2><p class="es-p">${esc(_CV.accroche)}</p>` : ""}
+    ${rubriqueVisible("Accroche") && _CV.accroche?.trim() ? `<h2 class="es-h2">Profil</h2><p class="es-p">${esc(_CV.accroche)}</p>` : ""}
     ${exps ? `<h2 class="es-h2">Expérience professionnelle</h2>${exps}` : ""}
     ${skills ? `<h2 class="es-h2">Compétences</h2>${skills}` : ""}
     ${softsk ? `<h2 class="es-h2">Compétences transversales</h2>${softsk}` : ""}
@@ -406,31 +429,31 @@ function PreviewSuisseCV(_CV)
   ].filter(Boolean);
 
   // Expériences : « POSTE — ENTREPRISE » + dates · lieu (majuscules via CSS)
-  const exps = _CV.experiences.map((e) => `
+  const exps = rubrique("Experiences", _CV.experiences).map((e) => `
     <h3 class="su-h3">${esc(e.poste) || "Poste"}${e.entreprise ? " — " + esc(e.entreprise) : ""}</h3>
     <p class="su-job-meta">${esc(e.debut)}${e.fin ? " – " + esc(e.fin) : " – aujourd'hui"}${e.lieu ? " · " + esc(e.lieu) : ""}</p>
     ${e.missions.filter(Boolean).length ? `<ul class="su-ul">${e.missions.filter(Boolean).map((m) => `<li>${esc(m)}</li>`).join("")}</ul>` : ""}
   `).join("");
 
   // Compétences : intitulé en petites majuscules, neutre (fidèle à la maquette)
-  const skills = _CV.competences
+  const skills = rubrique("Competences", _CV.competences)
     .filter((s) => (s.intitule || "").trim() || (s.valeur || "").trim())
     .map((s) => `<p class="su-skills"><b>${esc(s.intitule)} :</b> ${esc(s.valeur)}</p>`)
     .join("");
 
   // Soft-skills (affichés seulement si remplis)
-  const softsk = _CV.softskill
+  const softsk = rubrique("Softskill", _CV.softskill)
     .filter((s) => (s.libelle || "").trim() || (s.desc || "").trim())
     .map((s) => `<p class="su-skills"><b>${esc(s.libelle)} :</b> ${esc(s.desc)}</p>`)
     .join("");
 
-  const formations = _CV.formations.map((f) => `
+  const formations = rubrique("Formations", _CV.formations).map((f) => `
     <h3 class="su-h3">${esc(f.intitule)}${f.lieu ? " — " + esc(f.lieu) : ""}</h3>
     <p class="su-job-meta">${esc(f.annee)}</p>
   `).join("");
 
   // Sections libres (« Centres d'intérêt », etc.)
-  const autres = _CV.autresinformations.map((ai) => `
+  const autres = rubrique("Autres", _CV.autresinformations).map((ai) => `
     ${ai.libelle ? `<h2 class="su-h2">${esc(ai.libelle)}</h2>` : ""}
     ${ai.informations.filter(Boolean).length ? `<p class="su-p">${ai.informations.filter(Boolean).map((i) => esc(i)).join(" · ")}</p>` : ""}
   `).join("");
@@ -440,7 +463,7 @@ function PreviewSuisseCV(_CV)
     <h1 class="su-h1">${esc(_CV.nom) || "Votre nom"}</h1>
     <p class="su-role">${esc(_CV.titre) || "Votre titre"}</p>
     <p class="su-contact">${contactLines.join("<br>")}</p>
-    ${_CV.accroche?.trim() ? `<h2 class="su-h2">Profil</h2><p class="su-p">${esc(_CV.accroche)}</p>` : ""}
+    ${rubriqueVisible("Accroche") && _CV.accroche?.trim() ? `<h2 class="su-h2">Profil</h2><p class="su-p">${esc(_CV.accroche)}</p>` : ""}
     ${exps ? `<h2 class="su-h2">Expérience professionnelle</h2>${exps}` : ""}
     ${skills ? `<h2 class="su-h2">Compétences</h2>${skills}` : ""}
     ${softsk ? `<h2 class="su-h2">Compétences transversales</h2>${softsk}` : ""}
@@ -493,31 +516,31 @@ function PreviewCompetencesCV(_CV)
   )).map((c) => `<li>${esc(c)}</li>`).join("");
 
   // Compétences détaillées (intitulé : valeur)
-  const skills = _CV.competences
+  const skills = rubrique("Competences", _CV.competences)
     .filter((s) => (s.intitule || "").trim() || (s.valeur || "").trim())
     .map((s) => `<p class="ch-skills"><b>${esc(s.intitule)} :</b> ${esc(s.valeur)}</p>`)
     .join("");
 
   // Soft-skills (affichés seulement si remplis)
-  const softsk = _CV.softskill
+  const softsk = rubrique("Softskill", _CV.softskill)
     .filter((s) => (s.libelle || "").trim() || (s.desc || "").trim())
     .map((s) => `<p class="ch-skills"><b>${esc(s.libelle)} :</b> ${esc(s.desc)}</p>`)
     .join("");
 
   // Expériences : « Poste — Entreprise » + dates · lieu
-  const exps = _CV.experiences.map((e) => `
+  const exps = rubrique("Experiences", _CV.experiences).map((e) => `
     <h3 class="ch-h3">${esc(e.poste) || "Poste"}${e.entreprise ? " — " + esc(e.entreprise) : ""}</h3>
     <p class="ch-job-meta">${esc(e.debut)}${e.fin ? " – " + esc(e.fin) : " – aujourd'hui"}${e.lieu ? " · " + esc(e.lieu) : ""}</p>
     ${e.missions.filter(Boolean).length ? `<ul class="ch-ul">${e.missions.filter(Boolean).map((m) => `<li>${esc(m)}</li>`).join("")}</ul>` : ""}
   `).join("");
 
-  const formations = _CV.formations.map((f) => `
+  const formations = rubrique("Formations", _CV.formations).map((f) => `
     <h3 class="ch-h3">${esc(f.intitule)}${f.lieu ? " — " + esc(f.lieu) : ""}</h3>
     <p class="ch-job-meta">${esc(f.annee)}</p>
   `).join("");
 
   // Sections libres (« Centres d'intérêt », etc.)
-  const autres = _CV.autresinformations.map((ai) => `
+  const autres = rubrique("Autres", _CV.autresinformations).map((ai) => `
     ${ai.libelle ? `<h2 class="ch-h2">${esc(ai.libelle)}</h2>` : ""}
     ${ai.informations.filter(Boolean).length ? `<p class="ch-p">${ai.informations.filter(Boolean).map((i) => esc(i)).join(" · ")}</p>` : ""}
   `).join("");
@@ -529,10 +552,10 @@ function PreviewCompetencesCV(_CV)
       <p class="ch-role">${esc(_CV.titre) || "Votre titre"}</p>
       <p class="ch-contact">${contactLines.join("<br>")}</p>
     </div>
-    ${chips ? `<h2 class="ch-h2">Compétences clés</h2><ul class="ch-chips">${chips}</ul>` : ""}
+    ${rubriqueVisible("Competences") && chips ? `<h2 class="ch-h2">Compétences clés</h2><ul class="ch-chips">${chips}</ul>` : ""}
     ${skills ? `${skills}` : ""}
     ${softsk ? `<h2 class="ch-h2">Compétences transversales</h2>${softsk}` : ""}
-    ${_CV.accroche?.trim() ? `<h2 class="ch-h2">Profil</h2><p class="ch-p">${esc(_CV.accroche)}</p>` : ""}
+    ${rubriqueVisible("Accroche") && _CV.accroche?.trim() ? `<h2 class="ch-h2">Profil</h2><p class="ch-p">${esc(_CV.accroche)}</p>` : ""}
     ${exps ? `<h2 class="ch-h2">Expérience professionnelle</h2>${exps}` : ""}
     ${formations ? `<h2 class="ch-h2">Formation</h2>${formations}` : ""}
     ${autres}
