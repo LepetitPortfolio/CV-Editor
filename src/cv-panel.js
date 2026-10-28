@@ -215,13 +215,17 @@ function renderCustomisationTab()
   const rubriqueEnPlace = (k) =>
   {
     if (cv.customisation?.["affiche" + k] === false) return false;
+        // Les entrées masquées (affiche === false) ne comptent pas : une
+    // section entièrement décochée n'occupe aucune place dans le CV,
+    // donc aucun sens à l'ordonner — cohérent avec l'aperçu.
+    const visibles = (arr) => arr.filter((it) => it?.affiche !== false).length;
     const data =
       k === "Accroche"        ? String(cv.accroche || "").trim() :
-      k === "Experiences"     ? cv.experiences.length :
-      k === "Formations"      ? cv.formations.length :
-      k === "Competences"     ? cv.competences.length :
-      k === "Softskill"       ? cv.softskill.length :
-                                cv.autresinformations.length;
+      k === "Experiences"     ? visibles(cv.experiences) :
+      k === "Formations"      ? visibles(cv.formations) :
+      k === "Competences"     ? visibles(cv.competences) :
+      k === "Softskill"       ? visibles(cv.softskill) :
+                                visibles(cv.autresinformations);
     return Boolean(data);
   };
   const ordre = ordreSectionsEffectif();

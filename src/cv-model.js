@@ -224,9 +224,8 @@ function cvFontStack()
 // customisation.ordreSections au premier déplacement.
 function ordreSectionsEffectif()
 {
-  const choisi = Array.isArray(cv.customisation?.ordreSections)
-    ? cv.customisation.ordreSections.filter((k) => SECTION_KEYS.includes(k))
-    : [];
+  const choisi = Array.isArray(cv.customisation?.ordreSections) ? [...new Set(cv.customisation.ordreSections.filter((k) => SECTION_KEYS.includes(k)))] : [];
+  
   return choisi.concat(SECTION_KEYS.filter((k) => !choisi.includes(k)));
 }
 

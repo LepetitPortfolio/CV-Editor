@@ -108,7 +108,7 @@ function PreviewClassiqueCV(_CV)
 
   const contacts = `
                     <div class="cv-contact"><strong>Adresse : </strong><br>${esc(_CV.adresse.ligne1) || ""}${esc(_CV.adresse.ligne2) ? `<br>${esc(_CV.adresse.ligne2)}` : ""}</div>
-                    <div class="cv-contact">${esc(_CV.adresse.codePostal)+" " || ""}${esc(_CV.adresse.ville)+" " || ""} ${esc(_CV.adresse.pays)+" " || ""}</div>
+                    <div class="cv-contact">${[esc(_CV.adresse.codePostal), esc(_CV.adresse.ville), esc(_CV.adresse.pays)].filter(Boolean).map((s) => s.trim()).filter(Boolean).join(" ")}</div>
                     <div class="cv-contact"><strong>Tel : </strong>${esc(_CV.tel) || "06 ..."}</div>
                     <div class="cv-contact"><strong>Mail : </strong>${esc(_CV.email) || "mail@example.com"}</div>`
 
@@ -155,7 +155,7 @@ function PreviewClassiqueCV(_CV)
 
   const sections =
   {
-    Accroche: rubriqueVisible("Accroche") && _CV.accroche ? `<div class="cv-section-title">Profil</div><div class="cv-accroche">${esc(_CV.accroche)}</div>` : "",
+    Accroche: rubriqueVisible("Accroche") && _CV.accroche?.trim() ? `<div class="cv-section-title">Profil</div><div class="cv-accroche">${esc(_CV.accroche)}</div>` : "",
     Experiences: exps ? `<div class="cv-section-title">Expériences professionnelles</div>${exps}` : "",
     Competences: skills ? `<div class="cv-section-title">Compétences</div>${skills}` : "",
     Softskill: softsk ? `<div class="cv-section-title">Compétences transversales</div>${softsk}` : "",
