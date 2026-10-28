@@ -55,8 +55,12 @@ function scoreTexte(texte, poids)
   tokenizeAnalyse(texte).forEach((w) =>
   {
     const p = poids.get(w);
-    if (p) { score += p; trouves.add(w); }
+    if (p) 
+    { 
+        score += p; trouves.add(w); 
+    }
   });
+  
   return { score, mots: [...trouves] };
 }
 
@@ -117,7 +121,7 @@ function calibrerCv()
   {
     const arr = cv[key];
     if (!arr.length) return;
-    const scores = arr.map((it) => scoreTexte(TEXTE_ENTREEkey, poids));
+    const scores = arr.map((it) => scoreTexte(TEXTE_ENTREE[key], poids));
     const auMoinsUne = scores.some((s) => s.score > 0);
 
     // Masquage : uniquement si la section contient une entrée pertinente.
