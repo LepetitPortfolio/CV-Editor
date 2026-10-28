@@ -54,7 +54,6 @@ function updateJd(t)
   jd = t.value;
   renderJdResults();
 }
-
 // --- Champs simples à la racine du CV (nom, titre, accroche, email, tel) ---
 function writeCvRoot(bind, value)
 {
@@ -101,10 +100,11 @@ function updateCvField(t)
   // Les checkboxes : c'est "checked" qui fait foi (value vaut toujours "on").
   const value = t.type === "checkbox" ? t.checked : t.value;
 
-  // Cas particulier : la JD ne modifie pas le CV
+  // Cas particulier : la JD ne modifie pas le CV et ne déclenche
+  // PLUS d'analyse automatique — l'analyse se lance au clic sur
+  // #btn-analyser (cv-events.js), qui appelle updateJd().
   if (t.id === "jd-input")
   {
-    updateJd(t);
     return false;
   }
 

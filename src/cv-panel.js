@@ -280,14 +280,47 @@ function renderCustomisationTab()
 
 }
 
-function renderPosteTab()
+function renderAnalyseTab()
 {
   return `
       <div class="field">
         <label>Collez l'offre d'emploi (Job Description)</label>
         <textarea id="jd-input" rows="7" placeholder="Ex. Nous cherchons un Gameplay Programmer confirmé, maîtrisant C++, Unreal Engine, les 3C, l'IA (Behavior Trees), le réseau...">${esc(jd)}</textarea>
       </div>
-      <div id="jd-results"></div>`;
+      <div id="jd-results"></div>
+      <div class="calibre-actions">
+        <button id="btn-analyser" class="btn primary">🔍 Analyser l'offre</button>
+        <button id="btn-calibrer" class="btn primary">⚖ Calibrer le CV</button>
+        ${calibrageRapport ? '<button id="btn-annuler-calibrer" class="btn">↩ Annuler le calibrage</button>' : ""}
+      </div>
+      <div id="calibre-report">${renderCalibrageRapport()}</div>`;
+}
+
+// Rapport du dernier calibrage (transparence : quoi a changé, pourquoi)
+function renderCalibrageRapport()
+{
+  if (!calibrageRapport) return "";
+  const labels = { experiences: "Expériences", competences: "Compétences", softskill: "Soft-skills", autresinformations: "Autres informations" };
+  return `
+      <div class="alert info">
+        <strong>CV calibré sur l'offre.</strong>
+        Les entrées les plus pertinentes ont été remontées ; celles sans rapport avec l'offre
+        (score 0) ont été masquées quand leur section contenait au moins une entrée pertinente.
+        Les formations ne sont jamais masquées. Vous pouvez réafficher une entrée manuellement
+        via sa case « afficher ».
+      </div>
+      ${Object.entries(calibrageRapport).map(([section, r]) => `
+      <div class="calibre-section">
+        <h4>${labels[section] || section}</h4>
+        <div class="calibre-meta">${r.conservees} conservée(s) · ${r.masquees} masquée(s)${r.reordonne ? " · réordonnées" : ""}</div>
+        ${r.entrees.map((en) => `
+        <div class="calibre-entree ${en.masquee ? "calibre-off" : ""}">
+          <span class="calibre-score">${en.score}</span>
+          <span class="calibre-libelle">${esc(en.libelle)}</span>
+          ${en.mots.length ? `<span class="calibre-mots">${en.mots.map(esc).join(", ")}</span>` : ""}
+          ${en.masquee ? '<span class="calibre-badge">masquée</span>' : ""}
+        </div>`).join("")}
+      </div>`).join("")}`;
 }
 
 // Association onglet → sous-fonction de rendu
@@ -299,7 +332,7 @@ const TAB_RENDERERS =
   "SoftSkill":     renderSoftSkillTab,
   "autresinformations": renderAutresInformationsTab,
   "Customisation": renderCustomisationTab,
-  "poste":         renderPosteTab
+  "analyse":       renderAnalyseTab
 };
 
 // ------------------------------------------------------------
@@ -320,7 +353,10 @@ function renderPanel()
   const box = $("#panel-container");
   const render = TAB_RENDERERS[currentTab];
   box.innerHTML = render ? render() : "";
-  if (currentTab === "poste") 
+  // L'analyse ne se lance qu'au clic sur #btn-analyser : ici on ne
+  // fait que RESSORTIR les résultats d'une analyse déjà faite
+  // (après un renderAll, ex. calibrage) — jd vide = rien à afficher.
+  if (currentTab === "analyse" && jd.trim()) 
   { 
     renderJdResults(); 
   }

@@ -682,3 +682,83 @@ body.dark .drop-target { box-shadow: 0 -2px 0 0 var(--editor-accent); }
   height: auto;
   aspect-ratio: 4 / 5;
 }
+
+/* ============================================================
+   15 quater — Analyse d'offre : calibrage & rapport
+   ============================================================ */
+
+.calibre-actions {
+  display: flex;
+  gap: .5rem;
+  flex-wrap: wrap;
+  margin: .8rem 0;
+}
+
+.calibre-section {
+  border: 1px solid var(--border, #e2e8f0);
+  border-radius: 8px;
+  padding: .6rem .8rem;
+  margin-bottom: .7rem;
+}
+
+.calibre-section h4 {
+  margin: 0 0 .25rem;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--muted, #64748b);
+}
+
+.calibre-meta {
+  font-size: 11px;
+  color: var(--muted, #64748b);
+  margin-bottom: .4rem;
+}
+
+.calibre-entree {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .25rem 0;
+  font-size: 12px;
+  border-top: 1px dashed var(--border, #e2e8f0);
+}
+
+.calibre-entree:first-of-type { border-top: none; }
+
+.calibre-score {
+  flex: none;
+  min-width: 2em;
+  text-align: center;
+  font-weight: 700;
+  font-size: 11px;
+  padding: .1rem .3rem;
+  border-radius: 999px;
+  background: var(--editor-accent, #000);
+  color: #fff;
+}
+
+.calibre-libelle { flex: 1 1 auto; }
+
+.calibre-mots {
+  flex: none;
+  font-size: 10px;
+  color: var(--muted, #64748b);
+  font-style: italic;
+}
+
+.calibre-badge {
+  flex: none;
+  font-size: 10px;
+  font-weight: 600;
+  color: #b91c1c;
+  border: 1px solid #b91c1c;
+  border-radius: 999px;
+  padding: 0 .4rem;
+}
+
+.calibre-off { opacity: .55; }
+
+/* Mode sombre : lisibilité des cartes et badges */
+body.dark .calibre-section { border-color: var(--border, #334155); }
+body.dark .calibre-badge { color: #f87171; border-color: #f87171; }

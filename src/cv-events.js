@@ -96,6 +96,26 @@ document.addEventListener("click", (e) =>
   // Photo de profil (les boutons sont recréés par renderPanel → délégation)
   if (t.id === "btn-photo-add") { $("#photo-input")?.click(); return; }
   if (t.id === "btn-photo-remove") { cv.photo = ""; save(); renderAll(); return; }
+
+  // Analyse d'offre : l'analyse se lance au clic (pas à la frappe).
+  // "Analyser" lit le textarea et affiche les chips (updateJd dans
+  // cv-actions.js : jd = valeur, renderJdResults, pas de save).
+  if (t.id === "btn-analyser")
+  {
+    const ta = $("#jd-input");
+    if (ta) updateJd(ta);
+    return;
+  }
+  if (t.id === "btn-calibrer")
+  {
+    if (calibrerCv()) { save(); renderAll(); }
+    return;
+  }
+  if (t.id === "btn-annuler-calibrer")
+  {
+    if (annulerCalibrage()) { save(); renderAll(); }
+    return;
+  }
 });
 
 // Export / Import / Print / Reset
