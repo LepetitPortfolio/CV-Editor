@@ -129,7 +129,19 @@ $("#btn-reset").addEventListener("click", () =>
   }
 });
 
-$("#btn-print").addEventListener("click", () => window.print());
+// Export PDF : un titre de document propre AVANT window.print() —
+// le PDF hérite du <title> comme métadonnées (certains ATS le lisent)
+// et la boîte d'impression propose "CV - Nom - Titre.pdf" comme nom
+// de fichier au lieu du titre de l'éditeur. Restauré après impression.
+$("#btn-print").addEventListener("click", () =>
+{
+  const titreInitial = document.title;
+  const nom = (cv.nom || "").trim();
+  const role = (cv.titre || "").trim();
+  document.title = ["CV", nom, role].filter(Boolean).join(" - ");
+  window.print();
+  window.addEventListener("afterprint", () => { document.title = titreInitial; }, { once: true });
+});
 
 $("#btn-export-json").addEventListener("click", () => 
 {

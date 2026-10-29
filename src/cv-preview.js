@@ -148,7 +148,7 @@ function PreviewClassiqueCV(_CV)
     <div class="cv-job">
       <div class="cv-job-head">
         <div class="cv-job-title">${esc(e.poste) || "Poste"} — <span class="company">${esc(e.entreprise)}</span></div>
-        <div class="cv-job-dates">${esc(e.debut)}${e.fin ? " – " + esc(e.fin) : " – aujourd'hui"}${e.lieu ? " · " + esc(e.lieu) : ""}</div>
+        <div class="cv-job-dates">${esc(e.debut)}${e.fin ? " - " + esc(e.fin) : " - aujourd'hui"}${e.lieu ? " · " + esc(e.lieu) : ""}</div>
       </div>
       <ul>${e.missions.filter(Boolean).map((m) => `<li>${esc(m)}</li>`).join("")}</ul>
     </div>`).join("");
@@ -220,7 +220,7 @@ function PreviewModerneCV(_CV)
   // Expériences : « Poste — Entreprise » + dates · lieu
   const exps = rubrique("Experiences", _CV.experiences).map((e) => `
     <h3 class="tm-h3">${esc(e.poste) || "Poste"}${e.entreprise ? " — " + esc(e.entreprise) : ""}</h3>
-    <p class="tm-job-meta">${esc(e.debut)}${e.fin ? " – " + esc(e.fin) : " – aujourd'hui"}${e.lieu ? " · " + esc(e.lieu) : ""}</p>
+    <p class="tm-job-meta">${esc(e.debut)}${e.fin ? " - " + esc(e.fin) : " - aujourd'hui"}${e.lieu ? " · " + esc(e.lieu) : ""}</p>
     ${e.missions.filter(Boolean).length ? `<ul class="tm-ul">${e.missions.filter(Boolean).map((m) => `<li>${esc(m)}</li>`).join("")}</ul>` : ""}
   `).join("");
 
@@ -310,7 +310,7 @@ function PreviewMinimalisteCV(_CV)
   // Expériences : « Poste — Entreprise » + dates · lieu
   const exps = rubrique("Experiences", _CV.experiences).map((e) => `
     <h3 class="mn-h3">${esc(e.poste) || "Poste"}${e.entreprise ? " — " + esc(e.entreprise) : ""}</h3>
-    <p class="mn-job-meta">${esc(e.debut)}${e.fin ? " – " + esc(e.fin) : " – aujourd'hui"}${e.lieu ? " · " + esc(e.lieu) : ""}</p>
+    <p class="mn-job-meta">${esc(e.debut)}${e.fin ? " - " + esc(e.fin) : " - aujourd'hui"}${e.lieu ? " · " + esc(e.lieu) : ""}</p>
     ${e.missions.filter(Boolean).length ? `<ul class="mn-ul">${e.missions.filter(Boolean).map((m) => `<li>${esc(m)}</li>`).join("")}</ul>` : ""}
   `).join("");
 
@@ -394,7 +394,7 @@ function PreviewElegantSerifCV(_CV)
   // Expériences : « Poste — Entreprise » + dates · lieu (en italique)
   const exps = rubrique("Experiences", _CV.experiences).map((e) => `
     <h3 class="es-h3">${esc(e.poste) || "Poste"}${e.entreprise ? " — " + esc(e.entreprise) : ""}</h3>
-    <p class="es-job-meta">${esc(e.debut)}${e.fin ? " – " + esc(e.fin) : " – aujourd'hui"}${e.lieu ? " · " + esc(e.lieu) : ""}</p>
+    <p class="es-job-meta">${esc(e.debut)}${e.fin ? " - " + esc(e.fin) : " - aujourd'hui"}${e.lieu ? " · " + esc(e.lieu) : ""}</p>
     ${e.missions.filter(Boolean).length ? `<ul class="es-ul">${e.missions.filter(Boolean).map((m) => `<li>${esc(m)}</li>`).join("")}</ul>` : ""}
   `).join("");
 
@@ -474,7 +474,7 @@ function PreviewSuisseCV(_CV)
   // Expériences : « POSTE — ENTREPRISE » + dates · lieu (majuscules via CSS)
   const exps = rubrique("Experiences", _CV.experiences).map((e) => `
     <h3 class="su-h3">${esc(e.poste) || "Poste"}${e.entreprise ? " — " + esc(e.entreprise) : ""}</h3>
-    <p class="su-job-meta">${esc(e.debut)}${e.fin ? " – " + esc(e.fin) : " – aujourd'hui"}${e.lieu ? " · " + esc(e.lieu) : ""}</p>
+    <p class="su-job-meta">${esc(e.debut)}${e.fin ? " - " + esc(e.fin) : " - aujourd'hui"}${e.lieu ? " · " + esc(e.lieu) : ""}</p>
     ${e.missions.filter(Boolean).length ? `<ul class="su-ul">${e.missions.filter(Boolean).map((m) => `<li>${esc(m)}</li>`).join("")}</ul>` : ""}
   `).join("");
 
@@ -578,7 +578,7 @@ function PreviewCompetencesCV(_CV)
   // Expériences : « Poste — Entreprise » + dates · lieu
   const exps = rubrique("Experiences", _CV.experiences).map((e) => `
     <h3 class="ch-h3">${esc(e.poste) || "Poste"}${e.entreprise ? " — " + esc(e.entreprise) : ""}</h3>
-    <p class="ch-job-meta">${esc(e.debut)}${e.fin ? " – " + esc(e.fin) : " – aujourd'hui"}${e.lieu ? " · " + esc(e.lieu) : ""}</p>
+    <p class="ch-job-meta">${esc(e.debut)}${e.fin ? " - " + esc(e.fin) : " - aujourd'hui"}${e.lieu ? " · " + esc(e.lieu) : ""}</p>
     ${e.missions.filter(Boolean).length ? `<ul class="ch-ul">${e.missions.filter(Boolean).map((m) => `<li>${esc(m)}</li>`).join("")}</ul>` : ""}
   `).join("");
 
