@@ -15,7 +15,8 @@
    12. Élégant serif (es-*)
    13. Suisse (su-*)   
    14. Compétences en tête (ch-*) 
-   15. Photo de profil (.cv-photo)
+   15. Photo de profil (.cv-photo + personnalisation)
+   16. Analyse d'offre : calibrage & rapport (.calibre-*)
    ============================================================ */
 
 /* ===== 1. Base ===== */
@@ -313,6 +314,10 @@ body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg); co
 .cv-job li { font-size: var(--cv-size, 12px); color: var(--cv-ink, #374151); margin-bottom: 2px; }
 .cv-edu { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; font-size: var(--cv-size, 12px); color: var(--cv-ink, #374151); break-inside: avoid; }
 .cv-edu strong { color: var(--cv-secondaire, #111827); }
+
+/* Soft-skills du Classique : rendus dans .cv-SoftSkill-libelle (cv-preview.js),
+   qui n'avait AUCUNE règle → taille héritée du body, insensible au slider. */
+.cv-SoftSkill-libelle { font-size: var(--cv-size, 12px); color: var(--cv-ink, #374151); }
 
 /* ===== 8. Impression : seul le CV est exporté ===== */
 @media print 
@@ -646,15 +651,14 @@ body.dark .drop-target { box-shadow: 0 -2px 0 0 var(--editor-accent); }
   margin: .4rem;
 }
 
-/* ============================================================
-   15 bis. PERSONNALISATION PHOTO (onglet Customisation) —
-   classes photo-aN, photo-fn et photo-cn posées sur #cv-preview par renderPreview().
-   "Selon le template" (défaut) ne pose AUCUNE classe : les règles
-   par template ci-dessus restent alors maîtresses. Une valeur
-   explicite pose une classe, et ces sélecteurs (1 id + 2 classes)
-   sont plus spécifiques que les règles par template (1 id + 1
-   classe) → ils gagnent toujours, sur les 6 templates.
-   ============================================================ */
+/* ----- 15.1 Personnalisation photo (onglet Customisation) -----
+   Classes photo-aN, photo-fn, photo-cn posées sur #cv-preview par
+   renderPreview(). "Selon le template" (défaut) ne pose AUCUNE
+   classe : les règles par template ci-dessus restent alors
+   maîtresses. Une valeur explicite pose une classe, et ces
+   sélecteurs (1 id + 2 classes) sont plus spécifiques que les
+   règles par template (1 id + 1 classe) → ils gagnent toujours,
+   sur les 6 templates. */
 
 /* Ancrage (position) */
 #cv-preview.photo-a1 .cv-photo { float: right; margin: 0 0 .4rem .9rem; }
@@ -672,8 +676,8 @@ body.dark .drop-target { box-shadow: 0 -2px 0 0 var(--editor-accent); }
 #cv-preview.photo-c3 .cv-photo { border: 3px solid var(--cv-principale, #111); }
 #cv-preview.photo-c4 .cv-photo { border: 3px solid #fff; }
 
-/* ----- 15 ter. Taille de la photo (slider) ----- */
-/* 0 = "auto" : aucune classe photo-t1, la taille du template fait foi.
+/* ----- 15.2 Taille de la photo (slider) -----
+   0 = "auto" : aucune classe photo-t1, la taille du template fait foi.
    Le slider pose --cv-photo-taille sur #cv-preview (cf. cv-preview.js).
    aspect-ratio 4/5 : hauteur déduite, pas de déformation. */
 #cv-preview.photo-t1 .cv-photo
@@ -683,9 +687,7 @@ body.dark .drop-target { box-shadow: 0 -2px 0 0 var(--editor-accent); }
   aspect-ratio: 4 / 5;
 }
 
-/* ============================================================
-   15 quater — Analyse d'offre : calibrage & rapport
-   ============================================================ */
+/* ===== 16. Analyse d'offre : calibrage & rapport (onglet Analyse d'offre) ===== */
 
 .calibre-actions {
   display: flex;
