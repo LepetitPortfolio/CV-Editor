@@ -1,9 +1,11 @@
 "use strict";
 
 // ============================================================
-// cv-analyse.js — NOUVEAU FICHIER
-// Analyse d'offre : pondération des mots-clés, scoring des
-// entrées, calibrage / annulation (snapshot mémoire de session).
+// cv-analyse.js (v2) — Analyse d'offre : pondération des mots-clés,
+// scoring des entrées, calibrage / annulation (snapshot mémoire de
+// session) + règle anti-dilution : au-delà de 3 expériences
+// compatibles, seules les 3 mieux notées (date en départage)
+// restent affichées.
 // Chargé APRÈS cv-keywords.js (utilise STOPWORDS) et AVANT
 // cv-panel.js / cv-events.js (exposent calibrageRapport etc.).
 // Expose : pondererMotsCles, scoreTexte, TEXTE_ENTREE,
@@ -89,6 +91,30 @@ const CIBLES_CALIBRAGE = [
   { key: "autresinformations", libelle: (a) => a.libelle || "Sans libellé" }
 ];
 
+// ------------------------------------------------------------
+// RÈGLE ANTI-DILUTION (expériences uniquement) :
+// si l'offre rend compatibles (score > 0) PLUS de
+// SEUIL_EXPERIENCES expériences, seules les MAX_EXPERIENCES
+// mieux notées restent affichées — la récence (fin de poste)
+// départage les ex æquo. Les écartées sont masquées comme les
+// autres (réversibles : « Annuler » ou case « afficher »).
+// ------------------------------------------------------------
+const MAX_EXPERIENCES = 3;
+const SEUIL_EXPERIENCES = 3;
+
+// Récence d'une expérience : champ « fin » au format MM/AAAA ;
+// fin vide = poste en cours = aujourd'hui (le plus récent).
+// Renvoie un nombre comparable : AAAA*10000 + MM*100 (0 si illisible).
+function recenceExperience(e)
+{
+  const src = String(e?.fin || "").trim();
+  if (!src) return Number.MAX_SAFE_INTEGER; // en cours → le plus récent
+  const m = src.match(/(\d{1,2})\D+(\d{4})/);
+  if (m) return (+m[2]) * 10000 + (+m[1]) * 100;
+  const a = src.match(/(\d{4})/);
+  return a ? (+a[1]) * 10000 : 0;
+}
+
 // Snapshot mémoire de session (NON persisté) : le PLUS ANCIEN est
 // conservé — des calibrages successifs ne l'écrasent pas, "Annuler"
 // ramène donc toujours à l'état d'avant le premier calibrage.
@@ -121,7 +147,11 @@ function calibrerCv()
   {
     const arr = cv[key];
     if (!arr.length) return;
-    const scores = arr.map((it) => scoreTexte(TEXTE_ENTREE[key], poids));
+    const scores = arr.map((it) => scoreTexte(TEXTE_ENTREE[key](it), poids));
+    // Scores par RÉFÉRENCE : le réordonnacement ci-dessous ré-indexe
+    // arr, mais les références objet restent stables — le rapport
+    // reste donc correctement apparié (score ↔ entrée).
+    const scoreParItem = new Map(arr.map((it, i) => [it, scores[i]]));
     const auMoinsUne = scores.some((s) => s.score > 0);
 
     // Masquage : uniquement si la section contient une entrée pertinente.
@@ -145,17 +175,52 @@ function calibrerCv()
       arr.splice(0, arr.length, ...tri.map((t) => t.it));
     }
 
+    // RÈGLE ANTI-DILUTION (expériences uniquement) : plus de
+    // SEUIL_EXPERIENCES compatibles → on ne garde que les
+    // MAX_EXPERIENCES mieux notées (récence en départage).
+    // Re-appliquée à chaque clic « Calibrer » : une entrée
+    // réaffichée à la main peut donc être re-écartée si elle
+    // n'est pas dans le top — l'« Annuler » reste la porte de sortie.
+    // NOTE : on marque les OBJETS (Set de références), pas des
+    // indices — le réordonnancement ci-dessus a déjà ré-indexé arr,
+    // les positions ne sont donc plus fiables, les références si.
+    const ecarteesSet = new Set();
+    if (key === "experiences" && auMoinsUne)
+    {
+      const compatibles = arr
+        .map((it, i) => ({ it, i }))
+        .filter((t) => scores[t.i].score > 0);
+      if (compatibles.length > SEUIL_EXPERIENCES)
+      {
+        const classement = compatibles
+          .sort((a, b) =>
+            scores[b.i].score - scores[a.i].score
+            || recenceExperience(b.it) - recenceExperience(a.it));
+        classement.slice(0, MAX_EXPERIENCES).forEach((t) => ecarteesSet.add(t.it));
+        compatibles.forEach(({ it }) =>
+        {
+          if (!ecarteesSet.has(it) && it.affiche !== false)
+          {
+            it.affiche = false;
+            ecarteesSet.add(it);
+          }
+        });
+      }
+    }
+
     const reordonne = tri.some((t, pos) => t.i !== pos);
     const masquees = arr.reduce((n, it) => n + (it.affiche === false ? 1 : 0), 0);
     calibrageRapport[key] = {
       conservees: arr.length - masquees,
       masquees,
       reordonne,
-      entrees: arr.map((it, i) => ({
+      ecartees: ecarteesSet.size,
+      entrees: arr.map((it) => ({
         libelle: libelle(it),
-        score: scores[i].score,
-        mots: scores[i].mots,
-        masquee: it.affiche === false
+        score: scoreParItem.get(it).score,
+        mots: scoreParItem.get(it).mots,
+        masquee: it.affiche === false,
+        ecartee: ecarteesSet.has(it)
       }))
     };
   });

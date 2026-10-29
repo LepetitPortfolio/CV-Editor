@@ -306,19 +306,21 @@ function renderCalibrageRapport()
         <strong>CV calibré sur l'offre.</strong>
         Les entrées les plus pertinentes ont été remontées ; celles sans rapport avec l'offre
         (score 0) ont été masquées quand leur section contenait au moins une entrée pertinente.
+        Si plus de 3 expériences correspondaient à l'offre, seules les 3 mieux notées
+        (les plus récentes en cas d'égalité) ont été conservées — badge « hors top 3 ».
         Les formations ne sont jamais masquées. Vous pouvez réafficher une entrée manuellement
         via sa case « afficher ».
       </div>
       ${Object.entries(calibrageRapport).map(([section, r]) => `
       <div class="calibre-section">
         <h4>${labels[section] || section}</h4>
-        <div class="calibre-meta">${r.conservees} conservée(s) · ${r.masquees} masquée(s)${r.reordonne ? " · réordonnées" : ""}</div>
+        <div class="calibre-meta">${r.conservees} conservée(s) · ${r.masquees} masquée(s)${r.reordonne ? " · réordonnées" : ""}${r.ecartees ? ` · ${r.ecartees} écartée(s) par la règle des 3 max` : ""}</div>
         ${r.entrees.map((en) => `
         <div class="calibre-entree ${en.masquee ? "calibre-off" : ""}">
           <span class="calibre-score">${en.score}</span>
           <span class="calibre-libelle">${esc(en.libelle)}</span>
           ${en.mots.length ? `<span class="calibre-mots">${en.mots.map(esc).join(", ")}</span>` : ""}
-          ${en.masquee ? '<span class="calibre-badge">masquée</span>' : ""}
+          ${en.ecartee ? '<span class="calibre-badge">hors top 3</span>' : (en.masquee ? '<span class="calibre-badge">masquée</span>' : "")}
         </div>`).join("")}
       </div>`).join("")}`;
 }
