@@ -94,8 +94,30 @@ document.addEventListener("click", (e) =>
   }
 
   // Photo de profil (les boutons sont recréés par renderPanel → délégation)
-  if (t.id === "btn-photo-add") { $("#photo-input")?.click(); return; }
-  if (t.id === "btn-photo-remove") { cv.photo = ""; save(); renderAll(); return; }
+  if (t.id === "btn-photo-add") 
+  { 
+    $("#photo-input")?.click(); 
+    return; 
+  }
+    if (t.id === "btn-photo-remove") 
+    { cv.photo = ""; 
+      save(); 
+      renderAll(); 
+      return; 
+    }
+
+  // Onglet Expériences : tri anti-chronologique (le calibrage
+  // réordonne par pertinence ; ce bouton rétablit la convention
+  // recruteur/ATS : plus récente en premier).
+  if (t.id === "btn-trier-dates")
+  {
+    if (trierExperiencesChrono()) 
+    { 
+      save(); 
+      renderAll(); 
+    }
+    return;
+  }
 
   // Analyse d'offre : l'analyse se lance au clic (pas à la frappe).
   // "Analyser" lit le textarea et affiche les chips (updateJd dans
@@ -114,6 +136,18 @@ document.addEventListener("click", (e) =>
   if (t.id === "btn-annuler-calibrer")
   {
     if (annulerCalibrage()) { save(); renderAll(); }
+    return;
+  }
+    // Onglet Expériences : tri anti-chronologique (le calibrage
+  // réordonne par pertinence ; ce bouton rétablit la convention
+  // recruteur/ATS : plus récente en premier).
+  if (t.id === "btn-trier-dates")
+  {
+    if (trierExperiencesChrono()) 
+    { 
+      save(); 
+      renderAll(); 
+    }
     return;
   }
 });
@@ -223,9 +257,7 @@ document.addEventListener("dragover", (e) =>
   if (!dragReorder) return;
   const host = e.target.closest?.("[data-index]");
   if (!host) return;
-  const memeType = dragReorder.section
-    ? host.dataset.section !== undefined
-    : host.dataset.card === dragReorder.attr;
+  const memeType = dragReorder.section ? host.dataset.section !== undefined : host.dataset.card === dragReorder.attr;
   if (!memeType || +host.dataset.index === dragReorder.from) return;
   e.preventDefault(); // indispensable pour autoriser le drop
   document.querySelectorAll(".drop-target").forEach((el) => el.classList.remove("drop-target"));

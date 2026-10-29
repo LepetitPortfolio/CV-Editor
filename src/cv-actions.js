@@ -193,3 +193,20 @@ function moveSection(key, to)
   cv.customisation.ordreSections = ordre;
   return true;
 }
+
+// Trie les expériences de la plus récente à la plus ancienne
+// (anti-chronologique : la convention recruteur/ATS). La récence
+// vient de recenceExperience() (cv-analyse.js) : champ "fin"
+// MM/AAAA, vide = poste en cours = le plus récent ; dates
+// illisibles = 0 (en fin de tri, entre elles, ordre conservé :
+// Array.sort est stable). Utile après un calibrage, qui trie
+// lui par PERTINENCE et peut casser la chronologie.
+function trierExperiencesChrono()
+{
+  const arr = cv.experiences;
+  const tri = arr.map((it, i) => ({ it, i }))
+    .sort((a, b) => (recenceExperience(b.it) - recenceExperience(a.it)) || (a.i - b.i));
+  if (tri.every((t, pos) => t.i === pos)) return false; // déjà trié : rien à faire
+  arr.splice(0, arr.length, ...tri.map((t) => t.it));
+  return true;
+}

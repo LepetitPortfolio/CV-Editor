@@ -136,7 +136,8 @@ function renderExperiencesTab()
           <textarea data-exp="${i}" data-key="missions" rows="4">${esc(e.missions.join("\n"))}</textarea>
         </div>
       </div>`).join("")
-      + `<button class="add-btn" id="btn-add-exp">+ Ajouter une expérience</button><br><br>
+            + `<button class="add-btn" id="btn-add-exp">+ Ajouter une expérience</button>
+        <button class="add-btn" id="btn-trier-dates" title="De la plus récente à la plus ancienne (convention recruteur/ATS) — pratique après un calibrage, qui trie par pertinence">📅 Trier par dates</button><br><br>
 
       ${rubriqueToggle("Formations", "Formations", c.formations.length === 0)}
       ${c.formations.map((f, i) => `
