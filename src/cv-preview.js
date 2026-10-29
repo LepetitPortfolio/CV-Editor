@@ -24,6 +24,18 @@ function rubrique(key, arr)
     : [];
 }
 
+// Phrase de synthèse des soft-skills (onglet Soft-Skill) : affichée
+// en tête de section, SEULEMENT là où la section existe déjà — elle
+// est insérée dans les "sections" de chaque template au même titre
+// que ${softsk}, donc jamais seule (une section sans entrée ne
+// s'affiche pas : un résumé sans liste n'aurait pas de sens).
+// classe = classe de paragraphe du template (taille/couleur héritées).
+function syntheseSoftskill(_CV, classe)
+{
+  const t = (_CV.softskillSynthese || "").trim();
+  return t ? `<p class="${classe}"><em>${esc(t)}</em></p>` : "";
+}
+
 // Rend les sections dans l'ordre choisi (customisation.ordreSections,
 // réglé dans l'onglet Personnalisation). Chaque template construit un
 // map { clé: html } (clés de SECTION_KEYS) puis délègue ici : l'ordre
@@ -158,7 +170,7 @@ function PreviewClassiqueCV(_CV)
     Accroche: rubriqueVisible("Accroche") && _CV.accroche?.trim() ? `<div class="cv-section-title">Profil</div><div class="cv-accroche">${esc(_CV.accroche)}</div>` : "",
     Experiences: exps ? `<div class="cv-section-title">Expériences professionnelles</div>${exps}` : "",
     Competences: skills ? `<div class="cv-section-title">Compétences</div>${skills}` : "",
-    Softskill: softsk ? `<div class="cv-section-title">Compétences transversales</div>${softsk}` : "",
+    Softskill: softsk ? `<div class="cv-section-title">Compétences transversales</div>${syntheseSoftskill(_CV, "cv-SoftSkill-libelle")}${softsk}` : "",
     Formations: formations ? `<div class="cv-section-title">Formation</div>${formations}` : "",
     Autres: autreinfo
   };
@@ -240,7 +252,7 @@ function PreviewModerneCV(_CV)
     Accroche: rubriqueVisible("Accroche") ? accroche(_CV.accroche) : "",
     Experiences: exps ? `<h2 class="tm-h2">Expérience professionnelle</h2>${exps}` : "",
     Competences: skills ? `<h2 class="tm-h2">Compétences</h2>${skills}` : "",
-    Softskill: softsk ? `<h2 class="tm-h2">Compétences transversales</h2>${softsk}` : "",
+    Softskill: softsk ? `<h2 class="tm-h2">Compétences transversales</h2>${syntheseSoftskill(_CV, "tm-p")}${softsk}` : "",
     Formations: formations ? `<h2 class="tm-h2">Formation</h2>${formations}` : "",
     Autres: autres
   };
@@ -330,7 +342,7 @@ function PreviewMinimalisteCV(_CV)
     Accroche: rubriqueVisible("Accroche") && _CV.accroche?.trim() ? `<h2 class="mn-h2">Profil</h2><p class="mn-p">${esc(_CV.accroche)}</p>` : "",
     Experiences: exps ? `<h2 class="mn-h2">Expérience professionnelle</h2>${exps}` : "",
     Competences: skills ? `<h2 class="mn-h2">Compétences</h2>${skills}` : "",
-    Softskill: softsk ? `<h2 class="mn-h2">Compétences transversales</h2>${softsk}` : "",
+    Softskill: softsk ? `<h2 class="mn-h2">Compétences transversales</h2>${syntheseSoftskill(_CV, "mn-p")}${softsk}` : "",
     Formations: formations ? `<h2 class="mn-h2">Formation</h2>${formations}` : "",
     Autres: autres
   };
@@ -414,7 +426,7 @@ function PreviewElegantSerifCV(_CV)
     Accroche: rubriqueVisible("Accroche") && _CV.accroche?.trim() ? `<h2 class="es-h2">Profil</h2><p class="es-p">${esc(_CV.accroche)}</p>` : "",
     Experiences: exps ? `<h2 class="es-h2">Expérience professionnelle</h2>${exps}` : "",
     Competences: skills ? `<h2 class="es-h2">Compétences</h2>${skills}` : "",
-    Softskill: softsk ? `<h2 class="es-h2">Compétences transversales</h2>${softsk}` : "",
+    Softskill: softsk ? `<h2 class="es-h2">Compétences transversales</h2>${syntheseSoftskill(_CV, "es-p")}${softsk}` : "",
     Formations: formations ? `<h2 class="es-h2">Formation</h2>${formations}` : "",
     Autres: autres
   };
@@ -494,7 +506,7 @@ function PreviewSuisseCV(_CV)
     Accroche: rubriqueVisible("Accroche") && _CV.accroche?.trim() ? `<h2 class="su-h2">Profil</h2><p class="su-p">${esc(_CV.accroche)}</p>` : "",
     Experiences: exps ? `<h2 class="su-h2">Expérience professionnelle</h2>${exps}` : "",
     Competences: skills ? `<h2 class="su-h2">Compétences</h2>${skills}` : "",
-    Softskill: softsk ? `<h2 class="su-h2">Compétences transversales</h2>${softsk}` : "",
+    Softskill: softsk ? `<h2 class="su-h2">Compétences transversales</h2>${syntheseSoftskill(_CV, "su-p")}${softsk}` : "",
     Formations: formations ? `<h2 class="su-h2">Formation</h2>${formations}` : "",
     Autres: autres
   };
@@ -588,7 +600,7 @@ function PreviewCompetencesCV(_CV)
     Accroche: rubriqueVisible("Accroche") && _CV.accroche?.trim() ? `<h2 class="ch-h2">Profil</h2><p class="ch-p">${esc(_CV.accroche)}</p>` : "",
     Experiences: exps ? `<h2 class="ch-h2">Expérience professionnelle</h2>${exps}` : "",
     Competences: (rubriqueVisible("Competences") && chips ? `<h2 class="ch-h2">Compétences clés</h2><ul class="ch-chips">${chips}</ul>` : "") + (skills ? `${skills}` : ""),
-    Softskill: softsk ? `<h2 class="ch-h2">Compétences transversales</h2>${softsk}` : "",
+    Softskill: softsk ? `<h2 class="ch-h2">Compétences transversales</h2>${syntheseSoftskill(_CV, "ch-p")}${softsk}` : "",
     Formations: formations ? `<h2 class="ch-h2">Formation</h2>${formations}` : "",
     Autres: autres
   };

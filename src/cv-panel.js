@@ -167,8 +167,12 @@ function renderCompetencesTab()
 
 function renderSoftSkillTab()
 {
-  const c = cv;
-  return rubriqueToggle("Softskill", "Soft-skills", c.softskill.length === 0) + c.softskill.map((s, i) => `
+    const c = cv;
+  return rubriqueToggle("Softskill", "Soft-skills", c.softskill.length === 0)
+    + `<div class="field" style="margin-top:.7rem"><label>Synthèse des soft-skills (optionnel)</label>
+      <textarea data-bind="softskillSynthese" rows="2" placeholder="Ex. Curiosité, rigueur et écoute : je traduis les besoins des équipes en solutions concrètes.">${esc(c.softskillSynthese)}</textarea>
+      <div class="hint">Affichée en tête de la section « Compétences transversales », au-dessus de la liste.</div></div>`
+    + c.softskill.map((s, i) => `
       <div class="exp-card" data-card="softskill" data-index="${i}">
         ${itemTools("softskill", i, s, c.softskill.length)}
         ${c.softskill.length > 0 ? `<button class="remove" id="btn-remove-softskill" data-remove="${i}" title="Supprimer">✕</button>` : ""}

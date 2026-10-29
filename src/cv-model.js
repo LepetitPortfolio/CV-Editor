@@ -58,10 +58,11 @@ const DEFAULT_CV =
   [
     
   ],
-  softskill:
+    softskill:
   [
     
   ],
+  softskillSynthese: "",
   formations: 
   [
     
