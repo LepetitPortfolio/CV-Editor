@@ -105,6 +105,9 @@ function renderProfilTab()
         <div class="field"><label>Email</label><input data-bind="email" value="${esc(c.email)}"></div>
         <div class="field"><label>Téléphone</label><input data-bind="tel" value="${esc(c.tel)}"></div>
       </div>
+      <label class="rubrique-toggle" style="margin-top:.7rem" title="Ajoute la mention « RQTH — travailleur handicapé » dans le bloc contact du CV, sur les 6 templates. Décochée, la mention n'apparaît nulle part.">
+        <input type="checkbox" data-bind="rqth" ${c.rqth ? "checked" : ""}> RQTH — travailleur handicapé : afficher la mention sur le CV
+      </label>
       <div class="exp-card" style="margin-top:.7rem">
         ${c.otherlinks.map((otherlinks, i) => `
         ${c.otherlinks.length > 0 ? `<button class="remove" id="btn-remove-link" data-remove="${i}" title="Supprimer">✕</button>` : ""}

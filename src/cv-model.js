@@ -50,6 +50,7 @@ const DEFAULT_CV =
   },
   email: "",
   tel: "",
+  rqth: false,
   otherlinks : 
   [
     
