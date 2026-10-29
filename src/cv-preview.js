@@ -45,6 +45,29 @@ function mentionRqth(_CV)
   return _CV.rqth === true ? "RQTH — travailleur handicapé" : "";
 }
 
+// Reconstruit une URL partielle en URL absolue : le champ « Adresse »
+// de l'onglet Profil accepte "github.com/LepetitPortfolio" comme une
+// URL complète. Sans schéma, on préfixe https:// (http://, https://,
+// mailto: restent inchangés) — le lien du CV est toujours cliquable.
+function normaliserUrl(u)
+{
+  const t = String(u || "").trim();
+  if (!t || /^[a-z][a-z0-9+.-]*:/i.test(t)) return t;
+  return "https://" + t;
+}
+
+// Un lien supplémentaire rendu sur le CV : href = URL RECONSTRUITE,
+// texte affiché = URL sans son schéma (plus sobre, reste extractible
+// par les ATS), libellé en gras, « : » seulement s'il existe.
+// Tout le <a> est cliquable — même la zone du libellé.
+function lienSupplementaire(l)
+{
+  const href = normaliserUrl(l.url);
+  const affiche = String(l.url || "").trim().replace(/^https?:\/\//i, "");
+  const libelle = (l.libelle || "").trim();
+  return `<a href="${esc(href)}" target="_blank">${libelle ? `<b>${esc(libelle)} : </b>` : ""}${esc(affiche)}</a>`;
+}
+
 // Rend les sections dans l'ordre choisi (customisation.ordreSections,
 // réglé dans l'onglet Personnalisation). Chaque template construit un
 // map { clé: html } (clés de SECTION_KEYS) puis délègue ici : l'ordre
@@ -65,6 +88,9 @@ function renderPreview()
   page.style.setProperty("--cv-tertiaire",  c.customisation?.couleurtertiaire  || "#000000");
   page.style.setProperty("--cv-ink", c.customisation?.couleurtertiaire || "#000000");
   page.style.setProperty("--cv-size", (parseFloat(c.customisation?.taille) || 12) + "px");
+  // Espacement inter-sections : 100 → 1 (référence des templates),
+  // 50 → 0.5 (compact), 160 → 1.6 (aéré). Absent = 100 (anciens JSON).
+  page.style.setProperty("--cv-gap", ((parseFloat(c.customisation?.espacement) || 100) / 100));
   page.style.setProperty("--cv-font", cvFontStack());
 
   page.classList.remove("tpl-minimaliste", "tpl-serif");
@@ -135,10 +161,11 @@ function PreviewClassiqueCV(_CV)
                     ${_CV.rqth ? `<div class="cv-contact"><strong>RQTH : </strong>travailleur handicapé</div>` : ""}`
 
   // Liens : en <span> (inline) pour que les séparateurs "·" s'affichent
-  // correctement ; les liens entièrement vides sont ignorés.
+  // correctement ; les liens entièrement vides sont ignorés. Le <a>
+  // vient de lienSupplementaire() : URL reconstruite, libellé en gras.
   const links = _CV.otherlinks
     .filter((l) => (l.libelle || "").trim() || (l.url || "").trim())
-    .map((l) => `<span class="cv-Link-line"><strong>${esc(l.libelle)} : </strong><a href="${esc(l.url)}" target="_blank">${esc(l.url)}</a></span>`)
+    .map((l) => `<span class="cv-Link-line">${lienSupplementaire(l)}</span>`)
     .join(" · ");
 
   const skills = rubrique("Competences", _CV.competences).map((s) => `<div class="cv-skill-line"><strong>${esc(s.intitule)} : </strong>${esc(s.valeur)}</div>`).join("");
@@ -212,10 +239,12 @@ function PreviewModerneCV(_CV)
   const adrLines = [adr.ligne1, adr.ligne2, [adr.codePostal, adr.ville, adr.pays].filter(Boolean).join(" ")]
     .map((s) => (s || "").trim()).filter(Boolean);
 
-  // Liens (Portfolio, LinkedIn, GitHub...) — inline, séparés par « · »
+  // Liens (Portfolio, LinkedIn, GitHub...) — inline, séparés par « · » ;
+  // lienSupplementaire() reconstruit l'URL (https:// si schéma absent)
+  // et affiche le libellé en gras, sans « : » orphelin si vide.
   const links = _CV.otherlinks
     .filter((l) => (l.libelle || "").trim() || (l.url || "").trim())
-    .map((l) => `<a href="${esc(l.url)}" target="_blank">${esc(l.libelle)} : ${esc(l.url)}</a>`)
+    .map(lienSupplementaire)
     .join(" · ");
 
   const contactLines = [
@@ -306,10 +335,12 @@ function PreviewMinimalisteCV(_CV)
   const adrLines = [adr.ligne1, adr.ligne2, [adr.codePostal, adr.ville, adr.pays].filter(Boolean).join(" ")]
     .map((s) => (s || "").trim()).filter(Boolean);
 
-  // Liens (Portfolio, LinkedIn, GitHub...) — inline, séparés par « · »
+  // Liens (Portfolio, LinkedIn, GitHub...) — inline, séparés par « · » ;
+  // lienSupplementaire() reconstruit l'URL (https:// si schéma absent)
+  // et affiche le libellé en gras, sans « : » orphelin si vide.
   const links = _CV.otherlinks
     .filter((l) => (l.libelle || "").trim() || (l.url || "").trim())
-    .map((l) => `<a href="${esc(l.url)}" target="_blank">${esc(l.libelle)} : ${esc(l.url)}</a>`)
+    .map(lienSupplementaire)
     .join(" · ");
 
   const contactLines = [
@@ -391,10 +422,12 @@ function PreviewElegantSerifCV(_CV)
   const adrLines = [adr.ligne1, adr.ligne2, [adr.codePostal, adr.ville, adr.pays].filter(Boolean).join(" ")]
     .map((s) => (s || "").trim()).filter(Boolean);
 
-  // Liens (Portfolio, LinkedIn, GitHub...) — inline, séparés par « · »
+  // Liens (Portfolio, LinkedIn, GitHub...) — inline, séparés par « · » ;
+  // lienSupplementaire() reconstruit l'URL (https:// si schéma absent)
+  // et affiche le libellé en gras, sans « : » orphelin si vide.
   const links = _CV.otherlinks
     .filter((l) => (l.libelle || "").trim() || (l.url || "").trim())
-    .map((l) => `<a href="${esc(l.url)}" target="_blank">${esc(l.libelle)} : ${esc(l.url)}</a>`)
+    .map(lienSupplementaire)
     .join(" · ");
 
   const contactLines = [
@@ -472,10 +505,12 @@ function PreviewSuisseCV(_CV)
   const adrLines = [adr.ligne1, adr.ligne2, [adr.codePostal, adr.ville, adr.pays].filter(Boolean).join(" ")]
     .map((s) => (s || "").trim()).filter(Boolean);
 
-  // Liens (Portfolio, LinkedIn, GitHub...) — inline, séparés par « · »
+  // Liens (Portfolio, LinkedIn, GitHub...) — inline, séparés par « · » ;
+  // lienSupplementaire() reconstruit l'URL (https:// si schéma absent)
+  // et affiche le libellé en gras, sans « : » orphelin si vide.
   const links = _CV.otherlinks
     .filter((l) => (l.libelle || "").trim() || (l.url || "").trim())
-    .map((l) => `<a href="${esc(l.url)}" target="_blank">${esc(l.libelle)} : ${esc(l.url)}</a>`)
+    .map(lienSupplementaire)
     .join(" · ");
 
   const contactLines = [
@@ -555,10 +590,12 @@ function PreviewCompetencesCV(_CV)
   const adrLines = [adr.ligne1, adr.ligne2, [adr.codePostal, adr.ville, adr.pays].filter(Boolean).join(" ")]
     .map((s) => (s || "").trim()).filter(Boolean);
 
-  // Liens (Portfolio, LinkedIn, GitHub...) — inline, séparés par « · »
+  // Liens (Portfolio, LinkedIn, GitHub...) — inline, séparés par « · » ;
+  // lienSupplementaire() reconstruit l'URL (https:// si schéma absent)
+  // et affiche le libellé en gras, sans « : » orphelin si vide.
   const links = _CV.otherlinks
     .filter((l) => (l.libelle || "").trim() || (l.url || "").trim())
-    .map((l) => `<a href="${esc(l.url)}" target="_blank">${esc(l.libelle)} : ${esc(l.url)}</a>`)
+    .map(lienSupplementaire)
     .join(" · ");
 
   const contactLines = [

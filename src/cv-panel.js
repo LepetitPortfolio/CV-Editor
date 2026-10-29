@@ -211,6 +211,7 @@ function renderCustomisationTab()
   // FIX : la valeur du slider était codée en dur (12) et revenait à 12
   // après rechargement même si une autre taille était sauvegardée.
   const taille = parseFloat(c.customisation.taille) || 12;
+  const espacement = parseFloat(c.customisation.espacement) || 100;
 
   // Ordre des rubriques : liste réordonnable (poignée ⠿ + boutons ↑/↓).
   // L'ordre est commun à tous les templates et persisté dans
@@ -268,6 +269,10 @@ function renderCustomisationTab()
       <div class="field">
         <label>Taille <span class="range-val" id="taille-val">${c.customisation.taille} px</span></label>
         <input type="range" min="2" max="50" step="1" data-bind="customisation.taille" value="${taille}">
+      </div>
+      <div class="field">
+        <label>Espacement des sections <span class="range-val" id="espacement-val">${espacement} %</span></label>
+        <input type="range" min="50" max="160" step="10" data-bind="customisation.espacement" value="${espacement}" title="100 % = espacement d'origine des templates ; en dessous = CV plus compact, au-dessus = plus aéré">
       </div>
       <div class="field">
         <label>Couleur Principale</label>
