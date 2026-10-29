@@ -1,0 +1,29 @@
+/* ============================================================
+   11. TEMPLATE 2 « Minimaliste » — classes mn-*
+   Rôles (convention v2) : h1/rôle/titres de section/filet/puces =
+   --cv-principale ; intitulés de poste, dates et libellés de
+   compétences = --cv-secondaire ; texte commun = --cv-ink.
+   ============================================================ */
+
+/* Nom + rôle + contact */
+#cv-preview .mn-h1 { font-size: calc(var(--cv-size, 12px) * 2.2); margin: 0; font-weight: 800; letter-spacing: .5px; text-transform: none; color: var(--cv-principale, #222); }
+#cv-preview .mn-role { font-size: calc(var(--cv-size, 12px) * 1.15); text-transform: uppercase; letter-spacing: 3px; color: var(--cv-principale, #0f766e); font-weight: 700; margin: 4px 0 10px; }
+#cv-preview .mn-contact { font-size: calc(var(--cv-size, 12px) * 1.05); color: var(--cv-ink, #444); line-height: 1.7; margin: 0 0 6px; }
+#cv-preview .mn-contact a { color: inherit; text-decoration: none; }
+
+/* Titres de section soulignés */
+#cv-preview .mn-h2 { font-size: calc(var(--cv-size, 12px) * 1.0); text-transform: uppercase; letter-spacing: 2.5px; color: var(--cv-principale, #0f766e); margin: calc(26px * var(--cv-gap, 1)) 0 calc(4px * var(--cv-gap, 1)); font-weight: 800; }
+#cv-preview .mn-h2::after { content: ""; display: block; width: 42px; height: 3px; background: var(--cv-principale, #0f766e); margin-top: 5px; }
+
+/* Expériences / formations */
+#cv-preview .mn-h3 { font-size: calc(var(--cv-size, 12px) * 1.2); margin: calc(14px * var(--cv-gap, 1)) 0 1px; font-weight: 700; color: var(--cv-secondaire, #222); }
+#cv-preview .mn-job-meta { font-size: calc(var(--cv-size, 12px) * 1.0); color: var(--cv-secondaire, #666); margin: 0 0 calc(5px * var(--cv-gap, 1)); }
+
+/* Textes et listes (puces colorées) */
+#cv-preview .mn-p, #cv-preview .mn-ul li { font-size: calc(var(--cv-size, 12px) * 1.1); line-height: 1.55; }
+#cv-preview .mn-ul { margin: calc(4px * var(--cv-gap, 1)) 0 calc(2px * var(--cv-gap, 1)); padding-left: 18px; }
+#cv-preview .mn-ul li::marker { color: var(--cv-principale, #0f766e); }
+
+/* Compétences : intitulé en gras aligné */
+#cv-preview .mn-skills { font-size: calc(var(--cv-size, 12px) * 1.1); line-height: 1.7; margin: calc(3px * var(--cv-gap, 1)) 0; }
+#cv-preview .mn-skills b { color: var(--cv-secondaire, #0f766e); display: inline-block; min-width: 100px; }

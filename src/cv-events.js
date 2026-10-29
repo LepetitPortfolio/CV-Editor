@@ -41,6 +41,22 @@ const onFieldChange = (e) =>
     if (label) label.textContent = v > 0 ? `${v} px` : "auto";
   }
 
+  // Libellé « N % » du slider espacement (sans re-render, comme Taille)
+  if (t.dataset.bind === "customisation.espacement")
+  {
+    const label = $("#espacement-val");
+    if (label) label.textContent = `${parseFloat(t.value) || 100} %`;
+  }
+
+  // Libellé du select « Liens par ligne » : le <select> affiche déjà son
+  // choix, mais le range-val du <label> restait figé sans re-render.
+  if (t.dataset.bind === "customisation.liensParLigne")
+  {
+    const label = $("#liens-val");
+    const v = parseInt(t.value, 10) || 0;
+    if (label) label.textContent = v === 0 ? "une seule ligne" : v;
+  }
+
   save();
   renderPreview();
 };
@@ -136,18 +152,6 @@ document.addEventListener("click", (e) =>
   if (t.id === "btn-annuler-calibrer")
   {
     if (annulerCalibrage()) { save(); renderAll(); }
-    return;
-  }
-    // Onglet Expériences : tri anti-chronologique (le calibrage
-  // réordonne par pertinence ; ce bouton rétablit la convention
-  // recruteur/ATS : plus récente en premier).
-  if (t.id === "btn-trier-dates")
-  {
-    if (trierExperiencesChrono()) 
-    { 
-      save(); 
-      renderAll(); 
-    }
     return;
   }
 });

@@ -1,0 +1,72 @@
+/* ===== 1. Base ===== */
+/* Deux systèmes de couleurs, étanches l'un à l'autre :
+   - --editor-* : couleurs de l'INTERFACE (boutons, onglets, alertes...)
+   - --cv-*     : couleurs du CV (pilotées par l'onglet Customisation,
+                  appliquées par cv-preview.js sur #cv-preview) */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root 
+{
+  --editor-accent: #ea580c;
+  --editor-accent-soft: #fff7ed;
+  --ink: #1f2937;
+  --muted: #64748b;
+  --border: #e2e8f0;
+  --bg: #f1f5f9;
+}
+body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.5; }
+
+/* ===== 2. Topbar & boutons ===== */
+.topbar 
+{
+  background: #0f172a; color: #fff; padding: .65rem 1rem;
+  display: flex; flex-wrap: wrap; align-items: center; gap: .6rem; justify-content: space-between;
+  position: sticky; top: 0; z-index: 10;
+}
+.topbar .brand { display: flex; align-items: center; gap: .5rem; font-weight: 700; }
+.topbar .brand .logo 
+{
+  width: 26px; height: 26px; border-radius: 6px; background: var(--editor-accent);
+  display: inline-flex; align-items: center; justify-content: center; font-size: 12px;
+}
+.topbar .tag { font-size: 10px; font-weight: 400; color: #94a3b8; border: 1px solid #334155; border-radius: 4px; padding: 1px 6px; }
+.topbar .actions { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center; }
+#btn-dark { min-width: 34px; }
+
+.btn 
+{
+  font-size: 12px; padding: 6px 10px; border-radius: 6px; border: none; cursor: pointer;
+  background: #334155; color: #fff; transition: background .15s;
+}
+.btn:hover { background: #475569; }
+.btn.primary { background: var(--editor-accent); font-weight: 600; }
+.btn.primary:hover { filter: brightness(1.1); }
+.btn.reset { background: #ef4444; font-weight: 600; }
+.btn.reset:hover { filter: brightness(1.1); }
+
+/* ===== 3. Layout & cadre d'aperçu ===== */
+.layout { display: flex; gap: 1rem; padding: 1rem; max-width: 1600px; margin: 0 auto; align-items: flex-start; flex-wrap: wrap; }
+.editor { flex: 1 1 420px; min-width: 340px; }
+.preview-wrap { flex: 1 1 420px; min-width: 340px; }
+.preview-meta { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; font-weight: 600; margin-bottom: .4rem; }
+.preview-frame { background: #cbd5e1; border-radius: 10px; padding: 1rem; box-shadow: 0 8px 24px rgba(0,0,0,.1); }
+.preview-scroll { max-height: 82vh; overflow: auto; border-radius: 6px; }
+
+/* Pied de page de l'éditeur */
+#site-footer 
+{
+  max-width: 1600px; margin: 0 auto; padding: 0 1rem 1rem;
+  display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; justify-content: center;
+  font-size: 12px; color: var(--muted);
+}
+#site-footer a { color: var(--editor-accent); text-decoration: none; font-weight: 600; }
+#site-footer a:hover { text-decoration: underline; }
+
+/* ===== 4. Onglets ===== */
+.tabs { display: flex; gap: 2px; flex-wrap: wrap; margin-bottom: .7rem; }
+.tab 
+{
+  padding: 8px 14px; font-size: 14px; font-weight: 500; background: none; border: none;
+  border-bottom: 3px solid transparent; color: var(--muted); cursor: pointer; border-radius: 6px 6px 0 0;
+}
+.tab:hover { background: var(--bg); }
+.tab.active { color: var(--editor-accent); border-bottom-color: var(--editor-accent); }

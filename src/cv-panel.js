@@ -273,6 +273,11 @@ function renderCustomisationTab()
         <input type="range" min="2" max="50" step="1" data-bind="customisation.taille" value="${taille}">
       </div>
       <div class="field">
+        <label>Espacement du CV <span class="range-val" id="espacement-val">${espacement} %</span></label>
+        <input type="range" min="0" max="200" step="5" data-bind="customisation.espacement" value="${espacement}" title="100 % = rendu d'origine des templates ; en dessous = plus compact, au-dessus = plus aéré">
+        <div class="hint">Compacité verticale du CV : entre les sections ET à l'intérieur (titres, listes, compétences).</div>
+      </div>
+      <div class="field">
         <label>Liens par ligne <span class="range-val" id="liens-val">${liensParLigne === 0 ? "une seule ligne" : liensParLigne}</span></label>
         <select data-bind="customisation.liensParLigne">
           <option value="0" ${liensParLigne === 0 ? "selected" : ""}>Tout sur une ligne</option>

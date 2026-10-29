@@ -1,0 +1,78 @@
+/* ===== 8. Impression : seul le CV est exporté ===== */
+@media print 
+{
+  /* !important est indispensable : body.dark (classe) est plus spécifique
+     que "body" seul, et sinon le fond sombre resterait visible à l'impression. */
+  html, body { background: #fff !important; }
+  .topbar, .editor, .preview-meta, .site-footer { display: none !important; }
+  .layout { display: block; padding: 0; max-width: none; }
+  .preview-wrap { display: block; }
+  /* On ne masque PAS .preview-frame (sinon le CV qu'il contient disparaît aussi) :
+     on retire juste son habillage visuel. */
+  .preview-frame { background: none; padding: 0; border-radius: 0; box-shadow: none; }
+    /* Mode sombre : body.dark .preview-frame est PLUS SPÉCIFIQUE que la
+     règle .preview-frame ci-dessus — sans ces !important, le fond #1e293b
+     du cadre resterait imprimé autour du CV (bande noire en PDF). */
+  body.dark .preview-frame { background: none !important; box-shadow: none !important; }
+  .preview-scroll { max-height: none; overflow: visible; border-radius: 0; }
+  .cv-page { max-width: none; padding: 12mm; box-shadow: none; }
+  /* Fix PDF : forcer les couleurs de fond (bandeaux, chips) à l'impression.
+  Sans cela, les navigateurs les suppriment par défaut → le bandeau du
+  template Moderne disparaissait et les textes redevenaient noirs. */
+  .cv-page
+  {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  /* Astuce anti en-tête/pied de page ("1 sur 1", date, URL...) :
+     les navigateurs les placent dans la marge de @page ; une marge à 0
+     ne leur laisse aucune place → ils disparaissent. Les marges visibles
+     sont alors recréées par le padding de .cv-page ci-dessus. */
+  @page { size: A4; margin: 0; }
+}
+
+/* ============================================================
+   9. MODE SOMBRE
+   (le CV reste sur fond blanc pour rester fidèle à l'export ATS)
+   ============================================================ */
+body.dark { background: #0b1220; color: #dbe3ef; }
+
+/* Panneau d'édition & cartes */
+body.dark .panel { background: #111a2e; border-color: #253248; box-shadow: 0 1px 3px rgba(0,0,0,.4); }
+body.dark .exp-card { background: #0e1729; border-color: #253248; }
+
+/* Champs de formulaire */
+body.dark .field input, body.dark .field textarea, body.dark .field select 
+{
+  background: #0b1220; color: #dbe3ef; border-color: #334155;
+}
+body.dark .field input:focus, body.dark .field textarea:focus { box-shadow: 0 0 0 3px rgba(234,88,12,.25); }
+
+/* Onglets */
+body.dark .tab { color: #8fa3c0; }
+body.dark .tab:hover { background: #16213a; }
+
+/* Cadre d'aperçu (le CV reste clair à l'intérieur) */
+body.dark .preview-frame { background: #1e293b; box-shadow: 0 8px 24px rgba(0,0,0,.45); }
+body.dark .preview-meta { color: #8fa3c0; }
+
+/* Chips & alertes JD */
+body.dark .kw.ok { background: #064e3b; color: #6ee7b7; }
+body.dark .kw.miss { background: #450a0a; color: #fca5a5; }
+body.dark .alert.warn { background: #2a1706; border-color: #9a3412; color: #fdba74; }
+body.dark .alert.good { background: #052e16; border-color: #166534; color: #86efac; }
+
+/* Divers */
+body.dark .hint { color: #7c8db0; }
+body.dark #site-footer { color: #8fa3c0; }
+body.dark .exp-card .remove:hover { color: #f87171; }
+
+body.dark .item-toggle { color: var(--muted); }
+body.dark .item-toggle:has(input:not(:checked)) { color: #f87171; }
+
+/* Toolbar de carte & réordonnancement */
+body.dark .item-toggle-row { background: rgba(255, 255, 255, .05); border-bottom-color: #253248; }
+body.dark .move-btn { background: rgba(255, 255, 255, .08); color: var(--editor-accent); }
+body.dark .move-btn:hover:not(:disabled) { background: var(--editor-accent); color: #fff; }
+body.dark .section-order-row { background: #0e1729; border-color: #253248; }
+body.dark .drop-target { box-shadow: 0 -2px 0 0 var(--editor-accent); }
