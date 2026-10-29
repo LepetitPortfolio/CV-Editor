@@ -108,15 +108,16 @@ function renderProfilTab()
       <label class="rubrique-toggle" style="margin-top:.7rem" title="Ajoute la mention « RQTH — travailleur handicapé » dans le bloc contact du CV, sur les 6 templates. Décochée, la mention n'apparaît nulle part.">
         <input type="checkbox" data-bind="rqth" ${c.rqth ? "checked" : ""}> RQTH — travailleur handicapé : afficher la mention sur le CV
       </label>
-      <div class="exp-card" style="margin-top:.7rem">
-        ${c.otherlinks.map((otherlinks, i) => `
-        ${c.otherlinks.length > 0 ? `<button class="remove" id="btn-remove-link" data-remove="${i}" title="Supprimer">✕</button>` : ""}
+      ${c.otherlinks.map((l, i) => `
+      <div class="exp-card" data-card="otherlinks" data-index="${i}">
+        ${itemTools("otherlinks", i, l, c.otherlinks.length)}
+        <button class="remove" id="btn-remove-link" data-remove="${i}" title="Supprimer">✕</button>
         <div class="grid">
-          <div class="field"><label>Libelle</label><input data-otherlinks="${i}" data-key="libelle" value="${esc(otherlinks.libelle)}"></div>
-          <div class="field"><label>Adresse</label><input data-otherlinks="${i}" data-key="url" value="${esc(otherlinks.url)}"></div>
-        </div>`).join("")}
-        <button class="add-btn" id="btn-add-link">+ Ajouter un lien</button>
-      </div>`;
+          <div class="field"><label>Libelle</label><input data-otherlinks="${i}" data-key="libelle" value="${esc(l.libelle)}"></div>
+          <div class="field"><label>Adresse</label><input data-otherlinks="${i}" data-key="url" value="${esc(l.url)}"></div>
+        </div>
+      </div>`).join("")}
+      <button class="add-btn" id="btn-add-link">+ Ajouter un lien</button>`;
 }
 
 function renderExperiencesTab()
@@ -212,6 +213,7 @@ function renderCustomisationTab()
   // après rechargement même si une autre taille était sauvegardée.
   const taille = parseFloat(c.customisation.taille) || 12;
   const espacement = parseFloat(c.customisation.espacement) || 100;
+  const liensParLigne = parseInt(c.customisation.liensParLigne) || 0;
 
   // Ordre des rubriques : liste réordonnable (poignée ⠿ + boutons ↑/↓).
   // L'ordre est commun à tous les templates et persisté dans
@@ -271,8 +273,14 @@ function renderCustomisationTab()
         <input type="range" min="2" max="50" step="1" data-bind="customisation.taille" value="${taille}">
       </div>
       <div class="field">
-        <label>Espacement des sections <span class="range-val" id="espacement-val">${espacement} %</span></label>
-        <input type="range" min="50" max="160" step="10" data-bind="customisation.espacement" value="${espacement}" title="100 % = espacement d'origine des templates ; en dessous = CV plus compact, au-dessus = plus aéré">
+        <label>Liens par ligne <span class="range-val" id="liens-val">${liensParLigne === 0 ? "une seule ligne" : liensParLigne}</span></label>
+        <select data-bind="customisation.liensParLigne">
+          <option value="0" ${liensParLigne === 0 ? "selected" : ""}>Tout sur une ligne</option>
+          <option value="1" ${liensParLigne === 1 ? "selected" : ""}>1 lien par ligne</option>
+          <option value="2" ${liensParLigne === 2 ? "selected" : ""}>2 liens par ligne</option>
+          <option value="3" ${liensParLigne === 3 ? "selected" : ""}>3 liens par ligne</option>
+        </select>
+        <div class="hint">Répartition des liens (Portfolio, GitHub...) dans le bloc contact du CV.</div>
       </div>
       <div class="field">
         <label>Couleur Principale</label>

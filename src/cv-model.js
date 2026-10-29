@@ -104,6 +104,7 @@ const DEFAULT_CV =
     police : 0,
     taille : 12,
     espacement : 100,
+    liensParLigne : 0,
     couleurprincipale : "#000000",
     couleursecondaire : "#000000",
     couleurtertiaire : "#000000"

@@ -300,18 +300,18 @@ body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg); co
 {
   font-size: calc(var(--cv-size, 12px) * 1.083); font-weight: 700; text-transform: uppercase; letter-spacing: 0;
   color: var(--cv-principale, #000000); border-bottom: 2px solid var(--cv-principale, #000000);
-  padding-bottom: 2px; margin: calc(16px * var(--cv-gap, 1)) 0 6px;
+  padding-bottom: 2px; margin: calc(16px * var(--cv-gap, 1)) 0 calc(6px * var(--cv-gap, 1));
 }
 .cv-accroche { font-size: var(--cv-size, 12px); color: var(--cv-ink, #374151); }
-.cv-skill-line { font-size: var(--cv-size, 12px); color: var(--cv-ink, #374151); margin-bottom: 2px; }
+.cv-skill-line { font-size: var(--cv-size, 12px); color: var(--cv-ink, #374151); margin-bottom: calc(2px * var(--cv-gap, 1)); }
 .cv-other-info { font-size: var(--cv-size, 12px); color: var(--cv-ink, #374151); }
-.cv-job { margin-bottom: 12px; break-inside: avoid; page-break-inside: avoid; }
+.cv-job { margin-bottom: calc(12px * var(--cv-gap, 1)); break-inside: avoid; page-break-inside: avoid; }
 .cv-job-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap; }
 .cv-job-title { font-size: calc(var(--cv-size, 12px) * 1.125); font-weight: 700; color: var(--cv-secondaire, #111827); }
 .cv-job-title .company { color: var(--cv-secondaire, #000000); }
 .cv-job-dates { font-size: calc(var(--cv-size, 12px) * 0.92); color: var(--cv-secondaire, #6b7280); white-space: nowrap; }
-.cv-job ul { margin: 3px 0 0 18px; }
-.cv-job li { font-size: var(--cv-size, 12px); color: var(--cv-ink, #374151); margin-bottom: 2px; }
+.cv-job ul { margin: calc(3px * var(--cv-gap, 1)) 0 0 18px; }
+.cv-job li { font-size: var(--cv-size, 12px); color: var(--cv-ink, #374151); margin-bottom: calc(2px * var(--cv-gap, 1)); }
 .cv-edu { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; font-size: var(--cv-size, 12px); color: var(--cv-ink, #374151); break-inside: avoid; }
 .cv-edu strong { color: var(--cv-secondaire, #111827); }
 
@@ -428,23 +428,23 @@ body.dark .drop-target { box-shadow: 0 -2px 0 0 var(--editor-accent); }
   font-size: calc(var(--cv-size, 12px) * 1.1); text-transform: uppercase; letter-spacing: 2px;
   color: var(--cv-principale, #1e4e8c);
   border-left: 4px solid var(--cv-principale, #1e4e8c);
-  padding-left: 10px; margin: calc(22px * var(--cv-gap, 1)) 0 10px;
+  padding-left: 10px; margin: calc(22px * var(--cv-gap, 1)) 0 calc(10px * var(--cv-gap, 1));
 }
 
 /* Expériences / formations */
-#cv-preview .tm-h3 { font-size: calc(var(--cv-size, 12px) * 1.25); margin: 14px 0 1px; color: var(--cv-secondaire, #1e4e8c); }
+#cv-preview .tm-h3 { font-size: calc(var(--cv-size, 12px) * 1.25); margin: calc(14px * var(--cv-gap, 1)) 0 1px; color: var(--cv-secondaire, #1e4e8c); }
 #cv-preview .tm-job-meta 
 {
   font-size: calc(var(--cv-size, 12px) * 1.05);
-  color: var(--cv-secondaire, #1e4e8c); font-weight: 600; margin: 0 0 6px;
+  color: var(--cv-secondaire, #1e4e8c); font-weight: 600; margin: 0 0 calc(6px * var(--cv-gap, 1));
 }
 
 /* Textes et listes */
 #cv-preview .tm-p, #cv-preview .tm-ul li { font-size: calc(var(--cv-size, 12px) * 1.12); line-height: 1.5; }
-#cv-preview .tm-ul { margin: 6px 0 0; padding-left: 20px; }
+#cv-preview .tm-ul { margin: calc(6px * var(--cv-gap, 1)) 0 0; padding-left: 20px; }
 
 /* Compétences : intitulé en gras, largeur d'étiquette alignée */
-#cv-preview .tm-skills { font-size: calc(var(--cv-size, 12px) * 1.12); line-height: 1.7; margin: 4px 0; }
+#cv-preview .tm-skills { font-size: calc(var(--cv-size, 12px) * 1.12); line-height: 1.7; margin: calc(4px * var(--cv-gap, 1)) 0; }
 #cv-preview .tm-skills b { color: var(--cv-secondaire, #1e4e8c); display: inline-block; min-width: 105px; }
 
 /* ============================================================
@@ -461,20 +461,20 @@ body.dark .drop-target { box-shadow: 0 -2px 0 0 var(--editor-accent); }
 #cv-preview .mn-contact a { color: inherit; text-decoration: none; }
 
 /* Titres de section soulignés */
-#cv-preview .mn-h2 { font-size: calc(var(--cv-size, 12px) * 1.0); text-transform: uppercase; letter-spacing: 2.5px; color: var(--cv-principale, #0f766e); margin: calc(26px * var(--cv-gap, 1)) 0 4px; font-weight: 800; }
+#cv-preview .mn-h2 { font-size: calc(var(--cv-size, 12px) * 1.0); text-transform: uppercase; letter-spacing: 2.5px; color: var(--cv-principale, #0f766e); margin: calc(26px * var(--cv-gap, 1)) 0 calc(4px * var(--cv-gap, 1)); font-weight: 800; }
 #cv-preview .mn-h2::after { content: ""; display: block; width: 42px; height: 3px; background: var(--cv-principale, #0f766e); margin-top: 5px; }
 
 /* Expériences / formations */
-#cv-preview .mn-h3 { font-size: calc(var(--cv-size, 12px) * 1.2); margin: 14px 0 1px; font-weight: 700; color: var(--cv-secondaire, #222); }
-#cv-preview .mn-job-meta { font-size: calc(var(--cv-size, 12px) * 1.0); color: var(--cv-secondaire, #666); margin: 0 0 5px; }
+#cv-preview .mn-h3 { font-size: calc(var(--cv-size, 12px) * 1.2); margin: calc(14px * var(--cv-gap, 1)) 0 1px; font-weight: 700; color: var(--cv-secondaire, #222); }
+#cv-preview .mn-job-meta { font-size: calc(var(--cv-size, 12px) * 1.0); color: var(--cv-secondaire, #666); margin: 0 0 calc(5px * var(--cv-gap, 1)); }
 
 /* Textes et listes (puces colorées) */
 #cv-preview .mn-p, #cv-preview .mn-ul li { font-size: calc(var(--cv-size, 12px) * 1.1); line-height: 1.55; }
-#cv-preview .mn-ul { margin: 4px 0 2px; padding-left: 18px; }
+#cv-preview .mn-ul { margin: calc(4px * var(--cv-gap, 1)) 0 calc(2px * var(--cv-gap, 1)); padding-left: 18px; }
 #cv-preview .mn-ul li::marker { color: var(--cv-principale, #0f766e); }
 
 /* Compétences : intitulé en gras aligné */
-#cv-preview .mn-skills { font-size: calc(var(--cv-size, 12px) * 1.1); line-height: 1.7; margin: 3px 0; }
+#cv-preview .mn-skills { font-size: calc(var(--cv-size, 12px) * 1.1); line-height: 1.7; margin: calc(3px * var(--cv-gap, 1)) 0; }
 #cv-preview .mn-skills b { color: var(--cv-secondaire, #0f766e); display: inline-block; min-width: 100px; }
 
 /* ============================================================
@@ -491,20 +491,20 @@ body.dark .drop-target { box-shadow: 0 -2px 0 0 var(--editor-accent); }
 #cv-preview .es-contact a { color: inherit; text-decoration: none; }
 
 /* Titres de section centrés, flanqués de tirets */
-#cv-preview .es-h2 { font-size: calc(var(--cv-size, 12px) * 1.15); text-transform: uppercase; letter-spacing: 3px; color: var(--cv-principale, #8a6d3b); margin: calc(28px * var(--cv-gap, 1)) 0 10px; font-weight: 700; text-align: center; }
+#cv-preview .es-h2 { font-size: calc(var(--cv-size, 12px) * 1.15); text-transform: uppercase; letter-spacing: 3px; color: var(--cv-principale, #8a6d3b); margin: calc(28px * var(--cv-gap, 1)) 0 calc(10px * var(--cv-gap, 1)); font-weight: 700; text-align: center; }
 #cv-preview .es-h2::before, #cv-preview .es-h2::after { content: "—"; color: var(--cv-principale, #b5a880); margin: 0 10px; font-weight: 400; }
 
 /* Expériences / formations */
-#cv-preview .es-h3 { font-size: calc(var(--cv-size, 12px) * 1.3); margin: 18px 0 1px; font-weight: 700; color: var(--cv-secondaire, #26221c); }
-#cv-preview .es-job-meta { font-size: calc(var(--cv-size, 12px) * 1.05); color: var(--cv-secondaire, #6d6552); font-style: italic; margin: 0 0 6px; }
+#cv-preview .es-h3 { font-size: calc(var(--cv-size, 12px) * 1.3); margin: calc(18px * var(--cv-gap, 1)) 0 1px; font-weight: 700; color: var(--cv-secondaire, #26221c); }
+#cv-preview .es-job-meta { font-size: calc(var(--cv-size, 12px) * 1.05); color: var(--cv-secondaire, #6d6552); font-style: italic; margin: 0 0 calc(6px * var(--cv-gap, 1)); }
 
 /* Textes et listes (puces dorées) */
 #cv-preview .es-p, #cv-preview .es-ul li { font-size: calc(var(--cv-size, 12px) * 1.12); line-height: 1.55; }
-#cv-preview .es-ul { margin: 6px 0 0; padding-left: 22px; }
+#cv-preview .es-ul { margin: calc(6px * var(--cv-gap, 1)) 0 0; padding-left: 22px; }
 #cv-preview .es-ul li::marker { color: var(--cv-principale, #8a6d3b); }
 
 /* Compétences : intitulé en gras aligné */
-#cv-preview .es-skills { font-size: calc(var(--cv-size, 12px) * 1.12); line-height: 1.8; margin: 4px 0; }
+#cv-preview .es-skills { font-size: calc(var(--cv-size, 12px) * 1.12); line-height: 1.8; margin: calc(4px * var(--cv-gap, 1)) 0; }
 #cv-preview .es-skills b { color: var(--cv-secondaire, #8a6d3b); display: inline-block; min-width: 105px; }
 
 /* --- Habillages de page posés par les templates (via classes tpl-*) ---
@@ -532,19 +532,19 @@ body.dark .drop-target { box-shadow: 0 -2px 0 0 var(--editor-accent); }
 #cv-preview .su-contact a { color: inherit; text-decoration: none; }
 
 /* Titres de section : badges noirs à texte blanc */
-#cv-preview .su-h2 { font-size: calc(var(--cv-size, 12px) * 1.1); text-transform: uppercase; letter-spacing: 2px; margin: calc(28px * var(--cv-gap, 1)) 0 12px; font-weight: 900; background: var(--cv-principale, #111); color: #fff; display: inline-block; padding: 3px 12px; }
+#cv-preview .su-h2 { font-size: calc(var(--cv-size, 12px) * 1.1); text-transform: uppercase; letter-spacing: 2px; margin: calc(28px * var(--cv-gap, 1)) 0 calc(12px * var(--cv-gap, 1)); font-weight: 900; background: var(--cv-principale, #111); color: #fff; display: inline-block; padding: 3px 12px; }
 
 /* Expériences / formations (tout en majuscules) */
-#cv-preview .su-h3 { font-size: calc(var(--cv-size, 12px) * 1.25); margin: 18px 0 1px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: var(--cv-secondaire, #111); }
-#cv-preview .su-job-meta { font-size: calc(var(--cv-size, 12px) * 1.05); color: var(--cv-secondaire, #d6336c); font-weight: 700; margin: 0 0 6px; text-transform: uppercase; letter-spacing: 1px; }
+#cv-preview .su-h3 { font-size: calc(var(--cv-size, 12px) * 1.25); margin: calc(18px * var(--cv-gap, 1)) 0 1px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: var(--cv-secondaire, #111); }
+#cv-preview .su-job-meta { font-size: calc(var(--cv-size, 12px) * 1.05); color: var(--cv-secondaire, #d6336c); font-weight: 700; margin: 0 0 calc(6px * var(--cv-gap, 1)); text-transform: uppercase; letter-spacing: 1px; }
 
 /* Textes et listes (puces roses) */
 #cv-preview .su-p, #cv-preview .su-ul li { font-size: calc(var(--cv-size, 12px) * 1.12); line-height: 1.55; }
-#cv-preview .su-ul { margin: 6px 0 0; padding-left: 20px; }
+#cv-preview .su-ul { margin: calc(6px * var(--cv-gap, 1)) 0 0; padding-left: 20px; }
 #cv-preview .su-ul li::marker { color: var(--cv-principale, #d6336c); }
 
 /* Compétences : intitulé en petites majuscules, neutre */
-#cv-preview .su-skills { font-size: calc(var(--cv-size, 12px) * 1.12); line-height: 1.75; margin: 4px 0; }
+#cv-preview .su-skills { font-size: calc(var(--cv-size, 12px) * 1.12); line-height: 1.75; margin: calc(4px * var(--cv-gap, 1)) 0; }
 #cv-preview .su-skills b { display: inline-block; min-width: 105px; text-transform: uppercase; letter-spacing: 1px; font-size: calc(var(--cv-size, 12px) * 1.0); color: var(--cv-secondaire, #111); }
 
 /* ============================================================
@@ -564,19 +564,19 @@ body.dark .drop-target { box-shadow: 0 -2px 0 0 var(--editor-accent); }
 #cv-preview .ch-contact a { color: inherit; text-decoration: none; }
 
 /* Titres de section (bleus) */
-#cv-preview .ch-h2 { font-size: calc(var(--cv-size, 12px) * 1.1); text-transform: uppercase; letter-spacing: 1.5px; color: var(--cv-principale, #2563eb); margin: calc(26px * var(--cv-gap, 1)) 0 10px; font-weight: 700; }
+#cv-preview .ch-h2 { font-size: calc(var(--cv-size, 12px) * 1.1); text-transform: uppercase; letter-spacing: 1.5px; color: var(--cv-principale, #2563eb); margin: calc(26px * var(--cv-gap, 1)) 0 calc(10px * var(--cv-gap, 1)); font-weight: 700; }
 
 /* Expériences / formations */
-#cv-preview .ch-h3 { font-size: calc(var(--cv-size, 12px) * 1.25); margin: 15px 0 1px; font-weight: 700; color: var(--cv-secondaire, #1f2937); }
-#cv-preview .ch-job-meta { font-size: calc(var(--cv-size, 12px) * 1.05); color: var(--cv-secondaire, #6b7280); margin: 0 0 5px; }
+#cv-preview .ch-h3 { font-size: calc(var(--cv-size, 12px) * 1.25); margin: calc(15px * var(--cv-gap, 1)) 0 1px; font-weight: 700; color: var(--cv-secondaire, #1f2937); }
+#cv-preview .ch-job-meta { font-size: calc(var(--cv-size, 12px) * 1.05); color: var(--cv-secondaire, #6b7280); margin: 0 0 calc(5px * var(--cv-gap, 1)); }
 
 /* Textes et listes (puces bleues) */
 #cv-preview .ch-p, #cv-preview .ch-ul li { font-size: calc(var(--cv-size, 12px) * 1.12); line-height: 1.55; }
-#cv-preview .ch-ul { margin: 5px 0 0; padding-left: 20px; }
+#cv-preview .ch-ul { margin: calc(5px * var(--cv-gap, 1)) 0 0; padding-left: 20px; }
 #cv-preview .ch-ul li::marker { color: var(--cv-principale, #2563eb); }
 
 /* Chips de compétences clés (générées par le JS) */
-#cv-preview .ch-chips { margin: 4px 0 2px; padding: 0; list-style: none; }
+#cv-preview .ch-chips { margin: calc(4px * var(--cv-gap, 1)) 0 calc(2px * var(--cv-gap, 1)); padding: 0; list-style: none; }
 #cv-preview .ch-chips li 
 {
   display: inline-block; background: #eff6ff; color: var(--cv-secondaire, #1e40af);
@@ -586,7 +586,7 @@ body.dark .drop-target { box-shadow: 0 -2px 0 0 var(--editor-accent); }
 }
 
 /* Compétences : intitulé en gras aligné (bleu) */
-#cv-preview .ch-skills { font-size: calc(var(--cv-size, 12px) * 1.12); line-height: 1.75; margin: 4px 0; }
+#cv-preview .ch-skills { font-size: calc(var(--cv-size, 12px) * 1.12); line-height: 1.75; margin: calc(4px * var(--cv-gap, 1)) 0; }
 #cv-preview .ch-skills b { display: inline-block; min-width: 105px; color: var(--cv-secondaire, #2563eb); }
 
 /* ============================================================

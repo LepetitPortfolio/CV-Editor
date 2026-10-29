@@ -68,6 +68,18 @@ function lienSupplementaire(l)
   return `<a href="${esc(href)}" target="_blank">${libelle ? `<b>${esc(libelle)} : </b>` : ""}${esc(affiche)}</a>`;
 }
 
+// Répartit les liens sur plusieurs lignes : N liens par ligne
+// (0 = tous sur une seule ligne, séparés par « · »). "<br>" entre
+// les groupes, « · » à l'intérieur — fonctionne dans le bloc
+// contact des 6 templates. Utile pour les URLs longues.
+function joindreLiens(items, parLigne)
+{
+  if (!parLigne || parLigne < 1 || items.length <= parLigne) return items.join(" · ");
+  const groupes = [];
+  for (let i = 0; i < items.length; i += parLigne) groupes.push(items.slice(i, i + parLigne).join(" · "));
+  return groupes.join("<br>");
+}
+
 // Rend les sections dans l'ordre choisi (customisation.ordreSections,
 // réglé dans l'onglet Personnalisation). Chaque template construit un
 // map { clé: html } (clés de SECTION_KEYS) puis délègue ici : l'ordre
@@ -163,10 +175,12 @@ function PreviewClassiqueCV(_CV)
   // Liens : en <span> (inline) pour que les séparateurs "·" s'affichent
   // correctement ; les liens entièrement vides sont ignorés. Le <a>
   // vient de lienSupplementaire() : URL reconstruite, libellé en gras.
-  const links = _CV.otherlinks
-    .filter((l) => (l.libelle || "").trim() || (l.url || "").trim())
-    .map((l) => `<span class="cv-Link-line">${lienSupplementaire(l)}</span>`)
-    .join(" · ");
+  const links = joindreLiens(
+    _CV.otherlinks
+      .filter((l) => l.affiche !== false && ((l.libelle || "").trim() || (l.url || "").trim()))
+      .map((l) => `<span class="cv-Link-line">${lienSupplementaire(l)}</span>`),
+    parseInt(_CV.customisation?.liensParLigne) || 0
+  );
 
   const skills = rubrique("Competences", _CV.competences).map((s) => `<div class="cv-skill-line"><strong>${esc(s.intitule)} : </strong>${esc(s.valeur)}</div>`).join("");
 
@@ -242,10 +256,12 @@ function PreviewModerneCV(_CV)
   // Liens (Portfolio, LinkedIn, GitHub...) — inline, séparés par « · » ;
   // lienSupplementaire() reconstruit l'URL (https:// si schéma absent)
   // et affiche le libellé en gras, sans « : » orphelin si vide.
-  const links = _CV.otherlinks
-    .filter((l) => (l.libelle || "").trim() || (l.url || "").trim())
-    .map(lienSupplementaire)
-    .join(" · ");
+  const links = joindreLiens(
+    _CV.otherlinks
+      .filter((l) => l.affiche !== false && ((l.libelle || "").trim() || (l.url || "").trim()))
+      .map(lienSupplementaire),
+    parseInt(_CV.customisation?.liensParLigne) || 0
+  );
 
   const contactLines = [
     mentionRqth(_CV),
@@ -338,10 +354,12 @@ function PreviewMinimalisteCV(_CV)
   // Liens (Portfolio, LinkedIn, GitHub...) — inline, séparés par « · » ;
   // lienSupplementaire() reconstruit l'URL (https:// si schéma absent)
   // et affiche le libellé en gras, sans « : » orphelin si vide.
-  const links = _CV.otherlinks
-    .filter((l) => (l.libelle || "").trim() || (l.url || "").trim())
-    .map(lienSupplementaire)
-    .join(" · ");
+  const links = joindreLiens(
+    _CV.otherlinks
+      .filter((l) => l.affiche !== false && ((l.libelle || "").trim() || (l.url || "").trim()))
+      .map(lienSupplementaire),
+    parseInt(_CV.customisation?.liensParLigne) || 0
+  );
 
   const contactLines = [
     mentionRqth(_CV),
@@ -425,10 +443,12 @@ function PreviewElegantSerifCV(_CV)
   // Liens (Portfolio, LinkedIn, GitHub...) — inline, séparés par « · » ;
   // lienSupplementaire() reconstruit l'URL (https:// si schéma absent)
   // et affiche le libellé en gras, sans « : » orphelin si vide.
-  const links = _CV.otherlinks
-    .filter((l) => (l.libelle || "").trim() || (l.url || "").trim())
-    .map(lienSupplementaire)
-    .join(" · ");
+  const links = joindreLiens(
+    _CV.otherlinks
+      .filter((l) => l.affiche !== false && ((l.libelle || "").trim() || (l.url || "").trim()))
+      .map(lienSupplementaire),
+    parseInt(_CV.customisation?.liensParLigne) || 0
+  );
 
   const contactLines = [
     mentionRqth(_CV),
@@ -508,10 +528,12 @@ function PreviewSuisseCV(_CV)
   // Liens (Portfolio, LinkedIn, GitHub...) — inline, séparés par « · » ;
   // lienSupplementaire() reconstruit l'URL (https:// si schéma absent)
   // et affiche le libellé en gras, sans « : » orphelin si vide.
-  const links = _CV.otherlinks
-    .filter((l) => (l.libelle || "").trim() || (l.url || "").trim())
-    .map(lienSupplementaire)
-    .join(" · ");
+  const links = joindreLiens(
+    _CV.otherlinks
+      .filter((l) => l.affiche !== false && ((l.libelle || "").trim() || (l.url || "").trim()))
+      .map(lienSupplementaire),
+    parseInt(_CV.customisation?.liensParLigne) || 0
+  );
 
   const contactLines = [
     mentionRqth(_CV),
@@ -593,10 +615,12 @@ function PreviewCompetencesCV(_CV)
   // Liens (Portfolio, LinkedIn, GitHub...) — inline, séparés par « · » ;
   // lienSupplementaire() reconstruit l'URL (https:// si schéma absent)
   // et affiche le libellé en gras, sans « : » orphelin si vide.
-  const links = _CV.otherlinks
-    .filter((l) => (l.libelle || "").trim() || (l.url || "").trim())
-    .map(lienSupplementaire)
-    .join(" · ");
+  const links = joindreLiens(
+    _CV.otherlinks
+      .filter((l) => l.affiche !== false && ((l.libelle || "").trim() || (l.url || "").trim()))
+      .map(lienSupplementaire),
+    parseInt(_CV.customisation?.liensParLigne) || 0
+  );
 
   const contactLines = [
     mentionRqth(_CV),
