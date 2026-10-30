@@ -2,7 +2,7 @@
 
 **Éditeur de CV local, autonome et compatible ATS.** Ouvrez `index.html` dans un navigateur, éditez votre CV avec aperçu en temps réel, et exportez un PDF A4 au texte sélectionnable — le format que les logiciels de tri de candidatures (ATS) lisent le mieux.
 
-> 🎯 **100 % local & privé** : aucune donnée ne quitte votre machine. Pas de backend, pas de compte, pas de tracking. Fonctionne par simple double-clic (`file://`).
+> 🎯 **100 % local &amp; privé** : aucune donnée ne quitte votre machine. Pas de backend, pas de compte, pas de tracking. Fonctionne par simple double-clic (`file://`).
 
 > 🌐 **Version en ligne** : [simon.lepetit.free.fr/CV_Editor](http://simon.lepetit.free.fr/CV_Editor/) — même code, hébergé chez Free. Le dépôt GitHub reste la version de référence.
 
@@ -10,7 +10,8 @@
 
 ## ✨ Fonctionnalités
 
-### Édition & aperçu
+### Édition &amp; aperçu
+
 - **Aperçu live** — le CV se met à jour à chaque frappe
 - **7 onglets d'édition** : Profil (avec adresse postale structurée), Expériences, Compétences, Soft-Skills, Autres Informations, Personnalisation, Analyse d'offre
 - **Persistance automatique** — sauvegarde dans le `localStorage` à chaque modification
@@ -23,33 +24,40 @@
 - **🔀 Réordonnancement complet, à deux niveaux** :
   - **Ordre des rubriques** — liste dédiée dans l'onglet Personnalisation : poignée de glissement ⠿ **et** boutons ↑/↓, ordre commun aux 6 templates. Seules les rubriques visibles et non vides y apparaissent (celles que le CV rend réellement).
   - **Ordre des entrées** — chaque carte (expérience, formation, compétence, soft-skill, lien, autre info) embarque une toolbar en tête : poignée ⠿ + case de visibilité + boutons ↑/↓ en couleur d'accent. L'ordre est l'ordre des tableaux du JSON : il s'applique partout (aperçu, PDF, export), et le survol d'un outil illumine la carte entière.
-  - Le drag & drop est natif (HTML5, zéro dépendance), délégué sur `document`, et n'autorise le drop que sur les cibles du même type.
+  - Le drag &amp; drop est natif (HTML5, zéro dépendance), délégué sur `document`, et n'autorise le drop que sur les cibles du même type.
 - **🗑 Recommencer de zéro** — bouton de remise à plat des données locales, avec confirmation (action irréversible)
 
-### Templates & personnalisation
+### Templates &amp; personnalisation
+
 - **Système de templates** — liste déroulante de **6 modèles, tous implémentés** : « Classique sobre » (mono-colonne ATS), « Moderne » (bandeau coloré, sections à barre latérale), « Timeline minimaliste » (épuré, titres soulignés, filet pleine largeur), « Élégant serif » (accents dorés, titres centrés, contact encadré), « Suisse grandes majuscules » (typographie brute, badges de section pleins) et « Compétences en tête » (chips de compétences clés générées automatiquement). Une valeur inconnue retombe défensivement sur le Classique. **L'ordre des sections est piloté par les données** (`customisation.ordreSections`) : chaque template construit un map de sections puis les déroule via une fonction partagée — l'ordre n'est défini qu'à un seul endroit.
 - **Convention de couleurs** — 3 couleurs de customisation au rôle identique dans tous les templates :
-  | Couleur | Rôle |
-  |---|---|
+  
+  | Couleur             | Rôle                                                                                                        |
+  | ------------------- | ----------------------------------------------------------------------------------------------------------- |
   | `couleurprincipale` | Identité (nom, titre du poste, titres de section) + décorations (filets, bordures, puces, badges, bandeaux) |
-  | `couleursecondaire` | Mots clés scannables (intitulés de poste, entreprises, libellés de compétences) + dates |
-  | `couleurtertiaire` | Texte commun du CV (rarement changée, dérivée en `--cv-ink`) |
-
+  | `couleursecondaire` | Mots clés scannables (intitulés de poste, entreprises, libellés de compétences) + dates                     |
+  | `couleurtertiaire`  | Texte commun du CV (rarement changée, dérivée en `--cv-ink`)                                                |
+  
 - **Police** : liste déroulante de 7 polices sûres pour les ATS (Arial, Helvetica, Calibri, Verdana, Tahoma, Georgia, Times New Roman), avec pile CSS et fallback. Stockée en **index numérique** (0–6) dans le JSON, avec **migration automatique** des anciennes données au chargement
 - **Taille** : slider (2–50 px), initialisé sur la valeur sauvegardée, **libellé « N px » rafraîchi en direct** pendant le glissement. Les titres et méta des 6 templates sont scalés via `calc(… * var(--cv-size))` : la typographie suit le slider de bout en bout
-- **📏 Espacement du CV** : slider **0–200 %** (pas de 5), libellé « N % » en direct, appliqué via la variable CSS `--cv-gap` posée sur `#cv-preview`. **100 % = rendu d'origine des templates au pixel près** ; en dessous, le CV se compacte ; au-dessus, il s'aère. Le curseur pilote la densité verticale **complète** : marges entre les sections **et** à l'intérieur (titres h2/h3, méta de poste, listes, lignes de compétences, chips) — ~30 marges des 6 templates sont converties en `calc(Npx * var(--cv-gap, 1))`. Persisté dans `customisation.espacement` (nombre, absent = 100)
+- **📏 Espacement du CV** : slider **0–200 %** (pas de 5), libellé « N % » en direct, appliqué via la variable CSS `--cv-gap` posée sur `#cv-preview`. **100 % = rendu d'origine des templates au pixel près** ; en dessous, le CV se compacte ; au-dessus, il s'aère. Le curseur pilote la densité verticale **complète** : marges entre les sections **et** à l'intérieur (titres h2/h3, méta de poste, listes, lignes de compétences, chips) — \~30 marges des 6 templates sont converties en `calc(Npx * var(--cv-gap, 1))`. Persisté dans `customisation.espacement` (nombre, absent = 100)
 - **🔗 Liens par ligne** : choisir la répartition des liens du bloc contact — tout sur une ligne, ou 1 / 2 / 3 liens par ligne (`customisation.liensParLigne`, 0 = une seule ligne). Séparateur « · » à l'intérieur d'un groupe, retour à la ligne entre les groupes — sur les 6 templates, avec le même helper partagé
 - **Mode sombre 🌙** : bascule d'un clic, préférence sauvegardée, détection de la préférence système (`prefers-color-scheme`). Le CV reste sur fond blanc — le mode sombre ne concerne que l'interface d'édition
-- **🖼 Photo de profil (facultative)** — ajout/retrait depuis l'onglet Profil. L'image est **redimensionnée automatiquement** (300 px de large max, JPEG qualité 0.85) pour tenir dans le `localStorage` (~5 Mo) : même une photo de 4 Mo passe. Affichée sur **les 6 templates** avec une forme adaptée à chacun, incluse dans l'export JSON.
+- **🖼 Photo de profil (facultative)** — ajout/retrait depuis l'onglet Profil. L'image est **redimensionnée automatiquement** (300 px de large max, JPEG qualité 0.85) pour tenir dans le `localStorage` (\~5 Mo) : même une photo de 4 Mo passe. Affichée sur **les 6 templates** avec une forme adaptée à chacun, incluse dans l'export JSON.
 - **🎛 Réglages photo — ancrage, forme, encadrement, taille** — dans l'onglet Profil, visibles **uniquement quand une photo est présente** : position (Selon le template / À droite / À gauche / Centrée au-dessus du nom), forme (Rectangle / Arrondie / Ovale), encadrement (Aucun liseré / Filet discret / Couleur principale / Blanc) et **taille** (slider 0–160 px par pas de 2, libellé « auto / N px » en direct ; 0 = taille du template). Le défaut « Selon le template » préserve le look propre à chacun des 6 templates ; toute valeur explicite le surcharge, de façon composable. Persistés dans `customisation` (index numériques), donc inclus à l'export JSON.
 - **🎨 Couleur d'accent de l'éditeur** — picker dans la barre d'actions, persisté en `localStorage`, **double-clic = retour à l'orange par défaut**. Préférence d'interface : volontairement **absente du JSON exporté**.
 
 ### Export
+
 - **🖨 Exporter PDF (ATS)** — seul le CV est imprimé, en A4, texte sélectionnable, sans en-têtes/pieds de page du navigateur, fond blanc garanti quel que soit le thème actif, et **couleurs de fond conservées** (`print-color-adjust: exact` — sans lui, les navigateurs suppriment les backgrounds par défaut : le bandeau du Moderne disparaissait de l'export). Le titre du document est posé à « **CV - Nom - Titre** » juste avant l'impression : le PDF proposé s'appelle `CV - Nom - Titre.pdf` et ses métadonnées restent propres pour les ATS (titre de l'éditeur restauré après)
+- **📄 Multi-pages propre** — `box-decoration-break: clone` redessine le padding du CV sur **chaque page imprimée** : le contenu des pages 2+ ne colle plus aux bords, sans toucher à `@page { margin: 0 }` (les en-têtes/pieds du navigateur restent supprimés). Navigateur sans support : comportement inchangé, sans régression
 - **⬇ Export / ⬆ Import JSON** — sauvegardez et réimportez vos données de CV. L'import (comme le chargement initial) utilise une **fusion profonde** (`deepMerge`) : un JSON partiel complète les valeurs par défaut au lieu d'écraser des sections entières. Les clés récentes (`affiche*`, `ordreSections`, `photoTaille`, `affiche` par entrée, `rqth`, `softskillSynthese`, `espacement`, `liensParLigne`) sont optionnelles : un export plus ancien s'importe sans perte ni section masquée par accident.
+- **🛡 Validation d'import légère** — `validerCv()` nettoie le JSON **avant** la fusion : les types inattendus (`null` dans une liste, objet dans un champ texte, tableau où un objet est attendu…) sont ignorés et remplacés par les défauts, jamais recopiés en silence ; l'import **signale ses ajustements** au lieu de bloquer. Tolérante : un nombre là où un texte est attendu est converti (une année `2020` reste lisible), les clés inconnues/absentes passent telles quelles. Le chargement du `localStorage` passe par le même garde-fou, en silencieux.
 
 ### Analyse d'offre (onglet « Analyse d'offre »)
+
 - Collez une offre d'emploi : l'outil extrait ses mots-clés principaux (stopwords FR/EN filtrés, top 12 par fréquence), les compare au contenu de votre CV (✓ présent / ✗ absent), avec alerte récapitulative des manquants
+- **🧩 Correspondance approchée (synonymes + racines)** — l'offre **et** le CV passent par `canoniserMot()` : un dictionnaire de synonymes d'abord (unity/unity3d, unreal/unrealengine, télétravail/remote, debug/débogage/bug, agile/scrum… — domaines jeu vidéo, dev et recrutement FR/EN, extensible en une ligne par groupe), puis une racinisation légère FR/EN (pluriels et suffixes courants, avec garde-fou de longueur). « Unity3D » dans le CV valide « unity » dans l'offre ; les chips ✓/✗, la pondération et le calibrage partagent le même espace de comparaison — et fini les faux positifs par sous-chaîne (« disunity » ne matche plus « unity »)
 - **🎯 Calibrage du CV** — un clic sur « Calibrer » adapte le CV à l'offre **sans jamais supprimer de contenu** (tout est réversible) : les entrées sont **notées par recouvrement de mots-clés** avec une pondération par rubrique (l'accroche pèse plus lourd qu'une mission, etc.) ; les expériences, compétences, formations et soft-skills peu pertinents sont simplement **masqués** (`affiche: false`), les mieux notés remontent en tête. Si plus de trois expériences correspondent, seules les **3 mieux notées** sont conservées (récence en départage) ; le rapport indique les entrées écartées
 - **📸 Snapshot réversible** — le calibrage photographie l'état du CV avant modification ; « Annuler le calibrage » restaure tout (visibilités et ordres compris)
 - **📅 Trier par dates** — après un calibrage (qui trie par pertinence), le bouton de l'onglet Expériences rétablit la convention recruteur/ATS : plus récente en premier
@@ -62,15 +70,15 @@ Aucune installation nécessaire :
 - **En ligne** : ouvrez directement [la version hébergée](http://simon.lepetit.free.fr/CV_Editor/).
 - **En local** :
   1. Cloner le dépôt (ou télécharger les fichiers) :
-     ```bash
+    ```bash
      git clone https://github.com/LepetitPortfolio/CV-Editor.git
-     ```
+    ```
   2. Ouvrir `src/index.html` dans un navigateur (double-clic suffit).
   3. Éditer votre CV — tout est sauvegardé automatiquement.
   4. Exporter :
-     - **🖨 Exporter PDF (ATS)** → dans la boîte de dialogue, choisir **« Enregistrer au format PDF »** ;
-     - **⬇ Export JSON** → télécharge `mes-donnees-cv.json` ;
-     - **⬆ Import JSON** → restaure un CV précédemment exporté.
+    - **🖨 Exporter PDF (ATS)** → dans la boîte de dialogue, choisir **« Enregistrer au format PDF »** ;
+    - **⬇ Export JSON** → télécharge `mes-donnees-cv.json` ;
+    - **⬆ Import JSON** → restaure un CV précédemment exporté.
 
 ## 🗂 Structure du projet
 
@@ -92,10 +100,10 @@ CV-Editor/
 │   │   ├── cv-template-competences.css      # Template 5 « Compétences en tête » (ch-*)
 │   │   ├── cv-photo.css                    # Photo de profil (.cv-photo + variantes par template)
 │   │   └── cv-analyse.css                  # Calibrage & rapport (.calibre-*)
-│   ├── cv-model.js      # Données : DEFAULT_CV, CV_FONTS, CV_TEMPLATES, CV_PHOTO_*, SECTION_KEYS/LABELS, ordreSectionsEffectif(), deepMerge(), état global, save()
+│   ├── cv-model.js      # Données : DEFAULT_CV, CV_FONTS, CV_TEMPLATES, CV_PHOTO_*, SECTION_KEYS/LABELS, ordreSectionsEffectif(), deepMerge(), validerCv() (validation d'import), état global, save()
 │   ├── cv-utils.js      # Utilitaires : $, esc (échappement anti-XSS), resizePhoto()
 │   ├── cv-keywords.js   # Moteur de mots-clés : STOPWORDS, extractKeywords()
-│   ├── cv-analyse.js    # Analyse d'offre : scoring pondéré par rubrique, calibrage (masquage réversible, top 3), snapshot/annulation, recenceExperience()
+│   ├── cv-analyse.js    # Analyse d'offre : scoring pondéré par rubrique, correspondance approchée (GROUPES_SYNONYMES + stem() + canoniserMot()), calibrage (masquage réversible, top 3), snapshot/annulation, recenceExperience()
 │   ├── cv-preview.js    # Rendu du CV : renderPreview(), rubriqueVisible()/rubrique() (visibilité), sectionsOrdonnees() (ordre), normaliserUrl()/lienSupplementaire()/joindreLiens() (liens) + 1 fonction par template
 │   ├── cv-panel.js      # Formulaires : un renderXTab() par onglet, rubriqueToggle()/itemTools() (toggles + ↑/↓ + poignée), liste d'ordre des rubriques, renderJdResults(), renderAll()
 │   ├── cv-actions.js    # Actions JSON : updateCvField() répartiteur + write*(), addCvItem(), removeCvItem(), moveCvItem(), moveSection(), trierExperiencesChrono()
@@ -141,13 +149,15 @@ flowchart LR
 - **Checkboxes** : `updateCvField()` lit `t.checked` (la `value` d'une checkbox vaut toujours `"on"`) — le même répartiteur gère donc toggles de rubriques (`customisation.affiche*`) et d'entrées (`affiche` sur l'item, via `writeListItem`), sans code dédié.
 - **Routage des `data-bind` à points** : `customisation.*` et `adresse.*` sont écrits dans leurs sous-objets respectifs via le répartiteur `updateCvField()` — un `data-bind` n'écrit jamais que dans une seule cible (retours explicites, pas de retombée). Les clés `Template`, `police`, `photoAncre`, `photoForme` et `photoCadre` sont stockées en nombre.
 - **Fusion profonde à l'import et au chargement** : `deepMerge(DEFAULT_CV, incoming)` complète les clés manquantes à toutes les profondeurs (les tableaux restent ceux de l'entrant), sans jamais muter `DEFAULT_CV` (`structuredClone` à chaque niveau) ; `normalizePolice()` migre les anciens formats de police vers l'index valide. Les clés de visibilité/ordre/espacement/liens absentes d'un ancien JSON reçoivent les défauts (= tout affiché, ordre historique, 100 %, une ligne).
+- **Validation par schéma léger (`validerCv()`)** : les données importées **et** le `localStorage` passent par un nettoyage piloté par tables (`SCHEMA_CHAINES`, `SCHEMA_LISTES`, `SCHEMA_CUSTO_NUM`…) **avant** la fusion : chaque clé au type inattendu est ignorée (le défaut la remplacera) au lieu d'être recopiée — un `null` dans `experiences` ou un objet dans `customisation.Template` ne casse plus le rendu. Les types « presque bons » sont convertis (nombre → texte), les clés inconnues laissées (compatibilité future), et l'import liste les ajustements au lieu de rejeter le fichier.
+- **Correspondance approchée centralisée (`canoniserMot()`)** : l'offre et le CV sont projetés dans le même espace canonique (dictionnaire de synonymes puis racinisation légère) **avant** comptage et scoring — chips, pondération et calibrage sont donc cohérents entre eux par construction. Le dictionnaire (`GROUPES_SYNONYMES`) est une donnée : une ligne par groupe pour l'étendre, sans toucher à l'algorithme.
 - **Réordonnancement sans migration** : l'ordre des entrées **est** l'ordre des tableaux (`moveCvItem()` = double `splice` borné) ; l'ordre des rubriques vit dans `customisation.ordreSections`, normalisé à chaque usage par `ordreSectionsEffectif()` (clés inconnues ignorées, manquantes replacées à leur position par défaut) — un déplacement migre l'ordre complet à la volée.
-- **Drag & drop natif délégué** : seule la poignée ⠿ est `draggable` (la carte ne l'est pas — la sélection de texte dans les champs reste intacte) ; l'état du glissement est gardé en variable module (`dataTransfer` étant illisible pendant `dragover`), le survol ne surligne que les cibles du même type, et `dragend` nettoie tout (annulation comprise).
+- **Drag &amp; drop natif délégué** : seule la poignée ⠿ est `draggable` (la carte ne l'est pas — la sélection de texte dans les champs reste intacte) ; l'état du glissement est gardé en variable module (`dataTransfer` étant illisible pendant `dragover`), le survol ne surligne que les cibles du même type, et `dragend` nettoie tout (annulation comprise).
 - **Champs multi-lignes** : les `missions` et `informations` sont stockées en tableaux (`split("\n")`) et restituées ligne par ligne ; les entrées vides sont filtrées au rendu (soft-skills, liens, sections libres).
 - **Export PDF propre** : `@media print` masque l'interface mais **déshabille** `.preview-frame` au lieu de le cacher (cacher le parent du CV produirait une page blanche) ; `@page { margin: 0 }` supprime les en-têtes/pieds de page du navigateur, les marges visibles étant recréées par le `padding: 12mm` du CV ; `html, body { background: #fff !important; }` garantit un fond blanc même en mode sombre ; `print-color-adjust: exact` conserve les couleurs de fond (bandeau du Moderne, chips) ; `break-inside: avoid` empêche les coupures au milieu d'un bloc. Le nom de fichier proposé vient d'un `document.title` temporaire « CV - Nom - Titre », restauré après impression.
 - **Liens supplémentaires normalisés** : trois helpers partagés dans `cv-preview.js` — `normaliserUrl()` (préfixe `https://` si schéma absent), `lienSupplementaire()` (href reconstruit, texte affiché sans schéma pour rester sobre et extractible par les ATS, libellé en gras sans « : » orphelin) et `joindreLiens()` (répartition N par ligne : « · » intra-groupe, `<br>` inter-groupes). Les liens masqués (`affiche: false`) sont filtrés au même endroit sur les 6 templates.
 - **Échappement systématique (`esc`)** : toutes les valeurs saisies sont échappées avant injection.
-- **Pipeline photo local** : `resizePhoto()` réduit l'image en `canvas` → **data-URL JPEG** (300 px, qualité 0.85) stockée dans `cv.photo` — aucune requête réseau, et le `localStorage` (~5 Mo) reste souverain. L'affichage est 100 % CSS : un socle `.cv-photo` (format portrait 4:5, `object-fit: cover`, `object-position: top`) décliné par template. Absente = chaîne vide → mise en page inchangée.
+- **Pipeline photo local** : `resizePhoto()` réduit l'image en `canvas` → **data-URL JPEG** (300 px, qualité 0.85) stockée dans `cv.photo` — aucune requête réseau, et le `localStorage` (\~5 Mo) reste souverain. L'affichage est 100 % CSS : un socle `.cv-photo` (format portrait 4:5, `object-fit: cover`, `object-position: top`) décliné par template. Absente = chaîne vide → mise en page inchangée.
 - **Réglages photo par surcharge de classes** : `renderPreview()` pose des classes `photo-a*` (ancrage), `photo-f*` (forme), `photo-c*` (liseré), `photo-t1` (taille) sur `#cv-preview` — et les retire avant chaque rendu. La valeur 0 (« Selon le template ») ne pose aucune classe ; les sélecteurs de surcharge (1 id + 2 classes) sont plus spécifiques que les règles par template (1 id + 1 classe) → ils gagnent toujours, sans toucher aux styles existants.
 - **Accent d'interface dynamique** : `applyEditorAccent()` pose `--editor-accent` et dérive `--editor-accent-soft` via `color-mix(in srgb, ${color} 14%, #fff)` — toute l'interface suit sans classe utilitaire. Stocké sous `cv-editor-accent`, **jamais dans le JSON du CV**.
 
@@ -199,33 +209,32 @@ flowchart LR
 
 ## 🛠 Technologies
 
-- **HTML5 / CSS3** : variables CSS (convention `--editor-*` / `--cv-*`), `calc()` avec variables (`--cv-size`, `--cv-gap`), flexbox, `@media print`, `@page`, `accent-color`, sélecteur `:has()` (états des toggles, feedback des outils de carte)
-- **JavaScript vanilla** (ES2020+ : `structuredClone`, optional chaining `?.`, délégation d'événements, drag & drop HTML5 natif)
+- **HTML5 / CSS3** : variables CSS (convention `--editor-*` / `--cv-*`), `calc()` avec variables (`--cv-size`, `--cv-gap`), flexbox, `@media print`, `@page`, `box-decoration-break: clone` (padding multi-pages), `accent-color`, sélecteur `:has()` (états des toggles, feedback des outils de carte)
+- **JavaScript vanilla** (ES2020+ : `structuredClone`, optional chaining `?.`, délégation d'événements, drag &amp; drop HTML5 natif)
 - **APIs navigateur** : `localStorage`, `FileReader`, `Blob`/`URL.createObjectURL`, `window.print()`, `matchMedia`, `dataset`, `DataTransfer`
 
 Aucune dépendance externe, aucun outil de build.
 
-## ⚠️ Limitations & choix assumés
+## ⚠️ Limitations &amp; choix assumés
 
 - **Bandeau du Moderne dans les marges** : le bandeau coloré s'arrête aux limites de `.cv-page` (padding blanc autour) — choix volontaire pour rester propre à l'impression, mais un bandeau pleine largeur demanderait des marges négatives.
 - **Chips du template « Compétences en tête »** : générées par découpe des valeurs du champ Compétences sur les virgules (les entrées masquées n'y contribuent pas) — pas de liste de chips indépendante.
-- **Validation d'import légère** : la fusion profonde complète les clés manquantes, mais un JSON au types inattendus (tableau là où un objet est attendu, valeurs `null`) n'est pas rejeté.
-- **CV multi-pages** : le `padding` du CV ne se répète pas aux sauts de page (contenu proche du bord en page 2+).
-- **Analyse de mots-clés basique** (fréquence) : pas de synonymes ni de racinisation (stemming) — le calibrage note par recouvrement exact de mots-clés.
-- **Drag & drop souris/tactile** : le glissement suit l'API HTML5 (souris) ; sur écrans tactiles, les boutons ↑/↓ restent le chemin garanti.
+- **Validation d'import tolérante** : `validerCv()` nettoie silencieusement les types inattendus au lieu de rejeter le fichier — un JSON totalement corrompu s'importe donc « vidé puis complété par les défauts » plutôt qu'en erreur. Le contrôle de cohérence reste structurel (types), pas sémantique (contenu).
+- **Multi-pages** : le padding répété sur chaque page imprimée dépend de `box-decoration-break: clone` (support navigateurs récents — Firefox, Chromium ≥ 130) ; sur un navigateur sans support, les pages 2+ restent collées aux bords, comme avant le correctif.
+- **Analyse de mots-clés** : extraction par fréquence ; la correspondance approchée repose sur un **dictionnaire manuel** (extensible, une ligne par groupe) et une racinisation légère — pas de racinisation linguistique complète ni de détection de concepts multi-mots (« realite virtuelle » reste deux mots).
+- **Drag &amp; drop souris/tactile** : le glissement suit l'API HTML5 (souris) ; sur écrans tactiles, les boutons ↑/↓ restent le chemin garanti.
 - **Données liées au navigateur** (localStorage) : pensez à l'export JSON pour sauvegarder.
-- **Photo dans le localStorage** : la photo est stockée en data-URL dans les données du CV — quelques photos volumineuses (ou un localStorage partagé avec d'autres apps) peuvent approcher la limite ~5 Mo. La réduction automatique (300 px) limite le risque.
+- **Photo dans le localStorage** : la photo est stockée en data-URL dans les données du CV — quelques photos volumineuses (ou un localStorage partagé avec d'autres apps) peuvent approcher la limite \~5 Mo. La réduction automatique (300 px) limite le risque.
 
 ## 🗺 Améliorations possibles
 
-- Validation de la forme à l'import (rejeter types inattendus / `null`)
 - Liste de chips indépendante pour le template « Compétences en tête » (champ dédié dans le modèle)
-- Synonymes/stemming dans l'analyse de mots-clés (le calibrage gagnerait en rappel)
+- Dictionnaire de synonymes éditable depuis l'interface (aujourd'hui : une ligne par groupe dans cv-analyse.js)
 - Migration progressive vers les modules ES si un jour un serveur local ne fait plus peur (le découpage actuel est déjà « module-ready »)
 
 ## 🔗 Liens
 
-- 🌐 **Version en ligne** : [simon.lepetit.free.fr/CV_Editor](http://simon.lepetit.free.fr/CV_Editor/) — même code, hébergé chez Free
+- 🌐 **Version en ligne** : [simon.lepetit.free.fr/CV\_Editor](http://simon.lepetit.free.fr/CV_Editor/) — même code, hébergé chez Free
 
 ---
 
