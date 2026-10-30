@@ -181,3 +181,54 @@
 .alert { border-radius: 8px; padding: .7rem .9rem; font-size: 12.5px; margin-top: .8rem; }
 .alert.warn { background: var(--editor-accent-soft); border: 1px solid #fdba74; color: #7c2d12; }
 .alert.good { background: #f0fdf4; border: 1px solid #86efac; color: #14532d; }
+
+
+/* ----- Info-bulles ⓘ : explication au survol d'un libellé ----- */
+/* Pastille posée dans le libellé par tip() (cv-panel.js) ; le
+   texte remplace les parenthèses des anciens libellés. Visible
+   au survol OU au focus clavier (tabindex sur le span). */
+.tip
+{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  margin-left: 4px;
+  border-radius: 50%;
+  background: var(--muted);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  cursor: help;
+  vertical-align: middle;
+  flex: none;
+  position: relative;
+}
+.tip-text
+{
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 6px);
+  transform: translateX(-50%);
+  display: block;
+  width: max-content;
+  max-width: 220px;
+  padding: 6px 9px;
+  border-radius: 6px;
+  background: #0f172a;
+  color: #e2e8f0;
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.4;
+  text-transform: none;      /* les <label> sont en uppercase : on neutralise */
+  letter-spacing: 0;
+  white-space: normal;
+  box-shadow: 0 4px 12px rgba(0,0,0,.25);
+  z-index: 20;
+  opacity: 0;
+  pointer-events: none;      /* la bulle ne "vole" pas le survol du ⓘ */
+  transition: opacity .12s;
+}
+.tip:hover .tip-text,
+.tip:focus .tip-text { opacity: 1; }

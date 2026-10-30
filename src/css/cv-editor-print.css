@@ -87,3 +87,7 @@ body.dark .move-btn { background: rgba(255, 255, 255, .08); color: var(--editor-
 body.dark .move-btn:hover:not(:disabled) { background: var(--editor-accent); color: #fff; }
 body.dark .section-order-row { background: #0e1729; border-color: #253248; }
 body.dark .drop-target { box-shadow: 0 -2px 0 0 var(--editor-accent); }
+
+/* Info-bulles : pastille et bulle assombries */
+body.dark .tip { background: #334155; }
+body.dark .tip-text { background: #111a2e; border: 1px solid #253248; color: #dbe3ef; }

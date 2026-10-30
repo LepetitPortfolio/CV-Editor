@@ -23,6 +23,14 @@ function rubriqueToggle(key, label, vide)
   return `<label class="rubrique-toggle"><input type="checkbox" data-bind="customisation.affiche${key}" ${on ? "checked" : ""}> ${label} — afficher sur le CV</label>`;
 }
 
+// Info-bulle ⓘ : pastille dans un libellé, explication au survol
+// (ou au focus clavier via tabindex). Remplace les explications
+// entre parenthèses des anciens libellés.
+function tip(txt)
+{
+  return `<span class="tip" tabindex="0" role="note">ⓘ<span class="tip-text">${txt}</span></span>`;
+}
+
 // Case « Afficher sur le CV » d'UNE entrée (une expérience, une
 // formation, une compétence...). Écrit item.affiche via le même
 // mécanisme que les autres champs (data-<collection> + data-key).
@@ -53,13 +61,13 @@ function renderProfilTab()
         <div class="field"><label>Titre</label><input data-bind="titre" value="${esc(c.titre)}"></div>
       </div>
       <div class="field" style="margin-top:.7rem">
-        <label>Photo de profil (facultatif)</label>
+        <label>Photo de profil ${tip("Facultatif — sans photo, aucune trace sur le CV.")}</label>
         <input type="file" id="photo-input" accept="image/*" hidden />
         ${c.photo ? `<div class="grid"> 
         <img class="photo-thumb-editor" src="${c.photo}" alt="Photo de profil" />
         <div style="margin-top:.7rem">
           <div class="field">
-            <label>Photo — position (ancre)</label>
+            <label>Photo — position ${tip("Ancre de la photo dans l'en-tête : selon le template, ou position forcée.")}</label>
             <select data-bind="customisation.photoAncre">
             ${CV_PHOTO_ANCRES.map((a) => `<option value="${a.value}" ${(parseInt(c.customisation.photoAncre) || 0) === a.value ? "selected" : ""}>${esc(a.label)}</option>`).join("")}
             </select>
@@ -95,12 +103,12 @@ function renderProfilTab()
           <div class="field"><label>Adresse Ligne 1 </label><input data-bind="adresse.ligne1" value="${esc(c.adresse.ligne1)}"></div>
         </div>
         <div class="grid" style="margin-top:.7rem">
-          <div class="field"><label>Adresse Ligne 2 (Facultatif) </label><input data-bind="adresse.ligne2" value="${esc(c.adresse.ligne2)}"></div>
+          <div class="field"><label>Adresse Ligne 2 ${tip("Facultatif.")}</label><input data-bind="adresse.ligne2" value="${esc(c.adresse.ligne2)}"></div>
         </div>
         <div class="grid" style="margin-top:.7rem">
           <div class="field"><label>Code Postal </label><input data-bind="adresse.codePostal" value="${esc(c.adresse.codePostal)}"></div>
           <div class="field"><label>Ville </label><input data-bind="adresse.ville" value="${esc(c.adresse.ville)}"></div>
-          <div class="field"><label>Pays (Facultatif) </label><input data-bind="adresse.pays" value="${esc(c.adresse.pays)}"></div>
+          <div class="field"><label>Pays ${tip("Facultatif.")}</label><input data-bind="adresse.pays" value="${esc(c.adresse.pays)}"></div>
         </div>
       </div>
       <div class="grid" style="margin-top:.7rem">
@@ -137,10 +145,10 @@ function renderExperiencesTab()
           <div class="field"><label>Lieu</label><input data-exp="${i}" data-key="lieu" value="${esc(e.lieu)}"></div>
         </div>
         <div class="grid">
-          <div class="field"><label>Début (MM/AAAA)</label><input data-exp="${i}" data-key="debut" value="${esc(e.debut)}"></div>
-          <div class="field"><label>Fin (MM/AAAA)</label><input data-exp="${i}" data-key="fin" value="${esc(e.fin)}"></div>
+          <div class="field"><label>Début ${tip("Format MM/AAAA — ex. 03/2021.")}</label><input data-exp="${i}" data-key="debut" value="${esc(e.debut)}"></div>
+          <div class="field"><label>Fin ${tip("Format MM/AAAA — vide = poste en cours.")}</label><input data-exp="${i}" data-key="fin" value="${esc(e.fin)}"></div>
         </div>
-        <div class="field" style="margin-top:.7rem"><label>Missions (une par ligne)</label>
+        <div class="field" style="margin-top:.7rem"><label>Missions ${tip("Une mission par ligne : chaque ligne devient une puce sur le CV.")}</label>
           <textarea data-exp="${i}" data-key="missions" rows="4">${esc(e.missions.join("\n"))}</textarea>
         </div>
       </div>`).join("")
@@ -171,7 +179,7 @@ function renderCompetencesTab()
     // une par ligne. VIDE = chips automatiques (découpe des valeurs
     // par virgules) — le hint le dit, pas de surprise.
     + `<div class="field" style="margin-top:.8rem">
-        <label>Compétences clés (chips) — template « Compétences en tête »</label>
+        <label>Compétences clés ${tip("Chips affichées par le template « Compétences en tête ».")}</label>
         <textarea data-bind="competencesCles" rows="2" placeholder="Unity3D&#10;C++&#10;Optimisation&#10;(vide = automatique, depuis les valeurs ci-dessous)">${esc((c.competencesCles || []).join("\n"))}</textarea>
         <div class="hint">Une chip par ligne. Vide = chips automatiques découpées sur les virgules des compétences ci-dessous (comportement historique).</div>
       </div>`
@@ -180,7 +188,7 @@ function renderCompetencesTab()
         ${itemTools("comp", i, comp, c.competences.length)}
         ${c.competences.length > 0 ? `<button class="remove" id="btn-remove-comp" data-remove="${i}" title="Supprimer">✕</button>` : ""}
           <div class="field"><label>Intitulé</label><input data-comp="${i}" data-key="intitule" value="${esc(comp.intitule)}"></div>
-          <div class="field"><label>Compétences (séparés par des virgules)</label><textarea data-comp="${i}" data-key="valeur" rows="2">${esc(comp.valeur)}</textarea></div>
+          <div class="field"><label>Compétences ${tip("Séparées par des virgules — ex. C++, Unity, VR.")}</label><textarea data-comp="${i}" data-key="valeur" rows="2">${esc(comp.valeur)}</textarea></div>
       </div>`).join("")
       + `<button class="add-btn" id="btn-add-comp">+ Ajouter une compétence</button>`;
 }
@@ -190,7 +198,7 @@ function renderSoftSkillTab()
 {
     const c = cv;
   return rubriqueToggle("Softskill", "Soft-skills", c.softskill.length === 0)
-    + `<div class="field" style="margin-top:.7rem"><label>Synthèse des soft-skills (optionnel)</label>
+    + `<div class="field" style="margin-top:.7rem"><label>Synthèse des soft-skills ${tip("Optionnel — affichée en tête de la rubrique.")}</label>
       <textarea data-bind="softskillSynthese" rows="2" placeholder="Ex. Curiosité, rigueur et écoute : je traduis les besoins des équipes en solutions concrètes.">${esc(c.softskillSynthese)}</textarea>
       <div class="hint">Affichée en tête de la section « Compétences transversales », au-dessus de la liste.</div></div>`
     + c.softskill.map((s, i) => `
@@ -216,7 +224,7 @@ function renderAutresInformationsTab()
         ${c.autresinformations.length > 0 ? `<button class="remove" id="btn-remove-autresinformations" data-remove="${i}" title="Supprimer">✕</button>` : ""}
         <div>
           <div class="field"><label>Libelle</label><input data-autresinformations="${i}" data-key="libelle" value="${esc(ai.libelle)}"></div>
-          <div class="field" style="margin-top:.7rem"><label>Informations (une par ligne)</label>
+          <div class="field" style="margin-top:.7rem"><label>Informations ${tip("Une information par ligne.")}</label>
             <textarea data-autresinformations="${i}" data-key="informations" rows="4">${esc(ai.informations.join("\n"))}</textarea>
           </div>
         </div>
@@ -330,7 +338,7 @@ function renderAnalyseTab()
 {
   return `
       <div class="field">
-        <label>Collez l'offre d'emploi (Job Description)</label>
+        <label>Collez l'offre d'emploi ${tip("Job Description : le texte brut de l'annonce, tel quel.")}</label>
         <textarea id="jd-input" rows="7" placeholder="Ex. Nous cherchons un Gameplay Programmer confirmé, maîtrisant C++, Unreal Engine, les 3C, l'IA (Behavior Trees), le réseau...">${esc(jd)}</textarea>
       </div>
       <div id="jd-results"></div>
