@@ -233,6 +233,19 @@
 .tip:hover .tip-text,
 .tip:focus .tip-text { opacity: 1; }
 
+/* Info-bulle DANS la topbar : le ⓘ du bouton « Exporter PDF » est collé
+   au bord HAUT de la fenêtre (la topbar est sticky; top: 0) et proche du
+   bord DROIT — la bulle par défaut s'ouvre au-dessus (hors écran) et
+   centrée (hors cadre à droite). Dans la topbar, elle s'ouvre donc
+   VERS LE BAS, ancrée à droite du ⓘ : jamais hors du viewport. */
+.topbar .tip-text
+{
+  bottom: auto;
+  top: calc(100% + 6px);
+  left: auto;
+  right: 0;
+  transform: none;
+}
 
 /* ----- Bloc « Profils & statuts » (onglet Profil) ----- */
 /* Cadre discret, mais l'INTERRUPTEUR se voit : le <summary> (zone
