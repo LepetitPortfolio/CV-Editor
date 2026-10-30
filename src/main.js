@@ -5,3 +5,8 @@
 // Le premier rendu est déclenché par index.html :
 //   document.addEventListener("DOMContentLoaded", () => renderAll());
 // ============================================================
+
+document.addEventListener("DOMContentLoaded", () => 
+{
+  renderAll();
+});
