@@ -175,14 +175,6 @@ function renderCompetencesTab()
 {
   const c = cv;
   return rubriqueToggle("Competences", "Compétences", c.competences.length === 0)
-    // Chips « Compétences clés » (template « Compétences en tête ») :
-    // une par ligne. VIDE = chips automatiques (découpe des valeurs
-    // par virgules) — le hint le dit, pas de surprise.
-    + `<div class="field" style="margin-top:.8rem">
-        <label>Compétences clés ${tip("Chips affichées par le template « Compétences en tête ».")}</label>
-        <textarea data-bind="competencesCles" rows="2" placeholder="Unity3D&#10;C++&#10;Optimisation&#10;(vide = automatique, depuis les valeurs ci-dessous)">${esc((c.competencesCles || []).join("\n"))}</textarea>
-        <div class="hint">Une chip par ligne. Vide = chips automatiques découpées sur les virgules des compétences ci-dessous (comportement historique).</div>
-      </div>`
     + c.competences.map((comp, i) => `
       <div class="exp-card" data-card="comp" data-index="${i}">
         ${itemTools("comp", i, comp, c.competences.length)}
@@ -190,7 +182,16 @@ function renderCompetencesTab()
           <div class="field"><label>Intitulé</label><input data-comp="${i}" data-key="intitule" value="${esc(comp.intitule)}"></div>
           <div class="field"><label>Compétences ${tip("Séparées par des virgules — ex. C++, Unity, VR.")}</label><textarea data-comp="${i}" data-key="valeur" rows="2">${esc(comp.valeur)}</textarea></div>
       </div>`).join("")
-      + `<button class="add-btn" id="btn-add-comp">+ Ajouter une compétence</button>`;
+      + `<button class="add-btn" id="btn-add-comp">+ Ajouter une compétence</button>`
+      // Étiquettes « Compétences clés » (template « Compétences en tête ») :
+      // une par ligne. VIDE = étiquettes automatiques (découpe des valeurs
+      // par virgules) — le hint le dit, pas de surprise. Les classes CSS
+      // restent nommées « chips » (.ch-chips).
+    + `<div class="field" style="margin-top:.8rem">
+        <label>Compétences clés ${tip("Étiquettes colorées affichées en haut du CV par le template « Compétences en tête ».")}</label>
+        <textarea data-bind="competencesCles" rows="2" placeholder="Unity3D&#10;C++&#10;Optimisation&#10;(vide = automatique, depuis les valeurs ci-dessous)">${esc((c.competencesCles || []).join("\n"))}</textarea>
+        <div class="hint">Une étiquette par ligne. Vide = étiquettes automatiques découpées sur les virgules des compétences ci-dessous (comportement historique).</div>
+      </div>`;
 }
 
 // Onglet Soft-Skill : synthèse optionnelle + cartes libellé/description.
