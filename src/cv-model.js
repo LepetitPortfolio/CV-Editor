@@ -284,6 +284,57 @@ function validerCv(data)
         .filter((s) => s !== null && s.trim());
   }
 
+  // Dictionnaire de synonymes : liste de LISTES de chaînes (les
+  // groupes), COMPLÉTÉE à l'import par les groupes par défaut du
+  // fichier (GROUPES_SYNONYMES, cv-keywords.js) : un groupe importé
+  // qui partage au moins un mot avec un groupe par défaut absorbe
+  // ses autres mots ; un groupe par défaut non représenté est
+  // ajouté à la fin. Puis dédoublonnage final : chaque mot ne vit
+  // que dans son PREMIER groupe (anomalie comptée à l'import).
+  if (net.synonymes !== undefined)
+  {
+    if (!Array.isArray(net.synonymes))
+    { delete net.synonymes; anomalies.push("« synonymes » ignoré (liste attendue)"); }
+    else
+    {
+      const groupes = net.synonymes
+        .filter((g) => Array.isArray(g))
+        .map((g) => g.map((s) => commeChaine(s))
+                     .filter((s) => s !== null && s.trim() !== "")
+                     .map((s) => s.trim().toLowerCase()))
+        .map((g) => [...new Set(g)])
+        .filter((g) => g.length > 0);
+
+      // Fusion avec les défauts du fichier (toujours chargé à
+      // l'import : tous les scripts defer sont prêts).
+      const defauts = (typeof GROUPES_SYNONYMES !== "undefined" ? GROUPES_SYNONYMES : [])
+        .map((g) => g.map((m) => String(m).trim().toLowerCase()));
+      const fusionnes = groupes.map((g) => [...g]);
+      for (const d of defauts)
+      {
+        const cible = fusionnes.find((g) => d.some((m) => g.includes(m)));
+        if (cible) d.forEach((m) => { if (!cible.includes(m)) cible.push(m); });
+        else fusionnes.push([...d]);
+      }
+
+      // Dédoublonnage inter-groupes : un mot déjà vu (groupe
+      // importé OU défaut absorbé) est retiré des groupes suivants.
+      const vus = new Set();
+      let doublons = 0;
+      const uniques = [];
+      for (const g of fusionnes)
+      {
+        const filtre = g.filter((m) => !vus.has(m));
+        doublons += g.length - filtre.length;
+        filtre.forEach((m) => vus.add(m));
+        if (filtre.length > 0) uniques.push(filtre);
+      }
+      if (doublons > 0) anomalies.push(`« synonymes » : ${doublons} doublon(s) retiré(s)`);
+      if (uniques.length > 0) net.synonymes = uniques;
+      else delete net.synonymes;
+    }
+  }
+
   // customisation : clés critiques vérifiées, clés inconnues laissées
   // (deepMerge les recopie sans danger — compatibilité future).
   const c = net.customisation;

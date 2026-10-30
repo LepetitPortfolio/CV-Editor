@@ -333,6 +333,46 @@ function renderCustomisationTab()
 
 }
 
+// Panneau « Dictionnaire de synonymes » (repliable, <details>) :
+// les groupes effectifs (fichier + cv.synonymes), édition directe —
+// un ✕ par mot, un champ « + mot » par groupe (Entrée), suppression
+// de groupe, création par mots séparés par des virgules, « ↺ Défauts ».
+// Les modifs font partie du CV : elles partent avec l'export JSON.
+// Le banc d'essai « ça matche quoi ? » montre la canonisation en
+// direct (cf. listener dans cv-events.js — pas de re-render ici).
+function renderDictionnaireSynonymes()
+{
+  const groupes = groupesSynonymesEffectifs();
+  const perso = Array.isArray(cv.synonymes) && cv.synonymes.length > 0;
+  const nbMots = groupes.reduce((n, g) => n + g.length, 0);
+  const lignes = groupes.map((g, gi) => `
+        <div class="syn-groupe">
+          <span class="syn-mots">${g.map((m) =>
+            `<span class="syn-mot">${esc(m)}<button class="syn-del" data-syn-del-word="${gi}" data-syn-mot="${esc(m)}" title="Retirer « ${esc(m)} » du groupe">✕</button></span>`).join("")}
+          </span>
+          <span class="syn-outils">
+            <input data-syn-add-word="${gi}" placeholder="+ mot… (Entrée)">
+            <button class="syn-del-groupe" data-syn-del-group="${gi}" title="Supprimer ce groupe">🗑</button>
+          </span>
+        </div>`).join("");
+  return `
+      <details class="syn-dico" id="syn-dico">
+        <summary>🧩 Dictionnaire de synonymes <span class="syn-nb">${groupes.length} groupes · ${nbMots} mots${perso ? " · personnalisé" : ""}</span></summary>
+        <div class="hint">Tous les mots d'un groupe comptent pour un seul dans l'analyse (étiquettes ✓/✗, pondération, calibrage). Vos modifications font partie du CV : elles sont exportées dans le JSON et vous suivent d'une machine à l'autre. Un JSON importé est complété par les groupes par défaut du fichier. « ↺ Défauts » restaure ces groupes.</div>
+        <div class="syn-nouveau">
+          <input id="syn-new-group" placeholder="nouveau groupe : mots séparés par des virgules — ex. gameplay, gamedesign">
+          <button class="btn primary" id="btn-syn-add">+ Ajouter le groupe</button>
+          ${perso ? `<button class="btn reset" id="btn-syn-reset" title="Restaurer les groupes par défaut du fichier">↺ Défauts</button>` : ""}
+        </div>
+        <div class="syn-liste">${lignes || `<div class="hint">Aucun groupe — l'analyse repose alors uniquement sur la racinisation.</div>`}</div>
+        <div class="syn-test">
+          <span class="hint">🧪 Ça matche quoi ?</span>
+          <input id="syn-test" placeholder="un mot du CV ou de l'offre…">
+          <span class="hint" id="syn-test-out">—</span>
+        </div>
+      </details>`;
+}
+
 // Onglet Analyse d'offre : zone de collage de l'offre, boutons
 // Analyser / Calibrer / Annuler, et rapport du dernier calibrage.
 function renderAnalyseTab()
@@ -348,7 +388,8 @@ function renderAnalyseTab()
         <button id="btn-calibrer" class="btn primary">⚖ Calibrer le CV</button>
         ${calibrageRapport ? '<button id="btn-annuler-calibrer" class="btn">↩ Annuler le calibrage</button>' : ""}
       </div>
-      <div id="calibre-report">${renderCalibrageRapport()}</div>`;
+      <div id="calibre-report">${renderCalibrageRapport()}</div>
+      ${renderDictionnaireSynonymes()}`;
 }
 
 // Rapport du dernier calibrage (transparence : quoi a changé, pourquoi)

@@ -178,6 +178,88 @@ document.addEventListener("click", (e) =>
     }
     return;
   }
+
+  // Dictionnaire de synonymes : les mutations modifient cv.synonymes
+  // → save() comme toute donnée du CV (partira avec l'export JSON),
+  // rafraîchissement de la table, puis re-render du panneau en
+  // conservant l'état ouvert du <details> (sinon il se replierait
+  // à chaque édition — vite agaçant).
+  if (t.dataset.synDelGroup !== undefined)
+  {
+    if (retirerGroupeSynonymes(+t.dataset.synDelGroup))
+    {
+      save();
+      rafraichirSynonymes();
+      repanelSynDico();
+    }
+    return;
+  }
+  if (t.dataset.synDelWord !== undefined)
+  {
+    if (retirerMotSynonyme(+t.dataset.synDelWord, t.dataset.synMot))
+    {
+      save();
+      rafraichirSynonymes();
+      repanelSynDico();
+    }
+    return;
+  }
+  if (t.id === "btn-syn-add")
+  {
+    const inp = $("#syn-new-group");
+    if (inp && ajouterGroupeSynonymes(inp.value))
+    {
+      save();
+      rafraichirSynonymes();
+      repanelSynDico();
+    }
+    return;
+  }
+  if (t.id === "btn-syn-reset")
+  {
+    reinitialiserSynonymes();
+    save();
+    rafraichirSynonymes();
+    repanelSynDico();
+    return;
+  }
+});
+
+// Re-render du panneau en conservant l'état ouvert du dictionnaire
+// (renderPanel reconstruit le <details> replié par défaut).
+function repanelSynDico()
+{
+  const ouvert = $("#syn-dico")?.open;
+  renderPanel();
+  const d = $("#syn-dico");
+  if (d) d.open = ouvert;
+}
+
+// Dictionnaire de synonymes : Entrée dans le champ « + mot » d'un
+// groupe ajoute le mot ; le banc d'essai « ça matche quoi ? » répond
+// en direct SANS re-render (comme les libellés live des sliders).
+document.addEventListener("keydown", (e) =>
+{
+  const t = e.target;
+  if (e.key !== "Enter" || t.dataset?.synAddWord === undefined) return;
+  if (ajouterMotSynonyme(+t.dataset.synAddWord, t.value))
+  {
+    save();
+    rafraichirSynonymes();
+    repanelSynDico();
+  }
+});
+document.addEventListener("input", (e) =>
+{
+  const t = e.target;
+  if (t.id !== "syn-test") return;
+  const out = $("#syn-test-out");
+  if (!out) return;
+  const mot = t.value.trim().toLowerCase();
+  if (!mot) { out.textContent = "—"; return; }
+  const canon = canoniserMot(mot);
+  const groupe = groupesSynonymesEffectifs().find((g) => g.some((m) => canoniserMot(m) === canon));
+  out.textContent = groupe ? `✓ ${groupe.join(" ≈ ")}` : "✗ aucun groupe (racinisation seule)";
 });
 
 // Export / Import / Print / Reset

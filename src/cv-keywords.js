@@ -2,7 +2,10 @@
 
 // ============================================================
 // cv-keywords.js — Moteur de mots-clés (JD matching)
-// Expose : STOPWORDS, extractKeywords
+// Expose : STOPWORDS, extractKeywords,
+//          groupesSynonymesEffectifs, ajouterGroupeSynonymes,
+//          retirerGroupeSynonymes, ajouterMotSynonyme,
+//          retirerMotSynonyme, reinitialiserSynonymes
 // ============================================================
 const STOPWORDS = new Set(("le la les un une des de du au aux et ou en dans sur pour avec sans par qui que quoi dont où est sont être avoir fait faire plus moins très ce cette ces son sa ses leur nos vos je tu il elle nous vous ils elles se ne pas aussi ainsi comme mais donc or ni car si tout tous toute toutes autre autres même entre chez vers afin selon lors alors the and for with you your our their will that this from have has are was were not can all").split(" "));
 
@@ -17,30 +20,26 @@ const STOPWORDS = new Set(("le la les un une des de du au aux et ou en dans sur 
 // ============================================================
 const GROUPES_SYNONYMES =
 [
-  // Moteurs & tech
-  ["unity", "unity3d"],
-  ["unreal", "unrealengine", "ufn"],
-  ["godot", "godotengine"],
-  ["blueprint", "blueprints", "visualscripting"],
-  ["shader", "shaders", "shading"],
-  ["cpp", "c++"],
-  ["git", "github"],
-  ["agile", "scrum", "kanban"],
-  // Pratiques dev
-  ["prototype", "prototypes", "prototypage", "prototyper", "prototyping", "maquette", "maquettes"],
-  ["optimisation", "optimiser", "optimize", "optimization", "performance", "performances", "performant"],
-  ["debug", "debugging", "debogage", "débogage", "bug", "bugs", "bugfix"],
-  ["refactoring", "refactor", "refactorer", "refactorisation"],
-  // Contexte travail
-  ["teletravail", "télétravail", "remote"],
+  // Vocabulaire TRANSVERSAL des offres d'emploi (FR/EN), aucun
+  // métier privilégié : télétravail, langues, soft-skills, mode
+  // d'organisation. Les groupes spécialisés (technos, outils,
+  // jargon de secteur) n'ont pas leur place ici — ils se créent
+  // depuis l'onglet Analyse d'offre et voyagent dans le JSON
+  // exporté (cv.synonymes).
+  ["teletravail", "télétravail", "remote", "distanciel"],
   ["anglais", "english"],
-  // Soft-skills fréquents dans les offres
-  ["creativite", "créativite", "créativité", "creativity", "creatif", "créatif", "creative"],
-  ["equipe", "équipe", "equipes", "collaboration", "collaboratif", "collaborative", "cooperation", "coopération"],
+  ["developpement", "développement", "development"],
+  ["gestion", "management", "pilotage"],
+  ["equipe", "équipe", "teamwork", "collaboration", "collaboratif", "collaborative", "cooperation", "coopération"],
+  ["communication", "communicant", "communicante", "relationnel"],
   ["autonomie", "autonome", "independant", "indépendant"],
   ["curiosite", "curiosité", "curiosity", "curieux"],
-  ["rigueur", "rigoureux"],
-  ["mathematiques", "mathématiques", "maths", "math"]
+  ["creativite", "créativite", "créativité", "creativity", "creatif", "créatif", "creative"],
+  ["rigueur", "rigoureux", "organise", "organisé"],
+  ["reactivite", "réactivité", "proactif", "proactive"],
+  ["formation", "training"],
+  ["experience", "expérience"],
+  ["projet", "project", "projets"]
 ];
 
 // Racinisation légère : pluriel d'abord, puis le premier suffixe
@@ -71,4 +70,88 @@ function extractKeywords(text)
     .map(([word, count]) => ({ word, count }))
     .sort((a, b) => b.count - a.count)
     .slice(0, 12);
+}
+
+// ============================================================
+// Dictionnaire de synonymes ÉDITABLE (onglet Analyse d'offre).
+// Stockage : cv.synonymes, clé RACINE du CV — les groupes perso
+// font partie du document : exportés dans le JSON, réimportés
+// sur une autre machine. Absente ou vide = les défauts du
+// fichier ci-dessus (convention des clés optionnelles : rqth,
+// ordreSections…). À la première modification, les défauts sont
+// COPIÉS dans cv.synonymes : on édite ensuite sa copie.
+// ============================================================
+
+// Groupes effectifs : la liste personnalisée si elle existe et
+// est valide, sinon les défauts du fichier. Toujours [ [mots…], … ].
+function groupesSynonymesEffectifs()
+{
+  const persos = cv?.synonymes;
+  if (Array.isArray(persos) && persos.length > 0)
+  {
+    const propres = persos
+      .filter((g) => Array.isArray(g))
+      .map((g) => g.map(String).map((m) => m.trim().toLowerCase()).filter(Boolean))
+      .filter((g) => g.length > 0);
+    if (propres.length > 0) return propres;
+  }
+  return GROUPES_SYNONYMES;
+}
+
+// Liste MODIFIABLE : au premier appel éditorial, copie les défauts
+// dans cv.synonymes (première modif = bascule vers la copie perso).
+function listesSynonymesModifiables()
+{
+  if (!Array.isArray(cv.synonymes) || cv.synonymes.length === 0)
+    cv.synonymes = GROUPES_SYNONYMES.map((g) => [...g]);
+  return cv.synonymes;
+}
+
+// Crée un groupe depuis une saisie « mots séparés par des virgules »
+// (au moins 2 mots, doublons retirés, groupe déjà existant ignoré).
+function ajouterGroupeSynonymes(saisie)
+{
+  const mots = [...new Set(String(saisie).split(",").map((m) => m.trim().toLowerCase()).filter(Boolean))];
+  if (mots.length < 2) return false;
+  const listes = listesSynonymesModifiables();
+  if (listes.some((g) => mots.every((m) => g.includes(m)))) return false;
+  listes.push(mots);
+  return true;
+}
+
+// Retire le groupe n° i (0 = premier de la liste affichée).
+function retirerGroupeSynonymes(i)
+{
+  const listes = cv.synonymes;
+  if (!Array.isArray(listes) || i < 0 || i >= listes.length) return false;
+  listes.splice(i, 1);
+  return true;
+}
+
+// Ajoute un mot au groupe n° i (minuscule, aucun doublon).
+function ajouterMotSynonyme(i, mot)
+{
+  const propre = String(mot).trim().toLowerCase();
+  if (!propre) return false;
+  const listes = listesSynonymesModifiables();
+  if (i < 0 || i >= listes.length || listes[i].includes(propre)) return false;
+  listes[i].push(propre);
+  return true;
+}
+
+// Retire un mot du groupe n° i. Un groupe réduit à 1 mot reste tel
+// quel : il ne matche plus rien d'autre, et c'est visible dans l'UI.
+function retirerMotSynonyme(i, mot)
+{
+  const listes = cv.synonymes;
+  if (!Array.isArray(listes) || i < 0 || i >= listes.length) return false;
+  listes[i] = listes[i].filter((m) => m !== mot);
+  return true;
+}
+
+// « ↺ Défauts » : supprime la clé — les groupes du fichier
+// reprennent la main (y compris ceux ajoutés au fichier depuis).
+function reinitialiserSynonymes()
+{
+  delete cv.synonymes;
 }

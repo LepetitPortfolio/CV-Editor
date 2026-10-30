@@ -9,7 +9,8 @@
 // Chargé APRÈS cv-keywords.js (utilise STOPWORDS) et AVANT
 // cv-panel.js / cv-events.js (exposent calibrageRapport etc.).
 // Expose : pondererMotsCles, scoreTexte, TEXTE_ENTREE,
-//          calibrerCv, annulerCalibrage, calibrageRapport
+//          calibrerCv, annulerCalibrage, calibrageRapport,
+//          rafraichirSynonymes
 // ============================================================
 
 // ------------------------------------------------------------
@@ -18,8 +19,17 @@
 // ------------------------------------------------------------
 const EXTRA_STOPWORDS = new Set(("salaire poste profil candidat candidate candidature mission missions expérience expériences professionnel professionnelles années an ans jour jours mois temps plein complet contrat cdi cdd stage stagiaire job role work team teams company join looking seeking must should would could may more most new able within across about into salaire").split(" "));
 const STOPWORDS_ANALYSE = new Set([...STOPWORDS, ...EXTRA_STOPWORDS]);
-const SYNONYMES = new Map();
-GROUPES_SYNONYMES.forEach((g) => g.forEach((v) => SYNONYMES.set(v, g[0])));
+// Le dictionnaire est ÉDITABLE depuis l'onglet Analyse d'offre :
+// la table est reconstruite depuis les groupes EFFECTIFS (fichier +
+// cv.synonymes) après chaque édition — chips ✓/✗, pondération et
+// calibrage suivent sans autre changement.
+let SYNONYMES = new Map();
+function rafraichirSynonymes()
+{
+  SYNONYMES = new Map();
+  groupesSynonymesEffectifs().forEach((g) => g.forEach((v) => SYNONYMES.set(v, g[0])));
+}
+rafraichirSynonymes();
 
 
 

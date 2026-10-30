@@ -79,8 +79,125 @@
    (le bouton Annuler restaure tout). */
 .calibre-off { opacity: .55; }
 
+/* ===== Dictionnaire de synonymes (panneau repliable, même onglet) ===== */
+
+/* Conteneur <details> : fermé par défaut pour ne pas alourdir l'onglet */
+.syn-dico
+{
+  border: 1px solid var(--border, #e2e8f0);
+  border-radius: 8px;
+  padding: .5rem .8rem;
+  margin-top: .8rem;
+}
+.syn-dico summary
+{
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--muted, #64748b);
+  user-select: none;
+}
+.syn-nb
+{
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 10px;
+  margin-left: .4rem;
+}
+
+/* Les <input> du panneau ne sont PAS dans un .field : ils reprennent
+   le look des champs de l'éditeur à la main (les règles .field input
+   ne s'appliquent qu'aux champs de formulaire). */
+.syn-dico input
+{
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 12px;
+  padding: 5px 8px;
+  font-family: inherit;
+  color: var(--ink, #1f2937);
+  background: #fff;
+  outline: none;
+}
+
+/* Ligne « nouveau groupe » + boutons */
+.syn-nouveau
+{
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem;
+  margin: .5rem 0;
+}
+.syn-nouveau input { flex: 1 1 200px; }
+.syn-nouveau .btn { font-size: 11px; padding: 4px 8px; }
+
+/* Un groupe par ligne : étiquettes des mots + outils à droite */
+.syn-groupe
+{
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .4rem;
+  padding: .3rem 0;
+  border-top: 1px dashed var(--border, #e2e8f0);
+}
+.syn-groupe:first-of-type { border-top: none; }
+.syn-mots { display: flex; flex-wrap: wrap; gap: 4px; flex: 1 1 auto; }
+.syn-mot
+{
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: #eff6ff;
+  color: #1e40af;
+  border: 1px solid #bfdbfe;
+}
+.syn-del
+{
+  font-size: 10px;
+  font-weight: 700;
+  color: #ef4444;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+.syn-del:hover { color: #b91c1c; }
+.syn-outils { display: inline-flex; align-items: center; gap: .4rem; flex: none; }
+.syn-outils input { width: 120px; font-size: 11px; padding: 3px 7px; }
+.syn-del-groupe
+{
+  font-size: 11px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  opacity: .55;
+}
+.syn-del-groupe:hover { opacity: 1; }
+
+/* Banc d'essai « ça matche quoi ? » */
+.syn-test
+{
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  flex-wrap: wrap;
+  margin-top: .5rem;
+}
+.syn-test input { flex: 0 1 200px; font-size: 11px; padding: 3px 7px; }
+
 /* Mode sombre : lisibilité des cartes et badges */
-body.dark /* Carte d'une section du rapport (titres courts, compétences…) :
-   titre h4 + méta (poids appliqué) + entrées détaillées. */
-.calibre-section { border-color: var(--border, #334155); }
+body.dark .calibre-section { border-color: var(--border, #334155); }
 body.dark .calibre-badge { color: #f87171; border-color: #f87171; }
+
+/* Dictionnaire de synonymes : mêmes tons que les cartes du rapport */
+body.dark .syn-dico { border-color: #253248; }
+body.dark .syn-dico input { background: #0b1220; color: #dbe3ef; border-color: #334155; }
+body.dark .syn-mot { background: #172554; color: #93c5fd; border-color: #1e40af; }
