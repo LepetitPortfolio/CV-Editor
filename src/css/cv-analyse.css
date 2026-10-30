@@ -53,7 +53,7 @@
   padding: .1rem .3rem;
   border-radius: 999px;
   background: var(--editor-accent, #000);
-  color: #fff;
+  color: var(--editor-accent-texte, #fff);
 }
 
 .calibre-libelle { flex: 1 1 auto; }

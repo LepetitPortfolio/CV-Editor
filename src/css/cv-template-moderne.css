@@ -6,10 +6,10 @@
 #cv-preview .tm-header 
 {
   background: var(--cv-principale, #1e4e8c);
-  color: #fff;
+  color: var(--cv-texte-principale, #fff);
   padding: 26px 30px 22px;
 }
-#cv-preview .tm-h1 { font-size: calc(var(--cv-size, 12px) * 2.25); margin: 0 0 2px; font-family: var(--cv-font, "Segoe UI", Arial, sans-serif); color: #fff; }
+#cv-preview .tm-h1 { font-size: calc(var(--cv-size, 12px) * 2.25); margin: 0 0 2px; font-family: var(--cv-font, "Segoe UI", Arial, sans-serif); color: var(--cv-texte-principale, #fff); }
 #cv-preview .tm-role 
 {
   font-size: calc(var(--cv-size, 12px) * 1.25); font-weight: 600;
@@ -17,7 +17,7 @@
   opacity: .92; margin: 0 0 10px;
 }
 #cv-preview .tm-contact { font-size: calc(var(--cv-size, 12px) * 1.05); line-height: 1.7; opacity: .95; margin: 0; }
-#cv-preview .tm-contact a { color: #fff; text-decoration: none; }
+#cv-preview .tm-contact a { color: var(--cv-texte-principale, #fff); text-decoration: none; }
 
 /* --- Corps --- */
 #cv-preview .tm-body { padding: 4px 30px 30px; font-family: var(--cv-font, "Segoe UI", Arial, sans-serif); color: var(--cv-ink, #2d3748); }

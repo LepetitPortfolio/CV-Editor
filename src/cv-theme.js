@@ -27,10 +27,15 @@ function applyEditorAccent(color)
   {
     root.style.removeProperty("--editor-accent");
     root.style.removeProperty("--editor-accent-soft");
+    root.style.removeProperty("--editor-accent-texte");
     return;
   }
   root.style.setProperty("--editor-accent", color);
   root.style.setProperty("--editor-accent-soft", `color-mix(in srgb, ${color} 14%, #fff)`);
+  // Texte posé sur les fonds accentués (boutons, logo, badges) :
+  // noir si l'accent est clair (règle des 75 %, cf. texteSur dans
+  // cv-utils.js) — sinon l'accent pâle rend le blanc illisible.
+  root.style.setProperty("--editor-accent-texte", texteSur(color));
 }
 
 // Init thème : préférence sauvegardée, sinon préférence système

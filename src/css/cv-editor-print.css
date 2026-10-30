@@ -84,7 +84,7 @@ body.dark .item-toggle:has(input:not(:checked)) { color: #f87171; }
 /* Toolbar de carte & réordonnancement */
 body.dark .item-toggle-row { background: rgba(255, 255, 255, .05); border-bottom-color: #253248; }
 body.dark .move-btn { background: rgba(255, 255, 255, .08); color: var(--editor-accent); }
-body.dark .move-btn:hover:not(:disabled) { background: var(--editor-accent); color: #fff; }
+body.dark .move-btn:hover:not(:disabled) { background: var(--editor-accent); color: var(--editor-accent-texte, #fff); }
 body.dark .section-order-row { background: #0e1729; border-color: #253248; }
 body.dark .drop-target { box-shadow: 0 -2px 0 0 var(--editor-accent); }
 

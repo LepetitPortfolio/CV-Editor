@@ -21,7 +21,7 @@
 .exp-card .remove:hover { color: #b91c1c; }
 .add-btn 
 {
-  font-size: 13px; font-weight: 600; color: #fff; background: var(--editor-accent); border: none;
+  font-size: 13px; font-weight: 600; color: var(--editor-accent-texte, #fff); background: var(--editor-accent); border: none;
   border-radius: 6px; padding: 8px 12px; cursor: pointer; margin-top: .3rem;
 }
 
@@ -118,7 +118,7 @@
   border-radius: 6px;
   cursor: pointer;
 }
-.move-btn:hover:not(:disabled) { background: var(--editor-accent); color: #fff; }
+.move-btn:hover:not(:disabled) { background: var(--editor-accent); color: var(--editor-accent-texte, #fff); }
 .move-btn:active:not(:disabled) { transform: translateY(1px); }
 .move-btn:disabled { opacity: .3; cursor: default; }
 
@@ -252,7 +252,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: .04em;
-  color: #fff;
+  color: var(--editor-accent-texte, #fff);
   background: var(--editor-accent);
   border: none;
   border-radius: 6px;

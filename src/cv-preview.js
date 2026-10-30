@@ -110,6 +110,11 @@ function renderPreview()
   page.style.setProperty("--cv-secondaire", c.customisation?.couleursecondaire || "#000000");
   page.style.setProperty("--cv-tertiaire",  c.customisation?.couleurtertiaire  || "#000000");
   page.style.setProperty("--cv-ink", c.customisation?.couleurtertiaire || "#000000");
+  // Texte posé SUR la couleur principale (bandeau Moderne, badges
+  // Suisse) : blanc par défaut, NOIR si la couleur est claire —
+  // sinon le texte blanc devient illisible (règle des 75 %, cf.
+  // texteSur dans cv-utils.js).
+  page.style.setProperty("--cv-texte-principale", texteSur(c.customisation?.couleurprincipale || "#000000"));
   page.style.setProperty("--cv-size", (parseFloat(c.customisation?.taille) || 12) + "px");
   // Espacement inter-sections : 100 → 1 (référence des templates),
   // 50 → 0.5 (compact), 160 → 1.6 (aéré). Absent = 100 (anciens JSON).

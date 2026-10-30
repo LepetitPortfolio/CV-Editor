@@ -9,6 +9,10 @@
 {
   --editor-accent: #ea580c;
   --editor-accent-soft: #fff7ed;
+  /* Texte sur les fonds accentués : calculé par cv-theme.js quand
+     l'accent est personnalisé (règle des 75 %) ; blanc par défaut,
+     l'orange d'origine restant foncé. */
+  --editor-accent-texte: #ffffff;
   --ink: #1f2937;
   --muted: #64748b;
   --border: #e2e8f0;
@@ -28,6 +32,7 @@ body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg); co
 {
   width: 26px; height: 26px; border-radius: 6px; background: var(--editor-accent);
   display: inline-flex; align-items: center; justify-content: center; font-size: 12px;
+  color: var(--editor-accent-texte, #fff);
 }
 .topbar .tag { font-size: 10px; font-weight: 400; color: #94a3b8; border: 1px solid #334155; border-radius: 4px; padding: 1px 6px; }
 .topbar .actions { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center; }
@@ -39,7 +44,7 @@ body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg); co
   background: #334155; color: #fff; transition: background .15s;
 }
 .btn:hover { background: #475569; }
-.btn.primary { background: var(--editor-accent); font-weight: 600; }
+.btn.primary { background: var(--editor-accent); color: var(--editor-accent-texte, #fff); font-weight: 600; }
 .btn.primary:hover { filter: brightness(1.1); }
 .btn.reset { background: #ef4444; font-weight: 600; }
 .btn.reset:hover { filter: brightness(1.1); }
