@@ -1,4 +1,4 @@
-/* ===== 8. Impression : seul le CV est exporté ===== */
+/* ===== Impression : seul le CV est exporté ===== */
 @media print 
 {
   /* !important est indispensable : body.dark (classe) est plus spécifique
@@ -43,7 +43,7 @@
 }
 
 /* ============================================================
-   9. MODE SOMBRE
+   MODE SOMBRE
    (le CV reste sur fond blanc pour rester fidèle à l'export ATS)
    ============================================================ */
 body.dark { background: #0b1220; color: #dbe3ef; }

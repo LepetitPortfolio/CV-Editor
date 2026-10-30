@@ -5,6 +5,9 @@
 // Expose : $, esc, resizePhoto
 // ============================================================
 const $ = (sel) => document.querySelector(sel);
+
+// Échappe les caractères HTML d'une valeur saisie : TOUT texte injecté
+// dans un template string passe par esc() — jamais d'injection possible.
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
 // Réduit une image à MAX px de large et renvoie un dataURL JPEG.

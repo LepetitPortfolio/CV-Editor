@@ -1,4 +1,4 @@
-/* ===== 7. Aperçu du CV — template Classique (ATS-friendly) ===== */
+/* ===== Aperçu du CV — template Classique (ATS-friendly) ===== */
 /* Convention v2, commune à TOUS les templates (posées par cv-preview.js) :
    --cv-principale = couleurprincipale : identité (nom, titre du poste,
    titres de section) + décorations (filets, bordures, puces, badges)
@@ -7,26 +7,31 @@
    --cv-tertiaire  = couleurtertiaire  : texte commun (--cv-ink en dérive)
    --cv-ink = couleur du texte de corps (posée depuis couleurtertiaire)
    --cv-size / --cv-font = taille et police. */
+/* Page blanche mono-colonne du CV (seule feuille imprimée, cf. section 8) */
 .cv-page 
 {
   background: #fff; max-width: 720px; margin: 0 auto; padding: 2rem 2.2rem;
   font-family: var(--cv-font, Arial, Helvetica, sans-serif); line-height: 1.45;
   color: var(--cv-ink, #1f2937);
 }
+/* En-tête : nom (h1), titre du poste, contacts, filet principal */
 .cv-page h1 { font-size: calc(var(--cv-size, 12px) * 2); font-weight: 700; text-transform: uppercase; letter-spacing: 0; color: var(--cv-principale, #111827); }
 .cv-title { font-size: calc(var(--cv-size, 12px) * 1.25); font-weight: 600; color: var(--cv-principale, #000000); margin: 2px 0 4px; }
 .cv-contact { font-size: calc(var(--cv-size, 12px) * 0.92); color: var(--cv-ink, #4b5563); }
 .cv-contact a, .cv-Link-line a { color: inherit; text-decoration: none; }
 .cv-header { border-bottom: 3px solid var(--cv-principale, #000000); padding-bottom: 10px; margin-bottom: 12px; }
+/* Titres de section : majuscules + soulignement double épaisseur */
 .cv-section-title 
 {
   font-size: calc(var(--cv-size, 12px) * 1.083); font-weight: 700; text-transform: uppercase; letter-spacing: 0;
   color: var(--cv-principale, #000000); border-bottom: 2px solid var(--cv-principale, #000000);
   padding-bottom: 2px; margin: calc(16px * var(--cv-gap, 1)) 0 calc(6px * var(--cv-gap, 1));
 }
+/* Textes de contenu : accroche, lignes de compétences, infos libres */
 .cv-accroche { font-size: var(--cv-size, 12px); color: var(--cv-ink, #374151); }
 .cv-skill-line { font-size: var(--cv-size, 12px); color: var(--cv-ink, #374151); margin-bottom: calc(2px * var(--cv-gap, 1)); }
 .cv-other-info { font-size: var(--cv-size, 12px); color: var(--cv-ink, #374151); }
+/* Expériences : un bloc par poste, jamais coupé entre deux pages */
 .cv-job { margin-bottom: calc(12px * var(--cv-gap, 1)); break-inside: avoid; page-break-inside: avoid; }
 .cv-job-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap; }
 .cv-job-title { font-size: calc(var(--cv-size, 12px) * 1.125); font-weight: 700; color: var(--cv-secondaire, #111827); }
@@ -34,6 +39,7 @@
 .cv-job-dates { font-size: calc(var(--cv-size, 12px) * 0.92); color: var(--cv-secondaire, #6b7280); white-space: nowrap; }
 .cv-job ul { margin: calc(3px * var(--cv-gap, 1)) 0 0 18px; }
 .cv-job li { font-size: var(--cv-size, 12px); color: var(--cv-ink, #374151); margin-bottom: calc(2px * var(--cv-gap, 1)); }
+/* Formations : intitulé à gauche, dates à droite, anti-coupure */
 .cv-edu { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; font-size: var(--cv-size, 12px); color: var(--cv-ink, #374151); break-inside: avoid; }
 .cv-edu strong { color: var(--cv-secondaire, #111827); }
 

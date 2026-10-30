@@ -8,6 +8,8 @@ const DARK_KEY = "cv-editor-dark";
 const ACCENT_KEY = "cv-editor-accent";
 const EDITOR_ACCENT_DEFAULT = "#ea580c";
 
+// Bascule le mode sombre de l'INTERFACE (classe body.dark + icône du
+// bouton 🌙/☀️) et persiste la préférence. Le CV reste sur fond blanc.
 function applyTheme(dark)
 {
   document.body?.classList.toggle("dark", dark);

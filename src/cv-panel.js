@@ -42,6 +42,8 @@ function itemTools(attr, i, item, total)
   </div>`;
 }
 
+// Onglet Profil : identité (nom, titre, accroche), adresse structurée,
+// contacts, photo + réglages, mention RQTH, liens supplémentaires.
 function renderProfilTab()
 {
   const c = cv;
@@ -120,6 +122,8 @@ function renderProfilTab()
       <button class="add-btn" id="btn-add-link">+ Ajouter un lien</button>`;
 }
 
+// Onglet Expériences : cartes poste/entreprise/dates/missions, tri
+// chronologique 📅, cases de visibilité et réordonnancement.
 function renderExperiencesTab()
 {
   const c = cv;
@@ -157,6 +161,8 @@ function renderExperiencesTab()
       <button class="add-btn" id="btn-add-edu">+ Ajouter une formation</button>`;
 }
 
+// Onglet Compétences : chips « Compétences clés » (template Compétences
+// en tête) + cartes intitulé/valeurs.
 function renderCompetencesTab()
 {
   const c = cv;
@@ -179,6 +185,7 @@ function renderCompetencesTab()
       + `<button class="add-btn" id="btn-add-comp">+ Ajouter une compétence</button>`;
 }
 
+// Onglet Soft-Skill : synthèse optionnelle + cartes libellé/description.
 function renderSoftSkillTab()
 {
     const c = cv;
@@ -198,6 +205,8 @@ function renderSoftSkillTab()
       + `<button class="add-btn" id="btn-add-softskill">+ Ajouter un Soft skill</button>`;
 }
 
+// Onglet Autres Informations : sections libres (libellé + liste d'infos,
+// une par ligne — langues, centres d'intérêt...).
 function renderAutresInformationsTab()
 {
   const c = cv;
@@ -215,11 +224,11 @@ function renderAutresInformationsTab()
       + `<button class="add-btn" id="btn-add-autresinformations">+ Ajouter une Autres Informations</button>`;
 }
 
+// Onglet Personnalisation : template, police, taille, espacement, liens
+// par ligne, couleurs, ordre des rubriques.
 function renderCustomisationTab()
 {
   const c = cv;
-  // FIX : la valeur du slider était codée en dur (12) et revenait à 12
-  // après rechargement même si une autre taille était sauvegardée.
   const taille = parseFloat(c.customisation.taille) || 12;
   const espacement = parseFloat(c.customisation.espacement) || 100;
   const liensParLigne = parseInt(c.customisation.liensParLigne) || 0;
@@ -315,6 +324,8 @@ function renderCustomisationTab()
 
 }
 
+// Onglet Analyse d'offre : zone de collage de l'offre, boutons
+// Analyser / Calibrer / Annuler, et rapport du dernier calibrage.
 function renderAnalyseTab()
 {
   return `
@@ -400,6 +411,9 @@ function renderPanel()
 
 }
 
+// Résultats de l'analyse d'offre (ressortis à chaque renderAll tant
+// qu'une offre est collée) : chips ✓/✗ par correspondance canonique
+// + alerte récapitulative des mots-clés manquants.
 function renderJdResults()
 {
   const box = $("#jd-results");

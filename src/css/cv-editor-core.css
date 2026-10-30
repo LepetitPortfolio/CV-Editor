@@ -1,4 +1,4 @@
-
+/* ===== Base de l'interface & variables ===== */
 /* Deux systèmes de couleurs, étanches l'un à l'autre :
    - --editor-* : couleurs de l'INTERFACE (boutons, onglets, alertes...)
    - --cv-*     : couleurs du CV (pilotées par l'onglet Customisation,
@@ -16,7 +16,7 @@
 }
 body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.5; }
 
-/* ===== 2. Topbar & boutons ===== */
+/* ===== Topbar & boutons ===== */
 .topbar 
 {
   background: #0f172a; color: #fff; padding: .65rem 1rem;
@@ -44,11 +44,14 @@ body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg); co
 .btn.reset { background: #ef4444; font-weight: 600; }
 .btn.reset:hover { filter: brightness(1.1); }
 
-/* ===== 3. Layout & cadre d'aperçu ===== */
+/* ===== Layout & cadre d'aperçu ===== */
 .layout { display: flex; gap: 1rem; padding: 1rem; max-width: 1600px; margin: 0 auto; align-items: flex-start; flex-wrap: wrap; }
 .editor { flex: 1 1 420px; min-width: 340px; }
 .preview-wrap { flex: 1 1 420px; min-width: 340px; }
 .preview-meta { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; font-weight: 600; margin-bottom: .4rem; }
+/* Cadre gris « feuille sur bureau » (.preview-frame) ; à l'intérieur,
+   .preview-scroll limite la hauteur à l'écran pour ne pas étirer la page :
+   ces deux habillages sont retirés à l'impression (cf. section 8). */
 .preview-frame { background: #cbd5e1; border-radius: 10px; padding: 1rem; box-shadow: 0 8px 24px rgba(0,0,0,.1); }
 .preview-scroll { max-height: 82vh; overflow: auto; border-radius: 6px; }
 
@@ -62,7 +65,7 @@ body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg); co
 #site-footer a { color: var(--editor-accent); text-decoration: none; font-weight: 600; }
 #site-footer a:hover { text-decoration: underline; }
 
-/* ===== 4. Onglets ===== */
+/* ===== Onglets ===== */
 .tabs { display: flex; gap: 2px; flex-wrap: wrap; margin-bottom: .7rem; }
 .tab 
 {

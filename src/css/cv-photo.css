@@ -1,5 +1,5 @@
 /* ============================================================
-   15. PHOTO DE PROFIL — classes .cv-photo (+ variantes par template)
+   PHOTO DE PROFIL — classes .cv-photo (+ variantes par template)
    Positionnement choisi :
    - Classique (.cv-photo)     : flottante à droite de l'en-tête
    - Moderne (.tm-photo)       : ovale, à droite dans le bandeau
@@ -53,14 +53,16 @@
   margin-bottom: .4rem;
 }
 
+/* Grande vignette d'édition (onglet Profil) : aperçu 2:3 du
+   cadrage tel qu'il sera recadré sur le CV. */
 .photo-thumb-editor
 {
   display: block; width: 150px; height: 225px;
-  object-fit: cover; object-position:center ;
+  object-fit: cover; object-position: center;
   margin: .4rem;
 }
 
-/* ----- 15.1 Personnalisation photo (onglet Customisation) -----
+/* ----- Personnalisation photo (onglet Customisation) -----
    Classes photo-aN, photo-fn, photo-cn posées sur #cv-preview par
    renderPreview(). "Selon le template" (défaut) ne pose AUCUNE
    classe : les règles par template ci-dessus restent alors
@@ -85,7 +87,7 @@
 #cv-preview.photo-c3 .cv-photo { border: 3px solid var(--cv-principale, #111); }
 #cv-preview.photo-c4 .cv-photo { border: 3px solid #fff; }
 
-/* ----- 15.2 Taille de la photo (slider) -----
+/* ----- Taille de la photo (slider) -----
    0 = "auto" : aucune classe photo-t1, la taille du template fait foi.
    Le slider pose --cv-photo-taille sur #cv-preview (cf. cv-preview.js).
    aspect-ratio 4/5 : hauteur déduite, pas de déformation. */

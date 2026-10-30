@@ -1,8 +1,8 @@
 "use strict";
 
 // ============================================================
-// cv-preview.js (v5) — Rendu de l'aperçu du CV (template ATS)
-// Expose : renderPreview
+// cv-preview.js (v5) — Rendu de l'aperçu du CV (6 templates)
+// Expose : renderPreview + 1 sous-fonction par template
 // Dépend de : cv ($, esc de cv-utils.js)
 // ============================================================
 // Visibilité des rubriques : renvoie true si affichée. Convention :
@@ -89,6 +89,9 @@ function sectionsOrdonnees(map)
   return ordreSectionsEffectif().map((k) => map[k] || "").join("");
 }
 
+// Rendu de l'aperçu : pose les variables CSS du CV (couleurs, police,
+// taille, espacement), nettoie les classes de surcharge (templates et
+// photo), puis route vers la sous-fonction du template choisi.
 function renderPreview()
 {
   const c = cv;
@@ -155,9 +158,10 @@ function renderPreview()
       PreviewClassiqueCV(c);
       break;
   }
-    // Ajouter d'autres cas pour les autres templates
 }
 
+// TEMPLATE 0 — « Classique sobre » : mono-colonne ATS, photo flottante
+// à droite de l'en-tête, puces en couleur secondaire.
 function PreviewClassiqueCV(_CV)
 {
   const page = $("#cv-preview");

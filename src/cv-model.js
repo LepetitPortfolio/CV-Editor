@@ -202,6 +202,9 @@ function commeChaine(v)
   return null;
 }
 
+// Nettoie un JSON (import ou localStorage) avant fusion : chaque clé au
+// type inattendu est ignorée (le défaut la remplacera), les types
+// « presque bons » convertis. Renvoie { cv: nettoyé, anomalies: [...] }.
 function validerCv(data)
 {
   const anomalies = [];
@@ -314,6 +317,10 @@ function validerCv(data)
   return { cv: net, anomalies };
 }
 
+// Fusion récursive : les clés manquantes de incoming sont complétées
+// par celles de base, à toutes les profondeurs (les tableaux restent
+// ceux de incoming). Ne mute jamais base (structuredClone à chaque
+// niveau) : DEFAULT_CV reste vierge entre deux chargements.
 function deepMerge(base, incoming)
 {
   const out = structuredClone(base);

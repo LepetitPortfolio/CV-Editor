@@ -1,5 +1,6 @@
 /* ===== Analyse d'offre : calibrage & rapport (onglet Analyse d'offre) ===== */
 
+/* Barre d'actions de l'onglet : Analyser / Calibrer / Annuler */
 .calibre-actions {
   display: flex;
   gap: .5rem;
@@ -7,6 +8,8 @@
   margin: .8rem 0;
 }
 
+/* Carte d'une section du rapport (titres courts, compétences…) :
+   titre h4 + méta (poids appliqué) + entrées détaillées. */
 .calibre-section {
   border: 1px solid var(--border, #e2e8f0);
   border-radius: 8px;
@@ -28,6 +31,8 @@
   margin-bottom: .4rem;
 }
 
+/* Une entrée dans sa carte : badge score + libellé + mots-clés
+   matchés (italique) + badge rouge « écrêté » le cas échéant. */
 .calibre-entree {
   display: flex;
   align-items: center;
@@ -70,8 +75,12 @@
   padding: 0 .4rem;
 }
 
+/* Entrée coupée par le calibrage : grisée mais conservée
+   (le bouton Annuler restaure tout). */
 .calibre-off { opacity: .55; }
 
 /* Mode sombre : lisibilité des cartes et badges */
-body.dark .calibre-section { border-color: var(--border, #334155); }
+body.dark /* Carte d'une section du rapport (titres courts, compétences…) :
+   titre h4 + méta (poids appliqué) + entrées détaillées. */
+.calibre-section { border-color: var(--border, #334155); }
 body.dark .calibre-badge { color: #f87171; border-color: #f87171; }

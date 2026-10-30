@@ -18,6 +18,9 @@ const ADD_ACTIONS =
   "btn-add-autresinformations": () => cv.autresinformations.push({ libelle: "", informations: [""] })
 };
 
+// Ajoute une entrée vierge à la collection correspondant au bouton
+// cliqué (routage par la table ADD_ACTIONS). Renvoie false si l'id
+// du bouton est inconnu (rien ne se passe).
 function addCvItem(btnId)
 {
   const action = ADD_ACTIONS[btnId];
@@ -152,6 +155,9 @@ const REMOVE_ACTIONS =
   "btn-remove-autresinformations": () => cv.autresinformations
 };
 
+// Retire l'entrée n° index de la collection correspondant au bouton ✕
+// (routage par la table REMOVE_ACTIONS). Renvoie false si l'id est
+// inconnu (rien ne se passe).
 function removeCvItem(btnId, index)
 {
   const getCollection = REMOVE_ACTIONS[btnId];
