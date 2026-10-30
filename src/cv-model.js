@@ -159,9 +159,140 @@ const CV_PHOTO_CADRES =
   { value: 4, label: "Blanc (bandeau Moderne)" }
 ];
 
-// Fusion profonde : complète un objet (partiel) avec les valeurs par défaut,
-// clé par clé, à toutes les profondeurs. Les tableaux ne fusionnent PAS :
-// on prend ceux de l'objet entrant tels quels (ce sont des données utilisateur).
+// ============================================================
+// VALIDATION D'IMPORT (légère) — validerCv()
+// Nettoie un JSON importé AVANT fusion : types inattendus (null,
+// tableau là où un objet est attendu, nombre dans un champ texte…)
+// → la clé fautive est IGNORÉE (deepMerge la complètera par le
+// défaut), jamais recopiée. Tolérant : nombres/booléens convertis
+// en texte si c'est sensé (l'année 2020 en nombre reste lisible),
+// clés inconnues et absentes laissées telles quelles — un export
+// plus ancien s'importe toujours sans perte.
+// Renvoie { cv: objet nettoyé, anomalies: [messages] }.
+// ============================================================
+const SCHEMA_CHAINES = ["photo", "nom", "titre", "accroche", "email", "tel", "softskillSynthese"];
+const SCHEMA_BOOLEENS = ["rqth"];
+const SCHEMA_OBJETS = ["adresse"];
+const SCHEMA_LISTES =
+{
+  otherlinks:          { chaines: ["libelle", "url"],                                  listes: [] },
+  experiences:         { chaines: ["poste", "entreprise", "lieu", "debut", "fin"],    listes: ["missions"] },
+  formations:          { chaines: ["intitule", "lieu", "annee"],                      listes: [] },
+  competences:         { chaines: ["intitule", "valeur"],                             listes: [] },
+  softskill:           { chaines: ["libelle", "desc"],                                listes: [] },
+  autresinformations:  { chaines: ["libelle"],                                         listes: ["informations"] }
+};
+const SCHEMA_CUSTO_NUM = ["Template", "police", "taille", "espacement", "liensParLigne", "photoAncre", "photoForme", "photoCadre", "photoTaille"];
+const SCHEMA_CUSTO_COULEURS = ["couleurprincipale", "couleursecondaire", "couleurtertiaire"];
+
+// Coerce en chaîne si le type est « presque bon » (nombre, booléen),
+// sinon null (= champ à ignorer).
+function commeChaine(v)
+{
+  if (typeof v === "string") return v;
+  if (typeof v === "number" || typeof v === "boolean") return String(v);
+  return null;
+}
+
+function validerCv(data)
+{
+  const anomalies = [];
+  if (!data || typeof data !== "object" || Array.isArray(data))
+    return { cv: {}, anomalies: ["Le fichier ne contient pas un objet CV."] };
+
+  const net = { ...data };
+
+  SCHEMA_CHAINES.forEach((k) =>
+  {
+    if (net[k] === undefined) return;
+    const s = commeChaine(net[k]);
+    if (s === null) { delete net[k]; anomalies.push(`« ${k} » ignoré (texte attendu)`); }
+    else net[k] = s;
+  });
+
+  SCHEMA_BOOLEENS.forEach((k) =>
+  {
+    if (net[k] !== undefined && typeof net[k] !== "boolean")
+    { delete net[k]; anomalies.push(`« ${k} » ignoré (booléen attendu)`); }
+  });
+
+  SCHEMA_OBJETS.forEach((k) =>
+  {
+    const o = net[k];
+    if (o === undefined) return;
+    if (!o || typeof o !== "object" || Array.isArray(o))
+    { delete net[k]; anomalies.push(`« ${k} » ignoré (objet attendu)`); return; }
+    for (const f in o) { const s = commeChaine(o[f]); if (s === null) delete o[f]; else o[f] = s; }
+  });
+
+  for (const k in SCHEMA_LISTES)
+  {
+    const spec = SCHEMA_LISTES[k];
+    if (net[k] === undefined) continue;
+    if (!Array.isArray(net[k]))
+    { delete net[k]; anomalies.push(`« ${k} » ignoré (liste attendue)`); continue; }
+    net[k] = net[k]
+      .filter((item) =>
+      {
+        if (!item || typeof item !== "object" || Array.isArray(item))
+        { anomalies.push(`une entrée de « ${k} » ignorée (objet attendu)`); return false; }
+        return true;
+      })
+      .map((item) =>
+      {
+        const propre = { ...item };
+        spec.chaines.forEach((f) =>
+        {
+          if (propre[f] === undefined) return;
+          const s = commeChaine(propre[f]);
+          if (s === null) delete propre[f]; else propre[f] = s;
+        });
+        spec.listes.forEach((f) =>
+        {
+          if (propre[f] === undefined) return;
+          if (!Array.isArray(propre[f]))
+          { delete propre[f]; anomalies.push(`« ${f} » ignoré dans une entrée de « ${k} » (liste attendue)`); return; }
+          propre[f] = propre[f].map((l) => commeChaine(l)).filter((l) => l !== null);
+        });
+        if (propre.affiche !== undefined && typeof propre.affiche !== "boolean")
+        { delete propre.affiche; anomalies.push(`« affiche » ignoré dans une entrée de « ${k} » (booléen attendu)`); }
+        return propre;
+      });
+  }
+
+  // customisation : clés critiques vérifiées, clés inconnues laissées
+  // (deepMerge les recopie sans danger — compatibilité future).
+  const c = net.customisation;
+  if (c === undefined) return { cv: net, anomalies };
+  if (!c || typeof c !== "object" || Array.isArray(c))
+  { delete net.customisation; anomalies.push("« customisation » ignoré (objet attendu)"); return { cv: net, anomalies }; }
+
+  SCHEMA_CUSTO_NUM.forEach((f) =>
+  {
+    if (c[f] === undefined || typeof c[f] === "number") return;
+    const n = parseFloat(c[f]);
+    if (Number.isFinite(n)) c[f] = n;
+    else { delete c[f]; anomalies.push(`« customisation.${f} » ignoré (nombre attendu)`); }
+  });
+  for (const f in c)
+    if (f.startsWith("affiche") && c[f] !== undefined && typeof c[f] !== "boolean")
+    { delete c[f]; anomalies.push(`« customisation.${f} » ignoré (booléen attendu)`); }
+  if (c.ordreSections !== undefined)
+  {
+    if (!Array.isArray(c.ordreSections)) { delete c.ordreSections; anomalies.push("« customisation.ordreSections » ignoré (liste attendue)"); }
+    else c.ordreSections = c.ordreSections.filter((s) => SECTION_KEYS.includes(s));
+  }
+  SCHEMA_CUSTO_COULEURS.forEach((f) =>
+  {
+    if (c[f] === undefined) return;
+    const s = commeChaine(c[f]);
+    if (s === null) { delete c[f]; anomalies.push(`« customisation.${f} » ignoré (texte attendu)`); }
+    else c[f] = s;
+  });
+
+  return { cv: net, anomalies };
+}
+
 function deepMerge(base, incoming)
 {
   const out = structuredClone(base);

@@ -19,6 +19,78 @@
 const EXTRA_STOPWORDS = new Set(("salaire poste profil candidat candidate candidature mission missions expérience expériences professionnel professionnelles années an ans jour jours mois temps plein complet contrat cdi cdd stage stagiaire job role work team teams company join looking seeking must should would could may more most new able within across about into salaire").split(" "));
 const STOPWORDS_ANALYSE = new Set([...STOPWORDS, ...EXTRA_STOPWORDS]);
 
+// ============================================================
+// CORRESPONDANCE APPROCHÉE — canoniserMot()
+// Synonymes (dictionnaire, domaines jeu vidéo / dev / recrutement
+// FR & EN) + racinisation légère (pluriels et suffixes courants).
+// L'offre ET le CV passent par canoniserMot() : la comparaison se
+// fait dans le même espace des deux côtés. Mots simples uniquement
+// (les mots composés sont coupés par la tokenisation) ; accents des
+// deux orthographes (avec/sans) inclus.
+// ============================================================
+const GROUPES_SYNONYMES =
+[
+  // Moteurs & tech
+  ["unity", "unity3d"],
+  ["unreal", "unrealengine", "ufn"],
+  ["godot", "godotengine"],
+  ["blueprint", "blueprints", "visualscripting"],
+  ["shader", "shaders", "shading"],
+  ["cpp", "c++"],
+  ["git", "github"],
+  ["agile", "scrum", "kanban"],
+  // Pratiques dev
+  ["prototype", "prototypes", "prototypage", "prototyper", "prototyping", "maquette", "maquettes"],
+  ["optimisation", "optimiser", "optimize", "optimization", "performance", "performances", "performant"],
+  ["debug", "debugging", "debogage", "débogage", "bug", "bugs", "bugfix"],
+  ["refactoring", "refactor", "refactorer", "refactorisation"],
+  // Contexte travail
+  ["teletravail", "télétravail", "remote"],
+  ["anglais", "english"],
+  // Soft-skills fréquents dans les offres
+  ["creativite", "créativite", "créativité", "creativity", "creatif", "créatif", "creative"],
+  ["equipe", "équipe", "equipes", "collaboration", "collaboratif", "collaborative", "cooperation", "coopération"],
+  ["autonomie", "autonome", "independant", "indépendant"],
+  ["curiosite", "curiosité", "curiosity", "curieux"],
+  ["rigueur", "rigoureux"],
+  ["mathematiques", "mathématiques", "maths", "math"]
+];
+const SYNONYMES = new Map();
+GROUPES_SYNONYMES.forEach((g) => g.forEach((v) => SYNONYMES.set(v, g[0])));
+
+// Racinisation légère : pluriel d'abord, puis le premier suffixe
+// (liste triée du plus long au plus court) qui laisse un radical
+// d'au moins 4 caractères. "optimisation"/"optimisations" →
+// "optimis" ; "prototypes"/"prototype" → "prototype".
+const SUFFIXES =
+[
+  "issements", "issement", "ations", "ation", "ements", "ement",
+  "ateurs", "ateur", "ances", "ance", "ences", "ence",
+  "ités", "ité", "ions", "ion", "ings", "ing",
+  "ées", "és", "ée", "er", "ed", "es"
+];
+function stem(w)
+{
+  let s = w.replace(/[sx]$/, "");
+  for (const suf of SUFFIXES)
+  {
+    if (s.length - suf.length >= 4 && s.endsWith(suf))
+    {
+      s = s.slice(0, -suf.length);
+      break;
+    }
+  }
+  return s;
+}
+
+// Canonique d'un mot : le dictionnaire d'abord (exacts de la
+// tokenisation : "unity3d" → "unity"), la racine sinon. Le canonique
+// sert de clé commune à pondererMotsCles() et scoreTexte().
+function canoniserMot(w)
+{
+  return SYNONYMES.get(w) || stem(w);
+}
+
 // ------------------------------------------------------------
 // Tokenisation (cohérente avec cv-keywords.js, stopwords enrichis)
 // ------------------------------------------------------------
@@ -37,7 +109,13 @@ function tokenizeAnalyse(text)
 function pondererMotsCles(offre)
 {
   const counts = new Map();
-  tokenizeAnalyse(offre).forEach((w) => counts.set(w, (counts.get(w) || 0) + 1));
+  // Comptage en canonique : "unity" et "unity3d" dans l'offre
+  // totalisent le poids d'UN même concept, plus discriminant.
+  tokenizeAnalyse(offre).forEach((w) =>
+  {
+    const c = canoniserMot(w);
+    counts.set(c, (counts.get(c) || 0) + 1);
+  });
   const poids = new Map();
   counts.forEach((count, word) =>
   {
@@ -56,10 +134,11 @@ function scoreTexte(texte, poids)
   const trouves = new Set();
   tokenizeAnalyse(texte).forEach((w) =>
   {
-    const p = poids.get(w);
+    const c = canoniserMot(w);
+    const p = poids.get(c);
     if (p) 
     { 
-        score += p; trouves.add(w); 
+        score += p; trouves.add(c); 
     }
   });
   

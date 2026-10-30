@@ -398,12 +398,16 @@ function renderJdResults()
   if (!jd.trim()) { box.innerHTML = ""; return; }
 
   const keywords = extractKeywords(jd);
-  const cvText = JSON.stringify(cv).toLowerCase();
-  const missing = keywords.filter((k) => !cvText.includes(k.word));
+  // ✓/✗ par correspondance canonique (synonymes + racines, cf.
+  // cv-analyse.js) : "unity3d" dans le CV valide "unity" dans
+  // l'offre — et l'inverse. Même espace de comparaison que le
+  // calibrage (pondererMotsCles/scoreTexte), plus de sous-chaînes.
+  const matches = new Set(scoreTexte(JSON.stringify(cv), pondererMotsCles(jd)).mots);
+  const missing = keywords.filter((k) => !matches.has(canoniserMot(k.word)));
 
   const chips = keywords.map((k) =>
   {
-    const ok = cvText.includes(k.word);
+    const ok = matches.has(canoniserMot(k.word));
     return `<span class="kw ${ok ? "ok" : "miss"}">${esc(k.word)} ${ok ? "✓" : "✗"} (${k.count})</span>`;
   }).join("");
 

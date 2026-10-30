@@ -1,8 +1,9 @@
-/* ===== 1. Base ===== */
+
 /* Deux systèmes de couleurs, étanches l'un à l'autre :
    - --editor-* : couleurs de l'INTERFACE (boutons, onglets, alertes...)
    - --cv-*     : couleurs du CV (pilotées par l'onglet Customisation,
-                  appliquées par cv-preview.js sur #cv-preview) */
+                  appliquées par cv-preview.js sur #cv-preview)
+*/
 * { margin: 0; padding: 0; box-sizing: border-box; }
 :root 
 {

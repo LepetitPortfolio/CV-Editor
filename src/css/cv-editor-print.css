@@ -15,7 +15,18 @@
      du cadre resterait imprimé autour du CV (bande noire en PDF). */
   body.dark .preview-frame { background: none !important; box-shadow: none !important; }
   .preview-scroll { max-height: none; overflow: visible; border-radius: 0; }
-  .cv-page { max-width: none; padding: 12mm; box-shadow: none; }
+  .cv-page
+  {
+    max-width: none; padding: 12mm; box-shadow: none;
+    /* Multi-pages : clone redessine le padding sur CHAQUE fragment
+       de page — le contenu ne colle plus au bord des pages 2+.
+       Support récent (Firefox & Chromium ≥ 130) ; sinon, comportement
+       inchangé. On garde @page { margin: 0 } : les en-têtes/pieds de
+       page du navigateur restent supprimés (marges recréées par le
+       padding, répétées par clone). */
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
   /* Fix PDF : forcer les couleurs de fond (bandeaux, chips) à l'impression.
   Sans cela, les navigateurs les suppriment par défaut → le bandeau du
   template Moderne disparaissait et les textes redevenaient noirs. */

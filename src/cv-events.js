@@ -79,14 +79,22 @@ document.addEventListener("click", (e) =>
   // Ajout de données
   if (t.id && t.id.startsWith("btn-add-"))
   {
-    if (addCvItem(t.id)) { save(); renderAll(); }
+    if (addCvItem(t.id)) 
+    {  
+      save(); 
+      renderAll(); 
+    }
     return;
   }
 
   // Suppression de données
   if (t.id && t.id.startsWith("btn-remove-") && t.dataset.remove !== undefined)
   {
-    if (removeCvItem(t.id, +t.dataset.remove)) { save(); renderAll(); }
+    if (removeCvItem(t.id, +t.dataset.remove)) 
+    { 
+      save(); 
+      renderAll(); 
+    }
     return;
   }
 
@@ -98,13 +106,21 @@ document.addEventListener("click", (e) =>
     if (t.dataset.moveItem !== undefined)
     {
       const from = +t.dataset.index;
-      if (moveCvItem(t.dataset.moveItem, from, from + (+t.dataset.dir))) { save(); renderAll(); }
+      if (moveCvItem(t.dataset.moveItem, from, from + (+t.dataset.dir))) 
+      { 
+        save(); 
+        renderAll(); 
+      }
     }
     else if (t.dataset.moveSection)
     {
       const key = t.dataset.moveSection;
       const to = ordreSectionsEffectif().indexOf(key) + (+t.dataset.dir);
-      if (moveSection(key, to)) { save(); renderAll(); }
+      if (moveSection(key, to)) 
+      { 
+        save(); 
+        renderAll(); 
+      }
     }
     return;
   }
@@ -146,12 +162,20 @@ document.addEventListener("click", (e) =>
   }
   if (t.id === "btn-calibrer")
   {
-    if (calibrerCv()) { save(); renderAll(); }
+    if (calibrerCv()) 
+    { 
+      save(); 
+      renderAll(); 
+    }
     return;
   }
   if (t.id === "btn-annuler-calibrer")
   {
-    if (annulerCalibrage()) { save(); renderAll(); }
+    if (annulerCalibrage()) 
+    { 
+      save(); 
+      renderAll(); 
+    }
     return;
   }
 });
@@ -199,14 +223,23 @@ $("#file-input").addEventListener("change", (e) =>
   const reader = new FileReader();
   reader.onload = () => 
   {
-    try 
+        try
     {
-      cv = deepMerge(DEFAULT_CV, JSON.parse(String(reader.result)));
+      const { cv: propre, anomalies } = validerCv(JSON.parse(String(reader.result)));
+      cv = deepMerge(DEFAULT_CV, propre);
       normalizePolice();
       save(); 
       renderAll();
+      // L'import ne bloque JAMAIS : les anomalies sont nettoyées et
+      // listées — l'utilisateur sait ce qui a été ajusté, sans perdre
+      // le reste du fichier.
+      if (anomalies.length)
+        alert("CV importé avec " + anomalies.length + " ajustement(s) :\n• " + anomalies.slice(0, 8).join("\n• ") + (anomalies.length > 8 ? "\n• …" : ""));
     } 
-    catch { alert("Fichier JSON invalide"); }
+    catch 
+    { 
+      alert("Fichier JSON invalide"); 
+    }
   };
   reader.readAsText(file);
   e.target.value = "";
