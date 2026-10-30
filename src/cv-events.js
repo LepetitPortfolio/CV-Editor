@@ -223,6 +223,29 @@ document.addEventListener("click", (e) =>
     repanelSynDico();
     return;
   }
+
+  // Profils & statuts : case cochée/décochée → cv.profils mis à
+  // jour (basculerProfil, cv-model.js), save() comme toute donnée
+  // du CV, puis re-render du panneau en conservant le <details>
+  // ouvert (le champ « libellé CV » apparaît/disparaît) + aperçu.
+  if (t.dataset.profilCheck !== undefined)
+  {
+    if (basculerProfil(t.dataset.profilCheck))
+    {
+      save();
+      repanelProfils();
+      renderPreview();
+    }
+    return;
+  }
+  if (t.id === "btn-profils-reset")
+  {
+    cv.profils = [];
+    save();
+    repanelProfils();
+    renderPreview();
+    return;
+  }
 });
 
 // Re-render du panneau en conservant l'état ouvert du dictionnaire
@@ -260,6 +283,31 @@ document.addEventListener("input", (e) =>
   const canon = canoniserMot(mot);
   const groupe = groupesSynonymesEffectifs().find((g) => g.some((m) => canoniserMot(m) === canon));
   out.textContent = groupe ? `✓ ${groupe.join(" ≈ ")}` : "✗ aucun groupe (racinisation seule)";
+});
+
+// Re-render du panneau en conservant l'état ouvert du bloc
+// « Profils & statuts » (même principe que repanelSynDico).
+function repanelProfils()
+{
+  const ouvert = $("#profils-bloc")?.open;
+  renderPanel();
+  const d = $("#profils-bloc");
+  if (d) d.open = ouvert;
+}
+
+// Libellé CV d'un profil coché : sur « change » (pas « input ») —
+// on ne sauvegarde pas à chaque frappe ; l'aperçu suit au blur ou
+// à Entrée. Pas de re-render du panneau : le champ garderait le
+// focus, et rien d'autre n'en dépend.
+document.addEventListener("change", (e) =>
+{
+  const t = e.target;
+  if (t.dataset?.profilLib === undefined) return;
+  const p = cv.profils?.find((x) => x.id === t.dataset.profilLib);
+  if (!p) return;
+  p.libelle = t.value;
+  save();
+  renderPreview();
 });
 
 // Export / Import / Print / Reset

@@ -91,3 +91,10 @@ body.dark .drop-target { box-shadow: 0 -2px 0 0 var(--editor-accent); }
 /* Info-bulles : pastille et bulle assombries */
 body.dark .tip { background: #334155; }
 body.dark .tip-text { background: #111a2e; border: 1px solid #253248; color: #dbe3ef; }
+
+/* Bloc « Profils & statuts » : mêmes tons que les cartes du panneau */
+body.dark .profils-bloc { border-color: #253248; }
+body.dark .profils-item { color: #dbe3ef; }
+body.dark .profils-libelle input { background: #0b1220; color: #dbe3ef; border-color: #334155; }
+body.dark #btn-profils-reset { border-color: #334155; }
+body.dark #btn-profils-reset:hover { color: #f87171; border-color: #f87171; }

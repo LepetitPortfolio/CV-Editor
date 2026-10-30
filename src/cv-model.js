@@ -51,6 +51,12 @@ const DEFAULT_CV =
   email: "",
   tel: "",
   rqth: false,
+  // Profils & statuts cochés (onglet Profil, catalogue PROFILS
+  // ci-dessous) : [{ id, libelle }, …]. Vide = rien d'affiché.
+  profils:
+  [
+    
+  ],
   otherlinks : 
   [
     
@@ -193,6 +199,101 @@ const SCHEMA_LISTES =
 const SCHEMA_CUSTO_NUM = ["Template", "police", "taille", "espacement", "liensParLigne", "photoAncre", "photoForme", "photoCadre", "photoTaille"];
 const SCHEMA_CUSTO_COULEURS = ["couleurprincipale", "couleursecondaire", "couleurtertiaire"];
 
+
+// ------------------------------------------------------------
+// Catalogue des profils & statuts « atypiques » (onglet Profil).
+// Mentions FACULTATIVES et CUMULABLES, affichées dans le bloc
+// contact du CV — la case RQTH historique (cv.rqth) reste séparée.
+// Chaque entrée : id (stable, dans le JSON), libelle (texte par
+// défaut affiché sur le CV, éditable après cochage), desc (le
+// « quand l'afficher / quand le taire » de l'info-bulle ⓘ).
+// La liste vit ICI, dans le code : elle se cible, pas se coche.
+// ------------------------------------------------------------
+const PROFILS =
+[
+  {
+    groupe: "Statuts administratifs reconnus",
+    items:
+    [
+      {
+        id: "oeth",
+        libelle: "Bénéficiaire de l'obligation d'emploi (OETH)",
+        desc: "Depuis 2023, l'obligation d'emploi (6 %) couvre aussi les orientations MDPH hors RQTH : AAH, invalidité, anciens militaires. Alternative à la case RQTH si tu préfères rester général."
+      },
+      {
+        id: "militaire",
+        libelle: "Ancien militaire / vétéran",
+        desc: "Valorisé par les programmes « seconde carrière » des grandes entreprises. Traduis grades et missions en langage civil dans tes expériences."
+      },
+      {
+        id: "shn",
+        libelle: "Sportif de haut niveau",
+        desc: "Statut officiel (ministère). Très vendeur : discipline, pression, planning. Souvent cumulable avec une reconversion."
+      }
+    ]
+  },
+  {
+    groupe: "Profils de parcours",
+    items:
+    [
+      {
+        id: "reconversion",
+        libelle: "En reconversion professionnelle",
+        desc: "Mieux perçu assumé avec une phrase d'accroche qu'un trou inexpliqué dans la chronologie."
+      },
+      {
+        id: "autodidacte",
+        libelle: "Autodidacte",
+        desc: "À coupler avec des réalisations vérifiables (projets, portfolio). Seul, il déclenche le filtre « pas de diplôme »."
+      },
+      {
+        id: "jeune",
+        libelle: "Jeune diplômé·e / premier emploi",
+        desc: "Ouvre les programmes « jeunes talents » et contrats dédiés (apprentissage, PEC). Utile jusqu'à ~2 ans d'expérience."
+      },
+      {
+        id: "senior",
+        libelle: "Senior (50 ans et +)",
+        desc: "Ouvre les missions « retour à l'emploi seniors ». Discrimination fréquente : à afficher surtout si tu vises ces circuits."
+      },
+      {
+        id: "diplomeEtranger",
+        libelle: "Diplôme obtenu à l'étranger",
+        desc: "Précise l'équivalence RNCP si elle existe. Pour l'ATS, épelle le domaine plutôt que l'acronyme local du diplôme."
+      },
+      {
+        id: "expatrie",
+        libelle: "De retour d'expatriation",
+        desc: "Transforme la distance en atout (langues, marchés connus). Préfère « retour » à « rentrée »."
+      },
+      {
+        id: "pause",
+        libelle: "Après une pause carrière",
+        desc: "Une ligne sobre suffit, sans détail médical. Sois concret : « pause carrière — projet familial (2 ans) »."
+      }
+    ]
+  }
+];
+
+// Accès direct par id (le catalogue est petit, un objet plat va
+// plus vite qu'un find() à chaque rendu).
+const PROFILS_PAR_ID = {};
+PROFILS.forEach((g) => g.items.forEach((it) => { PROFILS_PAR_ID[it.id] = it; }));
+
+// Coche/décoche un profil : ajoute { id, libelle } (libellé par
+// défaut du catalogue) ou retire l'entrée. L'ordre de cv.profils
+// = l'ordre de cochage = l'ordre d'affichage sur le CV.
+// Renvoie false si l'id est inconnu du catalogue (no-op).
+function basculerProfil(id)
+{
+  if (!PROFILS_PAR_ID[id]) return false;
+  if (!Array.isArray(cv.profils)) cv.profils = [];
+  const i = cv.profils.findIndex((p) => p.id === id);
+  if (i >= 0) cv.profils.splice(i, 1);
+  else cv.profils.push({ id, libelle: PROFILS_PAR_ID[id].libelle });
+  return true;
+}
+
 // Coerce en chaîne si le type est « presque bon » (nombre, booléen),
 // sinon null (= champ à ignorer).
 function commeChaine(v)
@@ -332,6 +433,37 @@ function validerCv(data)
       if (doublons > 0) anomalies.push(`« synonymes » : ${doublons} doublon(s) retiré(s)`);
       if (uniques.length > 0) net.synonymes = uniques;
       else delete net.synonymes;
+    }
+  }
+
+  // Profils & statuts : liste d'objets { id, libelle }. id inconnu
+  // du catalogue → entrée ignorée ; doublons d'id retirés ; libellé
+  // non textuel ignoré (le défaut du catalogue reprend la main à
+  // l'affichage). Même esprit tolérant que le reste : un export plus
+  // ancien, ou d'une version au catalogue différent, s'importe sans
+  // casse — seules les entrées invérifiables tombent.
+  if (net.profils !== undefined)
+  {
+    if (!Array.isArray(net.profils))
+    { delete net.profils; anomalies.push("« profils » ignoré (liste attendue)"); }
+    else
+    {
+      const vus = new Set();
+      const propres = [];
+      for (const p of net.profils)
+      {
+        if (!p || typeof p !== "object" || Array.isArray(p))
+        { anomalies.push("une entrée de « profils » ignorée (objet attendu)"); continue; }
+        const id = commeChaine(p.id);
+        if (!id || !PROFILS_PAR_ID[id.trim()])
+        { anomalies.push("une entrée de « profils » ignorée (profil inconnu)"); continue; }
+        const cle = id.trim();
+        if (vus.has(cle)) { anomalies.push(`« profils » : doublon « ${cle} » retiré`); continue; }
+        vus.add(cle);
+        const libelle = commeChaine(p.libelle);
+        propres.push(libelle && libelle.trim() ? { id: cle, libelle: libelle.trim() } : { id: cle });
+      }
+      net.profils = propres;
     }
   }
 

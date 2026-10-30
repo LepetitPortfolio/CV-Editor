@@ -50,6 +50,40 @@ function itemTools(attr, i, item, total)
   </div>`;
 }
 
+// Bloc « Profils & statuts » (onglet Profil) : catalogue PROFILS
+// (cv-model.js) en cases à cocher cumulables ; sélection dans
+// cv.profils → export/import avec le CV. Repliable (<details>) :
+// les profils concernent une minorité d'utilisateurs, le bloc ne
+// doit pas alourdir l'onglet par défaut. Une fois coché, chaque
+// profil révèle son champ « libellé CV » éditable.
+function renderProfilsAtypiques()
+{
+  const sel = Array.isArray(cv.profils) ? cv.profils : [];
+  const coches = new Set(sel.map((p) => p.id));
+  const libelleDe = (id) => sel.find((p) => p.id === id)?.libelle;
+  const groupes = PROFILS.map((g) => `
+      <div class="profils-groupe">
+        <div class="profils-groupe-titre">${g.groupe}</div>
+        ${g.items.map((it) =>
+        {
+          const on = coches.has(it.id);
+          return `
+          <label class="profils-item">
+            <input type="checkbox" data-profil-check="${it.id}" ${on ? "checked" : ""}>
+            <span>${it.libelle} ${tip(it.desc)}</span>
+          </label>
+          ${on ? `<div class="profils-libelle"><input data-profil-lib="${it.id}" value="${esc(libelleDe(it.id) || it.libelle)}" title="Libellé exact affiché sur le CV"></div>` : ""}`;
+        }).join("")}
+      </div>`).join("");
+  return `
+      <details class="profils-bloc" id="profils-bloc">
+        <summary>Profils &amp; statuts <span class="profils-nb">${sel.length > 0 ? `${sel.length} coché${sel.length > 1 ? "s" : ""}` : "facultatif"}</span> ${tip("Mentions cumulables affichées dans le bloc contact du CV. Rien n'est obligatoire : chaque info-bulle dit quand afficher — ou taire — un profil.")}</summary>
+        <div class="hint">Cases cumulables — cochées, elles affichent leur libellé (éditable) sur le CV, sous la mention RQTH. La sélection fait partie du CV : elle est exportée dans le JSON.</div>
+        ${groupes}
+        ${sel.length > 0 ? `<button id="btn-profils-reset">↺ Tout décocher</button>` : ""}
+      </details>`;
+}
+
 // Onglet Profil : identité (nom, titre, accroche), adresse structurée,
 // contacts, photo + réglages, mention RQTH, liens supplémentaires.
 function renderProfilTab()
@@ -118,6 +152,7 @@ function renderProfilTab()
       <label class="rubrique-toggle" style="margin-top:.7rem" title="Ajoute la mention « RQTH — travailleur handicapé » dans le bloc contact du CV, sur les 6 templates. Décochée, la mention n'apparaît nulle part.">
         <input type="checkbox" data-bind="rqth" ${c.rqth ? "checked" : ""}> RQTH — travailleur handicapé : afficher la mention sur le CV
       </label>
+      ${renderProfilsAtypiques()}
       ${c.otherlinks.map((l, i) => `
       <div class="exp-card" data-card="otherlinks" data-index="${i}">
         ${itemTools("otherlinks", i, l, c.otherlinks.length)}
