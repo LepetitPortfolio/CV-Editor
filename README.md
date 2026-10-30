@@ -238,10 +238,6 @@ Aucune dépendance externe, aucun outil de build.
 - Dictionnaire de synonymes éditable depuis l'interface (aujourd'hui : une ligne par groupe dans cv-keywords.js)
 - Migration progressive vers les modules ES si un jour un serveur local ne fait plus peur (le découpage actuel est déjà « module-ready »)
 
-## 🔗 Liens
-
-- 🌐 **Version en ligne** : [simon.lepetit.free.fr/CV_Editor](http://simon.lepetit.free.fr/CV_Editor/) — même code, hébergé chez Free
-
 ---
 
 *Made with vanilla HTML/CSS/JS — no framework was harmed in the making of this tool.*
