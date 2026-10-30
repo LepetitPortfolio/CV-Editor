@@ -235,8 +235,9 @@
 
 
 /* ----- Bloc « Profils & statuts » (onglet Profil) ----- */
-/* Même langage que le dictionnaire de synonymes : <details> en
-   cadre, résumé discret, cases aux couleurs des autres toggles. */
+/* Cadre discret, mais l'INTERRUPTEUR se voit : le <summary> (zone
+   cliquable qui ouvre/ferme) reprend le look des .btn.primary de
+   l'éditeur — fond accent, texte blanc, survol brightness(1.1). */
 .profils-bloc
 {
   border: 1px solid var(--border);
@@ -251,9 +252,18 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: .04em;
-  color: var(--muted);
+  color: #fff;
+  background: var(--editor-accent);
+  border: none;
+  border-radius: 6px;
+  padding: 6px 10px;
+  margin-bottom: .3rem;
   user-select: none;
+  transition: filter .15s;
 }
+.profils-bloc summary::-webkit-details-marker { display: none; }
+.profils-bloc summary:hover { filter: brightness(1.1); }
+
 .profils-nb
 {
   font-weight: 400;
