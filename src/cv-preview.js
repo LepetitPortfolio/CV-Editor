@@ -629,15 +629,26 @@ function PreviewCompetencesCV(_CV)
     links
   ].filter(Boolean);
 
-  // Chips de compétences clés : découpées sur les virgules des
-  // valeurs du champ Compétences, dédoublonnées, vides ignorées.
-  // rubrique() : rubrique ET entrées masquées exclues des chips.
-  const chips = Array.from(new Set(
+  // Chips de compétences clés, par ordre de priorité :
+  // 1. liste DÉDIÉE cv.competencesCles (onglet Compétences, une par
+  //    ligne) si elle contient au moins une entrée ;
+  // 2. sinon découpe automatique sur les virgules des valeurs du
+  //    champ Compétences (comportement historique).
+  // Dédoublonnées, vides ignorées ; rubrique() exclut rubrique ET
+  // entrées masquées des chips automatiques. La visibilité de la
+  // section (rubriqueVisible + ordreSections) enveloppe déjà les
+  // deux cas dans le map "sections" — rien à changer en dessous.
+  const manuelles = Array.from(new Set(
+    (Array.isArray(_CV.competencesCles) ? _CV.competencesCles : [])
+      .map((c) => String(c || "").trim())
+      .filter(Boolean)
+  ));
+  const chips = (manuelles.length ? manuelles : Array.from(new Set(
     rubrique("Competences", _CV.competences)
       .flatMap((s) => String(s.valeur || "").split(","))
       .map((c) => c.trim())
       .filter(Boolean)
-  )).map((c) => `<li>${esc(c)}</li>`).join("");
+  ))).map((c) => `<li>${esc(c)}</li>`).join("");
 
   // Compétences détaillées (intitulé : valeur)
   const skills = rubrique("Competences", _CV.competences)

@@ -57,6 +57,14 @@ function updateJd(t)
 // --- Champs simples à la racine du CV (nom, titre, accroche, email, tel) ---
 function writeCvRoot(bind, value)
 {
+  // Liste de chips « une par ligne » : le textarea de l'onglet
+  // Compétences écrit un TABLEAU de chaînes propres (trim + vides
+  // ignorés) — même convention de stockage que missions/informations.
+  if (bind === "competencesCles")
+  {
+    cv.competencesCles = String(value).split("\n").map((l) => l.trim()).filter(Boolean);
+    return;
+  }
   cv[bind] = value;
 }
 

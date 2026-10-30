@@ -160,7 +160,16 @@ function renderExperiencesTab()
 function renderCompetencesTab()
 {
   const c = cv;
-  return rubriqueToggle("Competences", "Compétences", c.competences.length === 0) + c.competences.map((comp, i) => `
+  return rubriqueToggle("Competences", "Compétences", c.competences.length === 0)
+    // Chips « Compétences clés » (template « Compétences en tête ») :
+    // une par ligne. VIDE = chips automatiques (découpe des valeurs
+    // par virgules) — le hint le dit, pas de surprise.
+    + `<div class="field" style="margin-top:.8rem">
+        <label>Compétences clés (chips) — template « Compétences en tête »</label>
+        <textarea data-bind="competencesCles" rows="2" placeholder="Unity3D&#10;C++&#10;Optimisation&#10;(vide = automatique, depuis les valeurs ci-dessous)">${esc((c.competencesCles || []).join("\n"))}</textarea>
+        <div class="hint">Une chip par ligne. Vide = chips automatiques découpées sur les virgules des compétences ci-dessous (comportement historique).</div>
+      </div>`
+    + c.competences.map((comp, i) => `
       <div class="exp-card" data-card="comp" data-index="${i}">
         ${itemTools("comp", i, comp, c.competences.length)}
         ${c.competences.length > 0 ? `<button class="remove" id="btn-remove-comp" data-remove="${i}" title="Supprimer">✕</button>` : ""}

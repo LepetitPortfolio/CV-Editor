@@ -72,6 +72,14 @@ const DEFAULT_CV =
   [
     
   ],
+  // Chips « Compétences clés » du template « Compétences en tête » :
+  // liste LIBRE (une chip par ligne dans l'onglet Compétences).
+  // Tableau vide = découpe automatique historique (virgules des
+  // valeurs ci-dessus) — compatibilité anciens JSON garantie.
+  competencesCles:
+  [
+    
+  ],
   autresinformations: 
   [
     
@@ -260,6 +268,19 @@ function validerCv(data)
       });
   }
 
+  // Chips « une par ligne » : liste de CHAÎNES (pas d'objets comme
+  // les autres collections) — garde-fou dédié, même logique : type
+  // inattendu → clé ignorée (défaut = liste vide = chips auto).
+  if (net.competencesCles !== undefined)
+  {
+    if (!Array.isArray(net.competencesCles))
+    { delete net.competencesCles; anomalies.push("« competencesCles » ignoré (liste attendue)"); }
+    else
+      net.competencesCles = net.competencesCles
+        .map((s) => commeChaine(s))
+        .filter((s) => s !== null && s.trim());
+  }
+
   // customisation : clés critiques vérifiées, clés inconnues laissées
   // (deepMerge les recopie sans danger — compatibilité future).
   const c = net.customisation;
@@ -313,7 +334,11 @@ let cv;
 try 
 {
   const raw = localStorage.getItem(STORAGE_KEY);
-  cv = raw ? deepMerge(DEFAULT_CV, JSON.parse(raw)) : structuredClone(DEFAULT_CV);
+  // La validation nettoie aussi les données LOCALES : un JSON
+  // corrompu (édition manuelle du localStorage, ancien bug) ne
+  // casse plus le chargement — les clés fautives retombent sur
+  // les défauts, silencieusement (pas d'alerte au démarrage).
+  cv = raw ? deepMerge(DEFAULT_CV, validerCv(JSON.parse(raw)).cv) : structuredClone(DEFAULT_CV);
 } 
 catch { cv = structuredClone(DEFAULT_CV); }
 
