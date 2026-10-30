@@ -36,18 +36,11 @@ function syntheseSoftskill(_CV, classe)
   return t ? `<p class="${classe}"><em>${esc(t)}</em></p>` : "";
 }
 
-// Mention RQTH (case de l'onglet Profil) : affichée dans le bloc
-// contact des 6 templates. Le sigle RQTH est le terme reconnu par
-// les recruteurs et les ATS français (obligation d'emploi) ;
-// « travailleur handicapé » l'explicite pour les humains.
-function mentionRqth(_CV)
-{
-  return _CV.rqth === true ? "RQTH — travailleur handicapé" : "";
-}
-
 // Profils & statuts cochés (onglet Profil) : libellés ÉDITABLES —
 // d'où le esc() sur chacun — joints par « · », affichés dans le
-// bloc contact après la mention RQTH. Texte brut ATS-lisible.
+// bloc contact du CV. RQTH incluse : c'est une entrée du catalogue
+// comme les autres (mentionRqth a été fondue ici). Texte brut
+// ATS-lisible.
 // Le libellé vide retombe sur celui du catalogue (id connu : la
 // validation d'import garantit que p.id existe dans PROFILS_PAR_ID).
 function mentionProfils(_CV)
@@ -189,7 +182,7 @@ function PreviewClassiqueCV(_CV)
                     <div class="cv-contact">${[esc(_CV.adresse.codePostal), esc(_CV.adresse.ville), esc(_CV.adresse.pays)].filter(Boolean).map((s) => s.trim()).filter(Boolean).join(" ")}</div>
                     <div class="cv-contact"><strong>Tel : </strong>${esc(_CV.tel) || "06 ..."}</div>
                     <div class="cv-contact"><strong>Mail : </strong>${esc(_CV.email) || "mail@example.com"}</div>
-                    ${_CV.rqth ? `<div class="cv-contact"><strong>RQTH : </strong>travailleur handicapé</div>` : ""}${mentionProfils(_CV) ? `<div class="cv-contact">${mentionProfils(_CV)}</div>` : ""}`
+                    ${mentionProfils(_CV) ? `<div class="cv-contact">${mentionProfils(_CV)}</div>` : ""}`
 
   // Liens : en <span> (inline) pour que les séparateurs "·" s'affichent
   // correctement ; les liens entièrement vides sont ignorés. Le <a>
@@ -283,7 +276,6 @@ function PreviewModerneCV(_CV)
   );
 
   const contactLines = [
-    mentionRqth(_CV),
     mentionProfils(_CV),
     adrLines.join(" — "),
     [esc(_CV.tel), esc(_CV.email)].filter(Boolean).join(" — "),
@@ -382,7 +374,6 @@ function PreviewMinimalisteCV(_CV)
   );
 
   const contactLines = [
-    mentionRqth(_CV),
     mentionProfils(_CV),
     adrLines.join(" — "),
     [esc(_CV.tel), esc(_CV.email)].filter(Boolean).join(" — "),
@@ -472,7 +463,6 @@ function PreviewElegantSerifCV(_CV)
   );
 
   const contactLines = [
-    mentionRqth(_CV),
     mentionProfils(_CV),
     adrLines.join(" — "),
     [esc(_CV.tel), esc(_CV.email)].filter(Boolean).join(" — "),
@@ -558,7 +548,6 @@ function PreviewSuisseCV(_CV)
   );
 
   const contactLines = [
-    mentionRqth(_CV),
     mentionProfils(_CV),
     adrLines.join(" — "),
     [esc(_CV.tel), esc(_CV.email)].filter(Boolean).join(" — "),
@@ -646,7 +635,6 @@ function PreviewCompetencesCV(_CV)
   );
 
   const contactLines = [
-    mentionRqth(_CV),
     mentionProfils(_CV),
     adrLines.join(" — "),
     [esc(_CV.tel), esc(_CV.email)].filter(Boolean).join(" — "),

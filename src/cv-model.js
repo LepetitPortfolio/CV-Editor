@@ -50,7 +50,6 @@ const DEFAULT_CV =
   },
   email: "",
   tel: "",
-  rqth: false,
   // Profils & statuts cochés (onglet Profil, catalogue PROFILS
   // ci-dessous) : [{ id, libelle }, …]. Vide = rien d'affiché.
   profils:
@@ -185,7 +184,10 @@ const CV_PHOTO_CADRES =
 // Renvoie { cv: objet nettoyé, anomalies: [messages] }.
 // ============================================================
 const SCHEMA_CHAINES = ["photo", "nom", "titre", "accroche", "email", "tel", "softskillSynthese"];
-const SCHEMA_BOOLEENS = ["rqth"];
+// « rqth » n'est plus un booléen : c'est une entrée du catalogue
+// PROFILS, convertie par la migration juste avant la validation
+// des profils (ci-dessous dans validerCv).
+const SCHEMA_BOOLEENS = [];
 const SCHEMA_OBJETS = ["adresse"];
 const SCHEMA_LISTES =
 {
@@ -203,7 +205,8 @@ const SCHEMA_CUSTO_COULEURS = ["couleurprincipale", "couleursecondaire", "couleu
 // ------------------------------------------------------------
 // Catalogue des profils & statuts « atypiques » (onglet Profil).
 // Mentions FACULTATIVES et CUMULABLES, affichées dans le bloc
-// contact du CV — la case RQTH historique (cv.rqth) reste séparée.
+// contact du CV — RQTH incluse : l'ancienne case dédiée (cv.rqth
+// booléen) a été fondue ici (migration dans validerCv, ci-dessous).
 // Chaque entrée : id (stable, dans le JSON), libelle (texte par
 // défaut affiché sur le CV, éditable après cochage), desc (le
 // « quand l'afficher / quand le taire » de l'info-bulle ⓘ).
@@ -215,6 +218,11 @@ const PROFILS =
     groupe: "Statuts administratifs reconnus",
     items:
     [
+      {
+        id: "rqth",
+        libelle: "RQTH — travailleur handicapé",
+        desc: "Sigle reconnu des recruteurs et des ATS français (obligation d'emploi 6 %) ; « travailleur handicapé » l'explicite pour les humains. Ouvre les missions handicap (AGEFIPH). Mention 100 % facultative : affiche-la si tu vises ces circuits, tais-la sinon."
+      },
       {
         id: "oeth",
         libelle: "Bénéficiaire de l'obligation d'emploi (OETH)",
@@ -435,6 +443,20 @@ function validerCv(data)
       else delete net.synonymes;
     }
   }
+
+  // Migration RQTH : l'ancienne case dédiée (booléen « rqth ») est
+  // devenue une entrée du catalogue PROFILS. validerCv traite les
+  // imports JSON ET le chargement localStorage (le loader passe
+  // par ici) : un état « rqth: true » est converti au premier
+  // chargement, en tête de liste (comme l'affichage historique).
+  // La clé booléenne disparaît ensuite du JSON pour toujours.
+  if (net.rqth === true)
+  {
+    if (!Array.isArray(net.profils)) net.profils = [];
+    if (!net.profils.some((p) => p?.id === "rqth"))
+      net.profils.unshift({ id: "rqth" });
+  }
+  delete net.rqth;
 
   // Profils & statuts : liste d'objets { id, libelle }. id inconnu
   // du catalogue → entrée ignorée ; doublons d'id retirés ; libellé

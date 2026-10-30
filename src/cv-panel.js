@@ -85,7 +85,8 @@ function renderProfilsAtypiques()
 }
 
 // Onglet Profil : identité (nom, titre, accroche), adresse structurée,
-// contacts, photo + réglages, mention RQTH, liens supplémentaires.
+// contacts, photo + réglages, profils & statuts (RQTH incluse),
+// liens supplémentaires.
 function renderProfilTab()
 {
   const c = cv;
@@ -149,9 +150,6 @@ function renderProfilTab()
         <div class="field"><label>Email</label><input data-bind="email" value="${esc(c.email)}"></div>
         <div class="field"><label>Téléphone</label><input data-bind="tel" value="${esc(c.tel)}"></div>
       </div>
-      <label class="rubrique-toggle" style="margin-top:.7rem" title="Ajoute la mention « RQTH — travailleur handicapé » dans le bloc contact du CV, sur les 6 templates. Décochée, la mention n'apparaît nulle part.">
-        <input type="checkbox" data-bind="rqth" ${c.rqth ? "checked" : ""}> RQTH — travailleur handicapé : afficher la mention sur le CV
-      </label>
       ${renderProfilsAtypiques()}
       ${c.otherlinks.map((l, i) => `
       <div class="exp-card" data-card="otherlinks" data-index="${i}">
