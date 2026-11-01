@@ -340,7 +340,7 @@ $("#btn-export-json").addEventListener("click", () =>
   const blob = new Blob([JSON.stringify(cv, null, 2)], { type: "application/json" });
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
-  a.download = "mes-donnees-cv.json";
+  a.download = "cv-" + (cv.nom || "sans-nom").replace(/\s+/g, "-").toLowerCase() + ".json";
   a.click();
   URL.revokeObjectURL(a.href);
 });
