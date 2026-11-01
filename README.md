@@ -4,7 +4,7 @@
 
 > 🎯 **100 % local &amp; privé** : aucune donnée ne quitte votre machine. Pas de backend, pas de compte, pas de tracking. Fonctionne par simple double-clic (`file://`).
 
-> 🌐 **Version en ligne** : [simon.lepetit.free.fr/CV\_Editor](http://simon.lepetit.free.fr/CV_Editor/) — même code, hébergé chez Free. Le dépôt GitHub reste la version de référence.
+> 🌐 **Version en ligne** : [simon.lepetit.free.fr/CV\_Editor](https://simon-lepetit.pages-perso.free.fr/CV_Editor/) — même code, hébergé chez Free. Le dépôt GitHub reste la version de référence.
 
 ---
 
@@ -71,7 +71,7 @@
 
 Aucune installation nécessaire :
 
-- **En ligne** : ouvrez directement [la version hébergée](http://simon.lepetit.free.fr/CV_Editor/).
+- **En ligne** : ouvrez directement [la version hébergée](https://simon-lepetit.pages-perso.free.fr/CV_Editor/).
 - **En local** :
   1. Cloner le dépôt (ou télécharger les fichiers) :
     ```bash
