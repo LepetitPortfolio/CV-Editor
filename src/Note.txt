@@ -1,0 +1,14 @@
+La routine de release :
+
+- Modifs de code, test local ;
+- incrémenter APP_VERSION dans src/version.js ;
+- mettre la même valeur dans version.json ;
+- incrémenter tous les ?v=… de src/index.html (recherche/remplacement de l'ancien numéro par le nouveau — 10 secondes) ;
+- commit + push.
+
+Vérification d'auto-cohérence : si tu oublies l'étape 4, la bannière
+apparaît mais le reload peut resservir les vieux assets — les ?v= sont
+donc le mécanisme de fond, la bannière n'est que le signal. Si tu oublies
+l'étape 2 ou 3, rien ne casse : les deux valeurs restent égales, aucune
+bannière (au pire, l'utilisateur garde la vieille version jusqu'au
+prochain Ctrl+F5).

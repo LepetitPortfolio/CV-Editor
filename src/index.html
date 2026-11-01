@@ -3,7 +3,8 @@
 <head>
 <!-- Les scripts defer s'exécutent dans l'ORDRE : de la fondation (données)
      vers le câblage (événements) puis l'init (main). -->
-<script src="cv-model.js" defer></script>
+<script defer src="version.js"></script>
+<script defer src="cv-model.js?v=1.0.0"></script>
 <script src="cv-utils.js" defer></script>
 <script src="cv-keywords.js" defer></script>
 <script src="cv-analyse.js" defer></script>
@@ -11,9 +12,10 @@
 <script src="cv-panel.js" defer></script>
 <script src="cv-actions.js" defer></script>
 <script src="cv-events.js" defer></script>
-<script src="cv-theme.js" defer></script>
+<script defer src="cv-theme.js"></script>
+<script defer src="cv-update.js"></script>
 <script src="main.js" defer></script>
-<link rel="stylesheet" href="css/cv-editor-core.css">
+<link rel="stylesheet" href="css/cv-editor-core.css?v=1.0.0">
 <link rel="stylesheet" href="css/cv-editor-forms.css">
 <link rel="stylesheet" href="css/cv-template-classique.css">
 <link rel="stylesheet" href="css/cv-editor-print.css">

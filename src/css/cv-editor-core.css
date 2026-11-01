@@ -79,3 +79,28 @@ body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg); co
 }
 .tab:hover { background: var(--bg); }
 .tab.active { color: var(--editor-accent); border-bottom-color: var(--editor-accent); }
+
+/* ===== Bannière « nouvelle version disponible » (cv-update.js) ===== */
+#cv-update-banner
+{
+  position: fixed;
+  right: 12px;
+  bottom: 12px;
+  background: #1f2937;
+  color: #f9fafb;
+  padding: .6rem .9rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgb(0 0 0 / .25);
+  font-size: .9rem;
+  z-index: 100; /* au-dessus de la topbar (z-index 10) */
+}
+#cv-update-banner button
+{
+  margin-left: .4rem;
+  border: none;
+  border-radius: 6px;
+  padding: .15rem .6rem;
+  cursor: pointer;
+}
+#cv-update-reload { background: var(--editor-accent, #ea580c); color: #fff; }
+#cv-update-dismiss { background: #4b5563; color: #fff; }
