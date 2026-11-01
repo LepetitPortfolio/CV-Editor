@@ -131,8 +131,7 @@ function renderProfilTab()
           ${c.photo ? `<button class="btn reset" id="btn-photo-remove">Retirer</button>` : ""}
         </div>
       </div>
-      ${rubriqueToggle("Accroche", "Accroche", !String(c.accroche || "").trim())}
-      <div class="field" style="margin-top:.7rem"><label>Accroche</label><textarea data-bind="accroche" rows="4">${esc(c.accroche)}</textarea></div>
+      <div class="field" style="margin-top:.7rem"><label>${rubriqueToggle("Accroche", "Accroche", !String(c.accroche || "").trim())}</label><textarea data-bind="accroche" rows="4">${esc(c.accroche)}</textarea></div>
       <div class="field" style="margin-top:.7rem">
         <div class="grid" style="margin-top:.7rem">
           <div class="field"><label>Adresse Ligne 1 </label><input data-bind="adresse.ligne1" value="${esc(c.adresse.ligne1)}"></div>
